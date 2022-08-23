@@ -9,11 +9,11 @@ services:
     expose:
       - "3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=my-awesome-password
-      - MYSQL_DATABASE='social-coder'
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
     volumes:
-      - $PWD\\Database:/var/lib/mysql
-        
+      - ${DB_PATH}:/var/lib/mysql
+
   social-coder-api:
     build:
       context: .
@@ -29,5 +29,5 @@ services:
       - $USERPROFILE\.aspnet\https:/https/
     depends_on:
       - social-coder-api-db
-      
+    
     

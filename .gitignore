@@ -6,3 +6,4 @@ riderModule.iml
 Database/
 .vs/
 .idea/
+.env

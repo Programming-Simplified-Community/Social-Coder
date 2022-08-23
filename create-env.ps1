@@ -52,7 +52,7 @@ Write-Output "Updating connection string..."
 Set-Content $settingsPath $settings
 
 New-Item $envPath
-Add-Content $envPath "DB_PATH=$databasePath"
+Add-Content $envPath "DB_PATH=$databasePath\Database"
 Add-Content $envPath "DB_PASSWORD=$dbPassword"
 Add-Content $envPath "DB_HOST=$dbHost"
 Add-Content $envPath "DB_NAME=$dbName"

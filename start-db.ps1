@@ -1,4 +1,8 @@
-$envPath = Join-Path $PSScriptRoot .env
+$scriptPath = Split-Path $MyInvocation.MyCommand.Path -Parent
+cd $scriptPath
+
+$envPath = Join-Path $scriptPath .env
+
 docker-compose --env-file $envPath up -d social-coder-api-db
 
 $check = $false
@@ -20,7 +24,7 @@ while($attempts -gt 0 -and (-not $check))
     Start-Sleep 5
 }
 
-$serverPath = [IO.Path]::Combine($PSScriptRoot, "SocialCoder.Web", "Server")
+$serverPath = [IO.Path]::Combine($scriptPath, "SocialCoder.Web", "Server")
 cd $serverPath
 
 Write-Output "Running migrations..."

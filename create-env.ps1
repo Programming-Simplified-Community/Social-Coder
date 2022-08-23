@@ -5,8 +5,8 @@ Param(
     [Parameter(Mandatory=$false)] [string] $dbHost
 )
 
-$basePath = $PSScriptRoot
-$envPath = Join-Path $PSScriptRoot ".env"
+$basePath = Split-Path $MyInvocation.MyCommand.Path -Parent
+$envPath = Join-Path $basePath ".env"
 
 if(Test-Path $envPath)
 {
@@ -16,7 +16,7 @@ if(Test-Path $envPath)
 # if the database path has not been set
 if(-not($databasePath))
 {
-    $databasePath = Get-Location
+    $databasePath = $basePath
     Write-Output "Defaulting Database Path to $databasePath"
 }
 
@@ -39,7 +39,7 @@ if(-not($dbHost))
 }
 
 
-$settingsPath = [IO.Path]::Combine($PSScriptRoot, "SocialCoder.Web", "Server", "appsettings.json")
+$settingsPath = [IO.Path]::Combine($basePath, "SocialCoder.Web", "Server", "appsettings.json")
 Write-Output "appsettings.json path: $settingsPath"
 $settings = Get-Content $settingsPath
 

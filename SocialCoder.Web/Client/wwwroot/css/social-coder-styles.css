@@ -1,0 +1,172 @@
+﻿.post-option {
+    justify-content: center;
+    -ms-flex-pack: center;
+    width: 160px;
+    height: 44px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: box-shadow .2s ease-in-out, background-color .2s ease-in-out;
+}
+
+.post-option,
+.post-options {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.post-option .post-option-icon {
+    margin-right: 16px;
+    fill: #616a82;
+    opacity: .6;
+    transition: fill .2s ease-in-out, opacity .2s ease-in-out;
+}
+
+.widget-box {
+    position: relative;
+    box-shadow: 0 0 40px 0 rgb(0 0 0 / 6%);
+    border-radius: 12px;
+}
+
+.widget-box .widget-box-status {
+    padding-top: 25px;
+    position: relative;
+}
+
+.widget-box .widget-box-status .widget-box-status-content {
+    padding: 0 28px;
+}
+
+.widget-box .widget-box-status .widget-box-status-content .user-status {
+    font-family: Rajdhani, sans-serif;
+    padding-right: 70px;
+}
+
+.user-status {
+    min-height: 44px;
+    padding: 2px 0 0 52px;
+    position: relative;
+}
+
+.widget-box .widget-box-status .widget-box-status-content .user-status {
+    position: relative;
+    left: 0;
+    top: 0;
+}
+
+.user-status .user-status-title.medium {
+    font-size: 1rem;
+}
+
+.user-status .user-status-title {
+    color: #fff;
+    font-weight: 500;
+    line-height: 1.4285714286rem;
+}
+
+.user-status .user-status-title.medium+.user-status-text {
+    margin-top: 2px;
+}
+
+.user-status .user-status-text.small {
+    font-size: .75rem;
+}
+
+.user-status .user-status-text {
+    color: #9aa4bf;
+    font-weight: 500;
+    font-size: 0.875rem;
+    margin-top: 4px;
+}
+
+.widget-box .widget-box-status .user-status+.widget-box-status-text {
+    margin-top: 20px;
+}
+
+.widget-box .widget-box-status h3 + .widget-box .widget-box-status p,
+.widget-box .widget-box-status p + .widget-box .widget-box-status h3,
+.widget-box .widget-box-status p + .widget-box .widget-box-status p
+{
+    margin-top: 10px;
+}
+
+.widget-box .widget-box-status p,
+.widget-box .widget-box-status .widget-box-status-text {
+    font-size: .875rem;
+    line-height: 1.7142857143em;
+    font-weight: 500;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.header-brand-text
+{
+    margin-left: 26px;
+    color: #fff;
+    font-family: Titillium Web, sans-serif;;
+    font-size: 1.25rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+a, h1, h2, h3, h4, h5, h6, p
+{
+    color: #fff;
+    font-family: Rajdhani, sans-serif;
+    line-height: 1em;
+}
+
+.menu-item-link {
+    padding: 0 24px;
+    display: block;
+    color: #fff;
+    font-size: .75rem;
+    font-weight: 700;
+    line-height: 80px;
+    cursor: pointer;
+    transition: color .2s ease-in-out;
+}
+
+.section-banner {
+    min-height: 160px;
+    padding: 2px 60px 0 200px;
+    border-radius: 12px;
+    background: url(../img/banner/banner-bg.png) no-repeat;
+    position: relative;
+    filter: saturate(0.65);
+}
+
+.section-banner .section-banner-icon{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.section-banner img {
+    vertical-align: middle;
+    border-style: none;
+}
+
+.section-banner .section-banner-title
+{
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: white;
+}
+
+.section-banner .section-banner-text{
+    margin-top: 10px;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.section-banner .section-banner-title,
+.section-banner .section-banner-text {
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start:0px;
+    margin-inline-end: 0px;
+}
+

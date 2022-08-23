@@ -1,0 +1,1 @@
+docker-compose up social-coder-api-db -d

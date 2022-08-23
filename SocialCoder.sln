@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32616.157
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialCoder.Web.Server", "SocialCoder.Web\Server\SocialCoder.Web.Server.csproj", "{55CC9CD2-E708-4CED-B920-6D5E0567B9FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialCoder.Web.Client", "SocialCoder.Web\Client\SocialCoder.Web.Client.csproj", "{F68E1DB6-52B4-479E-BAF7-37A6FAB19EE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialCoder.Web.Shared", "SocialCoder.Web\Shared\SocialCoder.Web.Shared.csproj", "{40520FE4-D8C6-4251-AA46-103CC96DFC6A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6ED18575-31A4-468B-8C76-1353FB9F57DB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "web", "web", "{F10099E1-F9AA-4D68-BB12-653CA6E43256}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{99BAC35B-5B5D-4532-A49A-BBDE913E380F}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+		create-https-certs.ps1 = create-https-certs.ps1
+		start-db.ps1 = start-db.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{0B1747EF-1BEE-4EED-A989-A1BB11A59B8B}"
+	ProjectSection(SolutionItems) = preProject
+		Environment.md = Environment.md
+		Database.md = Database.md
+		Readme.md = Readme.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{55CC9CD2-E708-4CED-B920-6D5E0567B9FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55CC9CD2-E708-4CED-B920-6D5E0567B9FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55CC9CD2-E708-4CED-B920-6D5E0567B9FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55CC9CD2-E708-4CED-B920-6D5E0567B9FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F68E1DB6-52B4-479E-BAF7-37A6FAB19EE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F68E1DB6-52B4-479E-BAF7-37A6FAB19EE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F68E1DB6-52B4-479E-BAF7-37A6FAB19EE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F68E1DB6-52B4-479E-BAF7-37A6FAB19EE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40520FE4-D8C6-4251-AA46-103CC96DFC6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40520FE4-D8C6-4251-AA46-103CC96DFC6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40520FE4-D8C6-4251-AA46-103CC96DFC6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40520FE4-D8C6-4251-AA46-103CC96DFC6A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {56D50B34-3BF8-4D3D-B94A-04CDF3680AF9}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F10099E1-F9AA-4D68-BB12-653CA6E43256} = {6ED18575-31A4-468B-8C76-1353FB9F57DB}
+		{F68E1DB6-52B4-479E-BAF7-37A6FAB19EE6} = {F10099E1-F9AA-4D68-BB12-653CA6E43256}
+		{55CC9CD2-E708-4CED-B920-6D5E0567B9FF} = {F10099E1-F9AA-4D68-BB12-653CA6E43256}
+		{40520FE4-D8C6-4251-AA46-103CC96DFC6A} = {F10099E1-F9AA-4D68-BB12-653CA6E43256}
+	EndGlobalSection
+EndGlobal

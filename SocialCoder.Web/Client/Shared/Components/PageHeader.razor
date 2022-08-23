@@ -1,0 +1,20 @@
+﻿<MudGrid Justify="Justify.Center" Style="margin-top: 16px">
+    <MudItem sm="10" md="11" lg="11" xl="11" xxl="11">
+        <div class="section-banner">
+            <img class="section-banner-icon" src="@Type.GetImagePath()" alt="newsfeed-icon"/>
+            <p class="section-banner-title">@Title</p>
+            <p class="section-banner-text">@Subtitle</p>
+        </div>        
+    </MudItem>
+</MudGrid>
+
+@code {
+    [Parameter]
+    public PageType Type { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Subtitle { get; set; }
+}

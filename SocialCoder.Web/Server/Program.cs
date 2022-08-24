@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
+using SocialCoder.Web.Server;
 using SocialCoder.Web.Server.Data;
 using SocialCoder.Web.Server.Models;
 
@@ -52,9 +53,24 @@ app.UseIdentityServer();
 app.UseAuthentication();
 app.UseAuthorization();
 
-
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
+
+#if DEBUG
+try
+{
+    // We have services that are scoped. Therefore we need to create a new scope 
+    // for the things we'll use in our SeedDb.
+    var serviceProvider = app.Services.CreateScope().ServiceProvider;
+    await SeedDb.Seed(serviceProvider);
+}
+catch (Exception ex)
+{
+    Console.Error.WriteLine(ex);
+    await app.DisposeAsync();
+    Environment.Exit(1);
+}
+#endif
 
 app.Run();

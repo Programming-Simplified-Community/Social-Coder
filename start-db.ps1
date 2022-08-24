@@ -3,6 +3,13 @@ cd $scriptPath
 
 $envPath = Join-Path $scriptPath .env
 
+# Certain devs may have a slow internet connection
+# therefore we'll pull the image BEFORE trying to start our container
+# otherwise we risk the script breaking if we pull image while waiting on health check
+
+Write-Output "Pulling mysql image..."
+docker pull mysql:latest
+
 docker-compose --env-file $envPath up -d social-coder-api-db
 
 $check = $false

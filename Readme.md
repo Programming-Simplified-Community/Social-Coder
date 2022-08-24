@@ -36,3 +36,11 @@ Otherwise, this script will do the trick... hopefully
 ```bash
 ./create-https-certs.ps1
 ```
+
+## Login
+Default login credentials are
+
+```yml
+email: admin@test.com
+pass: Testing@123
+```

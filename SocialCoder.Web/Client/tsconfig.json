@@ -1,0 +1,18 @@
+﻿{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "removeComments": false,
+    "noEmitOnError": true,
+    "noImplicitAny": false,
+    "sourceMap": true,
+    "outDir": "wwwroot/js/dist"
+  },
+  "include": [
+    "Typescript/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

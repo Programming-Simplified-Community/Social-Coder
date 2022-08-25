@@ -1,0 +1,77 @@
+﻿@using SocialCoder.Web.Shared.ViewModels
+
+<MudItem md="3">
+    <MudPaper Class="user-preview" Elevation="3">
+    <MudContainer 
+        Style="display: flex; align-content: center; align-items: center; justify-content: center; flex-direction: column;">
+        <UserAvatar Progress="30"
+                    UserLevel="@UserLevel"
+                    AvatarImage="@AvatarImage"
+                    ProgressColor="Color.Success"
+                    BadgeColor="Color.Dark"
+                    BadgeLineColor="Color.Info"/>
+        <MudText Typo="Typo.button">@Username</MudText>
+        
+        @if (!string.IsNullOrEmpty(AlternativeName))
+        {
+            <MudText Typo="Typo.caption">@AlternativeName</MudText>
+        }
+        
+        @*
+            Create a row of badges to showcase
+        *@
+        <MudGrid Justify="Justify.Center" Style="margin-top: 6px;">
+            @foreach (var badge in Model?.Badges.Take(4) ?? new List<BasicBadgeViewModel>())
+            {
+                <MudItem>
+                    <div class="container-item" style="
+                            background-image: url('@badge.ImagePath');
+                            background-repeat: no-repeat;
+                            width: 32px; 
+                            height: 35px;"
+                         title="@badge.Title"></div>
+                </MudItem>
+            }
+        </MudGrid>
+        
+        <MudGrid Justify="Justify.Center" Style="margin-top: 6px;">
+            <MudItem>
+                <div class="container-item" style="flex-direction: column;min-width:64px;max-width:64px">
+                    <MudText  Typo="Typo.body1" Align="Align.Center">@PostsCount</MudText>
+                    <MudText Style="font-size: 0.75rem;" Typo="Typo.button" Align="Align.Center">Posts</MudText>
+                </div>
+            </MudItem>
+            <MudItem>
+                <div class="container-item" style="flex-direction: column; min-width:64px;max-width:64px">
+                    <MudText Typo="Typo.body1" Align="Align.Center">@FriendsCount</MudText>
+                    <MudText Typo="Typo.button" Align="Align.Center" Style="font-size: 0.75rem;">Friends</MudText>
+                </div>
+            </MudItem>
+        </MudGrid>
+            
+        
+        <MudGrid Justify="Justify.Center">
+            <MudItem Class="container-item">
+                <MudButton Color="Color.Primary">Add Friend</MudButton>
+            </MudItem>
+            <MudItem Class="container-item">
+                <MudButton Color="Color.Secondary">Message</MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+    
+</MudPaper>
+</MudItem>
+
+@code {
+    int UserLevel => Model?.UserLevel ?? 0;
+    int FriendsCount => Model?.NumberOfFriends ?? 0;
+    int PostsCount => Model?.NumberOfPosts ?? 0;
+    string AvatarImage => Model?.UserImage ?? string.Empty;
+    string Username => Model?.Username ?? string.Empty;
+    string AlternativeName => Model?.AlternateName ?? string.Empty;
+
+    [Parameter]
+    public MemberInfoViewModel? Model { get; set; }
+    
+}

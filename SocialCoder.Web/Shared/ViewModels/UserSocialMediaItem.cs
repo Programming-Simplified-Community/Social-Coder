@@ -4,6 +4,6 @@ namespace SocialCoder.Web.Shared.ViewModels;
 
 public class UserSocialMediaItem
 {
-    public string Url { get; set; }
-    public SocialMediaType Type { get; set; }
+    public string Url { get; set; } = string.Empty;
+    public SocialMediaType Type { get; set; } = SocialMediaType.Discord;
 }

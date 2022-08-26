@@ -54,7 +54,7 @@
             @foreach (var social in Model?.Socials ?? new List<UserSocialMediaItem>())
             {
                 var icon = GetSocialInfo(social.Type);
-                var color = $"color: {colors[_count % 6]}";
+                var color = $"color: {_colors[_count % 6]}";
                 <MudItem sm="2">
                     <MudLink Href="@social.Url" Class="container-item">
                         <MudIcon Icon="@icon" Style="@color"/>
@@ -88,7 +88,7 @@
     
     MudTheme _theme = new();
 
-    string[] colors;
+    string[] _colors = Array.Empty<string>();
     
     string GetSocialInfo(SocialMediaType type)
         => type switch
@@ -109,7 +109,7 @@
     {
         base.OnInitialized();
 
-        colors = new[]
+        _colors = new[]
         {
             _theme.PaletteDark.PrimaryLighten,
             _theme.PaletteDark.SecondaryLighten,

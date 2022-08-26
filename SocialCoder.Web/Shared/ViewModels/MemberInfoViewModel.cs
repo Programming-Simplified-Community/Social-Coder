@@ -1,4 +1,6 @@
-﻿namespace SocialCoder.Web.Shared.ViewModels;
+﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
+#pragma warning disable CS8618
+namespace SocialCoder.Web.Shared.ViewModels;
 
 public class MemberInfoViewModel
 {

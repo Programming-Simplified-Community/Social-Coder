@@ -5,6 +5,9 @@ using Microsoft.Extensions.Options;
 using SocialCoder.Web.Server.Models;
 using SocialCoder.Web.Shared.Models;
 
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+#pragma warning disable CS8618
+
 namespace SocialCoder.Web.Server.Data
 {
     public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>

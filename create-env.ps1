@@ -5,54 +5,32 @@ Param(
     [Parameter(Mandatory=$false)] [string] $dbHost
 )
 
-$basePath = Split-Path $MyInvocation.MyCommand.Path -Parent
-$envPath = Join-Path $basePath ".env"
+$vars = @{}
 
-if(Test-Path $envPath)
+# we are going to allow a developer to override default values
+# default values are stored in the `.defaults` file
+if($databasePath) { $vars["DB_PATH"] = $databasePath }
+if($dbPassword) { $vars["DB_PASSWORD"] = $dbPassword }
+if($dbName) { $vars["DB_NAME"] = $dbName }
+if($dbHost) { $vars["DB_HOST"] = $dbHost }
+if(-not $databasePath)
 {
-    Remove-Item $envPath
+    $databasePath = Join-Path $PSScriptRoot "Database"
 }
 
-# if the database path has not been set
-if(-not($databasePath))
-{
-    $databasePath = $basePath
-    Write-Output "Defaulting Database Path to $databasePath"
-}
+$vars["DB_PATH"] = $databasePath
 
-if(-not($dbPassword))
-{
-    $dbPassword = "my-awesome-password"
-    Write-Output "Using Default Password"
-}
+# similar to bash, we're 'importing' or 'sourcing' our scripts from our submodule... allowing us to call those functions!
+$funcPath = [IO.Path]::Combine($PSScriptRoot, "Scripts", "funcs.ps1") 
+. $funcPath
 
-if(-not($dbName))
-{
-    $dbName = "social-coder"
-    Write-Output "Using Default DB Name"
-}
+# pass in our dictionary of values
+createEnv $vars -allowDefaults $True
 
-if(-not($dbHost)) 
-{ 
-    $dbHost = "localhost"
-    Write-Output "Using Default Host"
-}
+# we need to load our env file so we know which values got used...
+loadEnvFile
 
-
-$settingsPath = [IO.Path]::Combine($basePath, "SocialCoder.Web", "Server", "appsettings.json")
-Write-Output "appsettings.json path: $settingsPath"
-$settings = Get-Content $settingsPath
-
-$connectionString = "server=$dbHost;user=root;password=$dbPassword;database=$dbName"
-$settings = $settings -replace ('"DefaultConnection": "(.*?)"', """DefaultConnection"": ""$connectionString""")
-
-write-output $settings
-
-Write-Output "Updating connection string..."
-Set-Content $settingsPath $settings
-
-New-Item $envPath
-Add-Content $envPath "DB_PATH=$databasePath\Database"
-Add-Content $envPath "DB_PASSWORD=$dbPassword"
-Add-Content $envPath "DB_HOST=$dbHost"
-Add-Content $envPath "DB_NAME=$dbName"
+# create our connection string based on the values in our .env
+$connectionEnvPath = Join-Path $PSScriptRoot ".connections"
+$connectionString = "server=$([System.Environment]::GetEnvironmentVariable("DB_HOST"));user=root;password=$([System.Environment]::GetEnvironmentVariable("DB_PASSWORD"));database=$([System.Environment]::GetEnvironmentVariable("DB_NAME"))"
+createEnv @{ DefaultConnection = "$connectionString"; } -saveTo $connectionEnvPath

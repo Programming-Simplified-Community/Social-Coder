@@ -3,11 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using SocialCoder.Web.Server;
 using SocialCoder.Web.Server.Data;
 using SocialCoder.Web.Server.Models;
+using SocialCoder.Web.Shared.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddConnections();
+
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration["DefaultConnection"];
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));

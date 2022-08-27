@@ -28,7 +28,10 @@
   </ItemGroup>
   
   <Target Name="CopyConnectionsFile" AfterTargets="AfterBuild">
-    <Copy SourceFiles="..\..\.connections" DestinationFolder="$(OutDir)"/>
+    <Copy SourceFiles="..\..\.connections" 
+          DestinationFolder="$(OutDir)"
+          Condition="Exists(..\..\.connections)"
+    />
   </Target>
   
 </Project>

@@ -1,0 +1,8 @@
+Results of markdownlint linter (version 0.32.2)
+See documentation on https://oxsecurity.github.io/megalinter/v6/descriptors/markdown_markdownlint/
+-----------------------------------------------
+
+❌ [ERROR] for workspace /github/workspace
+Linter raw log:
+/github/workspace/Readme.md:5 MD025/single-title/single-h1 Multiple top-level headings in the same document [Context: "# Social Coder"]
+

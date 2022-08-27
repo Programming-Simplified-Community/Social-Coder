@@ -1,0 +1,6 @@
+Results of dotnet-format linter (version 000)
+See documentation on https://oxsecurity.github.io/megalinter/v6/descriptors/csharp_dotnet_format/
+-----------------------------------------------
+
+✅ [SUCCESS] SocialCoder.Web/Server/Program.cs
+✅ [SUCCESS] SocialCoder.Web/Shared/Extensions/ConfigurationExtensions.cs - FIXED

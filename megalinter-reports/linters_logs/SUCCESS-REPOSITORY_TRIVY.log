@@ -1,0 +1,5 @@
+Results of trivy linter (version 0.29.2)
+See documentation on https://oxsecurity.github.io/megalinter/v6/descriptors/repository_trivy/
+-----------------------------------------------
+
+✅ [SUCCESS] for workspace /github/workspace

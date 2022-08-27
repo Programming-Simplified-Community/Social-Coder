@@ -30,7 +30,7 @@
   <Target Name="CopyConnectionsFile" AfterTargets="AfterBuild">
     <Copy SourceFiles="..\..\.connections" 
           DestinationFolder="$(OutDir)"
-          Condition="Exists(..\..\.connections)"
+          Condition="Exists('..\..\.connections')"
     />
   </Target>
   

@@ -5,11 +5,12 @@
 
 <MudLayout>
     <MudAppBar Elevation="1" Dense="@_dense">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@DrawerToggle"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleLeftDrawer"/>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleRightDrawer"/>
         <MudSpacer/>
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/Programming-Simplified-Community/Social-Coder" Target="_blank"/>
     </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen" ClipMode="_clipMode" Breakpoint="@_breakpoint" PreserveOpenState="@_preserveOpenState" Elevation="1" Variant="@DrawerVariant.Mini">
+    <MudDrawer @bind-Open="@_openLeft" Anchor="Anchor.Left" ClipMode="_clipMode" Breakpoint="@_breakpoint" PreserveOpenState="@_preserveOpenState" Elevation="1" Variant="@DrawerVariant.Mini">
         <MudNavMenu>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Store">Newsfeed</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.LibraryBooks">Overview</MudNavLink>
@@ -23,7 +24,22 @@
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Settings">Marketplace</MudNavLink>
 
         </MudNavMenu>
-    </MudDrawer>
+    </MudDrawer >
+    <MudDrawer @bind-Open="@_openRight" Anchor="Anchor.Right" ClipMode="_clipMode" Breakpoint="@_breakpoint" PreserveOpenState="@_preserveOpenState" Elevation="1" Variant="@DrawerVariant.Mini">
+        <MudNavMenu>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Store">Newsfeed</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.LibraryBooks">Overview</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Group">Groups</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Person">Members</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Badge">Badges</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.QuestionMark">Quests</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Stream">Streams</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Event">Events</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Forum">Forums</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Settings">Marketplace</MudNavLink>
+
+        </MudNavMenu>
+    </MudDrawer >
     <MudMainContent Class="pt-16 px-16">
         <MudContainer Class="mt-6">
             <MudExpansionPanels>
@@ -55,6 +71,22 @@
     bool _preserveOpenState;
     Breakpoint _breakpoint = Breakpoint.Lg;
     DrawerClipMode _clipMode = DrawerClipMode.Never;
+
+    public bool Rtl { get; set; }
+
+    bool _openLeft = false;
+    bool _openRight = false;
+
+    void ToggleLeftDrawer()
+    {
+        _openLeft = !_openLeft;
+    }
+
+    void ToggleRightDrawer()
+    {
+        _openRight = !_openRight;
+    }
+
 
     readonly MudTheme _theme = new()
     {

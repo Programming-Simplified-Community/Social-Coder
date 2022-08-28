@@ -1,0 +1,3 @@
+DB_PASSWORD=my-awesome-password
+DB_HOST=localhost
+DB_NAME=social-coder

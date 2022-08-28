@@ -1,22 +1,10 @@
 $scriptPath = Split-Path $MyInvocation.MyCommand.Path -Parent
 cd $scriptPath
 
-$envPath = Join-Path $scriptPath .env
+# similar to bash, we're 'importing' or 'sourcing' our scripts from our submodule... allowing us to call those functions!
+$funcPath = [IO.Path]::Combine($PSScriptRoot, "Scripts", "funcs.ps1")
+. $funcPath
 
-Write-Output "Tearing down DB container"
-docker-compose down
+loadEnvFile
 
-# read first line of our env file (which is our database path)
-$firstLine = Get-Content $envPath -First 1
-$dbPath = $firstLine.Split('=')[1]
-
-write-output $dbPath
-
-if(Test-Path $dbPath)
-{
-    Write-Output "Cleaning up old database files at: $dbPath"
-    Remove-Item -Recurse $dbPath
-}
-
-# reuse our start-db script
-./start-db.ps1
+resetDb -composeFolder "$PSScriptRoot" -serviceName "social-coder-api-db" -projectFolder "$([IO.Path]::Combine($PSScriptRoot, "SocialCoder.Web", "Server"))"

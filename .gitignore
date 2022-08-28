@@ -7,4 +7,5 @@ Database/
 .vs/
 .idea/
 .env
-dist
+.connections
+dist/

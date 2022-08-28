@@ -20,6 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{99BA
 		start-db.ps1 = start-db.ps1
 		create-env.ps1 = create-env.ps1
 		reset-db.ps1 = reset-db.ps1
+		.defaults = .defaults
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{0B1747EF-1BEE-4EED-A989-A1BB11A59B8B}"

@@ -1,4 +1,5 @@
-﻿namespace SocialCoder.Web.Shared.Models;
+﻿#pragma warning disable CS8618
+namespace SocialCoder.Web.Shared.Models;
 
 public class BadgeProgress
 {

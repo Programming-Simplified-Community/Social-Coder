@@ -1,4 +1,5 @@
-﻿using SocialCoder.Web.Shared.Models;
+﻿#pragma warning disable CS8618
+using SocialCoder.Web.Shared.Models;
 
 namespace SocialCoder.Web.Shared.ViewModels;
 

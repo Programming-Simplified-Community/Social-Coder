@@ -1,12 +1,9 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using IdentityModel;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SocialCoder.Web.Server.Models;
+using SocialCoder.Web.Server.Services.Contracts;
 using SocialCoder.Web.Shared.ViewModels;
 
 namespace SocialCoder.Web.Server.Controllers;
@@ -15,51 +12,18 @@ namespace SocialCoder.Web.Server.Controllers;
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
-    private readonly IConfiguration _configuration;
+    private readonly IUserService _userService;
     private readonly ILogger<AuthController> _logger;
 
-    public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IConfiguration configuration, ILogger<AuthController> logger)
+    public AuthController(
+        SignInManager<ApplicationUser> signInManager, 
+        ILogger<AuthController> logger, 
+        IUserService userService)
     {
-        _userManager = userManager;
         _signInManager = signInManager;
-        _configuration = configuration;
         _logger = logger;
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Login(LoginParameters parameters)
-    {
-        var user = await _userManager.FindByNameAsync(parameters.UserName);
-        if (user is null) return BadRequest("Invalid login attempt");
-
-        var signInResult = await _signInManager.CheckPasswordSignInAsync(user, parameters.Password, false);
-        if (!signInResult.Succeeded) return BadRequest("Invalid login attempt");
-
-        await _signInManager.SignInAsync(user, parameters.RememberMe);
-        return Ok();
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Register(RegisterParameters parameters)
-    {
-        var user = new ApplicationUser()
-        {
-            UserName = parameters.UserName,
-            Email = parameters.Email,
-            NormalizedEmail = parameters.Email.ToUpper(),
-            NormalizedUserName = parameters.UserName.ToUpper()
-        };
-
-        var result = await _userManager.CreateAsync(user, parameters.Password);
-        if (!result.Succeeded) return BadRequest(result.Errors.FirstOrDefault()?.Description);
-        
-        return await Login(new()
-        {
-            UserName = parameters.UserName,
-            Password = parameters.Password
-        });
+        _userService = userService;
     }
 
     [Authorize]
@@ -81,12 +45,18 @@ public class AuthController : ControllerBase
         return Challenge(props, scheme);
     }
 
+    #region OAuth Callbacks (IDK Why but these were needed for this to work)
     [Route("/signin-discord")]
-    public async Task<IActionResult> SignInDiscord()
-    {
-        return Ok();
-    }
+    public Task<IActionResult> SignInDiscord() => Task.FromResult<IActionResult>(Ok());
 
+    [Route("/signin-google")]
+    public Task<IActionResult> SignInGoogle() => Task.FromResult<IActionResult>(Ok());
+    #endregion
+
+    /// <summary>
+    /// Obtain information about the user from HttpContext
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     public UserInfo UserInfo()
         => new()
@@ -102,80 +72,12 @@ public class AuthController : ControllerBase
         {
             var result = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
 
-            if (result.Ticket is null)
-                _logger.LogError("ticket is not here");
-            else
-            {
-                _logger.LogWarning("I have the ticket");
-                StringBuilder sb = new();
-                
-                sb.AppendLine($"Auth Scheme: {result.Ticket.AuthenticationScheme}");
-                sb.AppendLine(
-                    $"Auth Items: {string.Join("\n\t", result.Ticket.Properties.Items.Select(x => $"{x.Key}: {x.Value}"))}");
-                sb.AppendLine(
-                    $"Auth Props: {string.Join("\n\t", result.Ticket.Properties.Parameters.Select(x => $"{x.Key}: {x.Value}"))}");
-                sb.AppendLine($"Claims: {string.Join("\n\t",result.Ticket.Principal.Claims.Select(x => $"{x.Type}: {x.Value}"))}");
+            var response = await _userService.GetUserFromOAuth(result);
 
-                _logger.LogInformation(sb.ToString());
-            }
-            
-            if (!result.Succeeded)
-            {
-                _logger.LogError(result.Failure?.Message ?? "Error with external auth");
-                throw new Exception("External authentication error");
-            }
+            if (!response.Success || response.Data is null)
+                return BadRequest(response.Message);
 
-            var externalUser = result.Principal!;
-            var claims = externalUser.Claims.ToList();
-            var userIdClaim =
-                claims.FirstOrDefault(x => x.Type == JwtClaimTypes.Subject || x.Type == ClaimTypes.NameIdentifier);
-
-            if (userIdClaim is null)
-                throw new Exception("Unknown User");
-            _logger.LogInformation("{User} - {Claims}\n{Scheme}", externalUser.Identity?.Name,
-                string.Join("\n", claims.Select(x=>$"{x.Type}: {x.Value}")),
-                HttpContext.Request.Headers.Referer);
-            
-            // Does this user already exist within our application?
-            var existingUser = await _userManager.FindByEmailAsync(claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value ??
-                                          string.Empty);
-
-            if (existingUser is null)
-            {
-                var name = claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value ?? string.Empty;
-                var email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value ?? string.Empty;
-                var createUserResult = await _userManager.CreateAsync(new ApplicationUser
-                {
-                    Email = email,
-                    NormalizedEmail = email.ToUpper(),
-                    UserName = name,
-                    NormalizedUserName = name.ToUpper()
-                });
-
-                if (!createUserResult.Succeeded)
-                {
-                    _logger.LogError("Was unable to create new user from {Scheme}\n{Error}",
-                        result.Ticket.AuthenticationScheme,
-                        string.Join("\n", createUserResult.Errors.Select(x=>x.Description)));
-                    throw new Exception("Bad request");
-                }
-                
-                existingUser = await _userManager.FindByNameAsync(name);
-                
-                var addLoginResult = await _userManager.AddLoginAsync(existingUser!, new UserLoginInfo(
-                    result.Ticket.AuthenticationScheme,
-                    userIdClaim.Value,
-                    result.Ticket.AuthenticationScheme));
-
-                if (!addLoginResult.Succeeded)
-                    _logger.LogError("Was unable to add external login provider for {Scheme}\n{Error}",
-                        result.Ticket.AuthenticationScheme,
-                        string.Join("\n", addLoginResult.Errors.Select(x=>x.Description)));
-                
-            }
-
-            await _signInManager.SignInAsync(existingUser, isPersistent: false);
-            // await HttpContext.SignInAsync(externalUser);
+            await _signInManager.SignInAsync(response.Data, isPersistent: false);
             return Redirect("~/");
         }
         catch (Exception ex)

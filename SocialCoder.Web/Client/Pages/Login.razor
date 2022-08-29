@@ -1,11 +1,8 @@
 ﻿@page "/Login"
 @layout LoginLayout
-@inject NavigationManager NavigationManager
-@inject IdentityAuthenticationStateProvider AuthStateProvider
 @inject HttpClient Client
 
 @using SocialCoder.Web.Shared.ViewModels
-@using SocialCoder.Web.Client.Services
 
 <PageTitle>Login</PageTitle>
 
@@ -53,33 +50,11 @@ else
 @code {
     bool _loading = true;
     AuthProvider[] _providers = Array.Empty<AuthProvider>();
-    LoginParameters _loginParameters = new();
-    string? _error;
 
-    async Task OnSubmit()
+    protected override async Task OnInitializedAsync()
     {
-        _error = null;
-        try
-        {
-            await AuthStateProvider.Login(_loginParameters);
-            NavigationManager.NavigateTo(string.Empty);
-        }
-        catch (Exception ex)
-        {
-            _error = ex.Message;
-        }
-    }
-    
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await base.OnAfterRenderAsync(firstRender);
-
-        if (!firstRender)
-            return;
+        await base.OnInitializedAsync();
         _providers = await Client.GetFromJsonAsync<AuthProvider[]>("/api/Auth/Providers") ?? Array.Empty<AuthProvider>();
-        
         _loading = false;
-        StateHasChanged();
     }
-
 }

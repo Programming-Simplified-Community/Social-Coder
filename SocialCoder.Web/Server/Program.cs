@@ -1,11 +1,10 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using SocialCoder.Web.Server;
 using SocialCoder.Web.Server.Data;
 using SocialCoder.Web.Server.Models;
+using SocialCoder.Web.Server.Services.Contracts;
+using SocialCoder.Web.Server.Services.Implementations;
 using SocialCoder.Web.Shared.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -73,6 +72,8 @@ builder.Services.AddAuthentication("MainCookie")
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 

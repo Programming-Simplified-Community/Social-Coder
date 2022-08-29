@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
+using SocialCoder.Web.Client.Services.Contracts;
 using SocialCoder.Web.Shared.ViewModels;
-namespace SocialCoder.Web.Client.Services;
+namespace SocialCoder.Web.Client.Services.Implementations;
 
 public class AuthorizeApi : IAuthorizeApi
 {
@@ -11,24 +12,9 @@ public class AuthorizeApi : IAuthorizeApi
         _httpClient = client;
     }
 
-    public async Task Login(LoginParameters loginParameters)
-    {
-        //var stringContent = new StringContent(JsonSerializer.Serialize(loginParameters), Encoding.UTF8, "application/json");
-        var result = await _httpClient.PostAsJsonAsync("api/auth/Login", loginParameters);
-        if (result.StatusCode == System.Net.HttpStatusCode.BadRequest) throw new Exception(await result.Content.ReadAsStringAsync());
-        result.EnsureSuccessStatusCode();
-    }
-
     public async Task Logout()
     {
         var result = await _httpClient.PostAsync("api/auth/Logout", null);
-        result.EnsureSuccessStatusCode();
-    }
-
-    public async Task Register(RegisterParameters registerParameters)
-    {
-        var result = await _httpClient.PostAsJsonAsync("api/auth/Register", registerParameters);
-        if (result.StatusCode == System.Net.HttpStatusCode.BadRequest) throw new Exception(await result.Content.ReadAsStringAsync());
         result.EnsureSuccessStatusCode();
     }
 

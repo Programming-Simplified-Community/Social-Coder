@@ -1,8 +1,9 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
+using SocialCoder.Web.Client.Services.Contracts;
 using SocialCoder.Web.Shared.ViewModels;
 
-namespace SocialCoder.Web.Client.Services;
+namespace SocialCoder.Web.Client.Services.Implementations;
 
 public class IdentityAuthenticationStateProvider : AuthenticationStateProvider
 {
@@ -12,18 +13,6 @@ public class IdentityAuthenticationStateProvider : AuthenticationStateProvider
     public IdentityAuthenticationStateProvider(IAuthorizeApi authorizeApi)
     {
         _authorizeApi = authorizeApi;
-    }
-
-    public async Task Login(LoginParameters parameters)
-    {
-        await _authorizeApi.Login(parameters);
-        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-    }
-
-    public async Task Register(RegisterParameters parameters)
-    {
-        await _authorizeApi.Register(parameters);
-        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
 
     public async Task Logout()

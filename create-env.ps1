@@ -2,9 +2,7 @@ Param(
     [Parameter(Mandatory=$False)] [string] $databasePath,
     [Parameter(Mandatory=$False)] [string] $dbPassword,
     [Parameter(Mandatory=$False)] [string] $dbName,
-    [Parameter(Mandatory=$False)] [string] $dbHost,
-    [Parameter(Mandatory=$False)] [string] $jwtSecret,
-    [Parameter(Mandatory=$False)] [string] $jwtAudience
+    [Parameter(Mandatory=$False)] [string] $dbHost
 )
 
 $vars = @{}
@@ -15,8 +13,6 @@ if($databasePath) { $vars["DB_PATH"] = $databasePath }
 if($dbPassword) { $vars["DB_PASSWORD"] = $dbPassword }
 if($dbName) { $vars["DB_NAME"] = $dbName }
 if($dbHost) { $vars["DB_HOST"] = $dbHost }
-if($jwtSecret) { $vars["JWT_SECRET"] = "$jwtSecret" }
-if($jwtAudience) { $vars["JWT_AUDIENCE"] = "$jwtAudience" }
 
 if(-not $databasePath)
 {

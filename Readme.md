@@ -42,9 +42,4 @@ Otherwise, this script will do the trick... hopefully
 ```
 
 ## Login
-Default login credentials are
-
-```yml
-email: admin@test.com
-pass: Testing@123
-```
+There are no default credentials. Must utilize OAuth.

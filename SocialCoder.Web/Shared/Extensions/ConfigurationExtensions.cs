@@ -5,6 +5,41 @@ namespace SocialCoder.Web.Shared.Extensions;
 public static class ConfigurationExtensions
 {
     /// <summary>
+    /// Loads all configuration files at <paramref name="folderPath"/> (if specified) or <see cref="AppDomain.CurrentDomain.BaseDirectory"/> that
+    /// have the '.dev' or '.development' file extension.
+    /// </summary>
+    /// <example>
+    ///     <list type="bullet">
+    ///         <item>appsettings.dev.json</item>
+    ///         <item>appsettings.development.json</item>
+    ///         <item>appsettings.development</item>
+    ///     </list>
+    /// </example>
+    /// <param name="builder"></param>
+    /// <param name="folderPath"></param>
+    /// <returns><paramref name="builder"/> to allow chained calls</returns>
+    /// <exception cref="DirectoryNotFoundException">When <paramref name="folderPath"/> is not found</exception>
+    public static IConfigurationBuilder AddJsonConfigurationFiles(this IConfigurationBuilder builder, string? folderPath=null)
+    {
+        if (string.IsNullOrEmpty(folderPath))
+            folderPath = AppDomain.CurrentDomain.BaseDirectory;
+
+        if (!Directory.Exists(folderPath))
+            throw new DirectoryNotFoundException(folderPath);
+        
+        var files = Directory.GetFiles(folderPath, "*.json")
+            .Where(x=>x.Contains(".dev", StringComparison.InvariantCultureIgnoreCase));
+
+        foreach (var configFile in files)
+        {
+            Console.WriteLine($"Adding {configFile} to configuration");
+            builder.AddJsonFile(configFile, optional: true, reloadOnChange: true);
+        }
+
+        return builder;
+    }
+    
+    /// <summary>
     /// Add a connections environment file as InMemory Key Value Pairs
     /// </summary>
     /// <param name="builder"></param>

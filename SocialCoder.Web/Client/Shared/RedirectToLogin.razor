@@ -1,8 +1,22 @@
 ﻿@inject NavigationManager Navigation
 
+<MudGrid Justify="Justify.Center">
+    <MudItem md="12">
+        <MudProgressCircular Indeterminate="true"
+                             Color="Color.Info"
+                             Size="Size.Large"/>
+    </MudItem>
+    <MudItem md="12">
+        <MudText Align="Align.Center" Typo="Typo.button">
+            Redirecting...
+        </MudText>
+    </MudItem>
+</MudGrid>
+
 @code {
     protected override void OnInitialized()
     {
-        Navigation.NavigateTo($"authentication/login?returnUrl={Uri.EscapeDataString(Navigation.Uri)}");
+        //Navigation.NavigateTo($"authentication/login?returnUrl={Uri.EscapeDataString(Navigation.Uri)}");
+        Navigation.NavigateTo("login");
     }
 }

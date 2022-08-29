@@ -1,24 +1,36 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using SocialCoder.Web.Client.Services
 
 @inject NavigationManager Navigation
-@inject SignOutSessionStateManager SignOutManager
+@inject IdentityAuthenticationStateProvider AuthStateProvider
 
 <AuthorizeView>
     <Authorized>
-        <a href="authentication/profile">Hello, @context.User.Identity?.Name!</a>
-        <button class="nav-link btn btn-link" @onclick="BeginSignOut">Log out</button>
+        <MudButton>
+            <MudIcon Color="Color.Inherit"
+                     Icon="@Icons.Filled.ManageAccounts"/>
+            &nbsp;@(context.User.Identity?.Name)
+        </MudButton>
+        <MudButton OnClick="BeginSignOut">
+            <MudIcon Icon="@Icons.Filled.Logout"/>
+            Logout
+        </MudButton>
     </Authorized>
     <NotAuthorized>
-        <a href="authentication/register">Register</a>
-        <a href="authentication/login">Log in</a>
+        <MudButton OnClick="ToLogin">
+            <MudIcon Icon="@Icons.Filled.Login" Color="Color.Inherit"/>
+            &nbsp;Login
+        </MudButton>
     </NotAuthorized>
 </AuthorizeView>
 
 @code{
     private async Task BeginSignOut(MouseEventArgs args)
     {
-        await SignOutManager.SetSignOutState();
-        Navigation.NavigateTo("authentication/logout");
+        await AuthStateProvider.Logout();
+        Navigation.NavigateTo("/");
     }
+
+    void ToLogin() => Navigation.NavigateTo("/login");
 }

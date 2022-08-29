@@ -1,0 +1,85 @@
+﻿@page "/Login"
+@layout LoginLayout
+@inject NavigationManager NavigationManager
+@inject IdentityAuthenticationStateProvider AuthStateProvider
+@inject HttpClient Client
+
+@using SocialCoder.Web.Shared.ViewModels
+@using SocialCoder.Web.Client.Services
+
+<PageTitle>Login</PageTitle>
+
+@if (_loading)
+{
+    <MudProgressCircular Indeterminate="true" Size="Size.Large"/>
+}
+else
+{
+    <MudGrid Justify="Justify.Center" Spacing="3" Style="margin-top: 5rem;">
+        <MudItem md="4">
+            <MudPaper Elevation="3">
+                <MudItem Style="display: flex; justify-content: center">
+                    <MudText Typo="Typo.button" Align="Align.Center">
+                        Login using
+                    </MudText>
+                </MudItem>
+                
+                <MudForm>
+
+                    <MudList>
+                        @foreach (var provider in _providers)
+                        {
+                            var icon = provider.Name.ToLower() switch
+                            {
+                                "discord" => Icons.Custom.Brands.Discord,
+                                "google" => Icons.Custom.Brands.Google,
+                                "microsoft" => Icons.Custom.Brands.Microsoft,
+                                "github" => Icons.Custom.Brands.GitHub,
+                                "twitter" => Icons.Custom.Brands.Twitter,
+                                "instagram" => Icons.Custom.Brands.Instagram,
+                                _ => Icons.Filled.QuestionMark
+                                };
+
+                            var challengeUrl = $"/api/auth/challenge/{provider.Name}";
+                            <MudNavLink Href="@challengeUrl" Icon="@icon">@provider.DisplayName</MudNavLink>
+                        }
+                    </MudList>
+                </MudForm>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+    bool _loading = true;
+    AuthProvider[] _providers = Array.Empty<AuthProvider>();
+    LoginParameters _loginParameters = new();
+    string? _error;
+
+    async Task OnSubmit()
+    {
+        _error = null;
+        try
+        {
+            await AuthStateProvider.Login(_loginParameters);
+            NavigationManager.NavigateTo(string.Empty);
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (!firstRender)
+            return;
+        _providers = await Client.GetFromJsonAsync<AuthProvider[]>("/api/Auth/Providers") ?? Array.Empty<AuthProvider>();
+        
+        _loading = false;
+        StateHasChanged();
+    }
+
+}

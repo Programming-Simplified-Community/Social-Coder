@@ -1,8 +1,8 @@
 Param(
-    [Parameter(Mandatory=$false)] [string] $databasePath,
-    [Parameter(Mandatory=$false)] [string] $dbPassword,
-    [Parameter(Mandatory=$false)] [string] $dbName,
-    [Parameter(Mandatory=$false)] [string] $dbHost
+    [Parameter(Mandatory=$False)] [string] $databasePath,
+    [Parameter(Mandatory=$False)] [string] $dbPassword,
+    [Parameter(Mandatory=$False)] [string] $dbName,
+    [Parameter(Mandatory=$False)] [string] $dbHost
 )
 
 $vars = @{}
@@ -13,6 +13,7 @@ if($databasePath) { $vars["DB_PATH"] = $databasePath }
 if($dbPassword) { $vars["DB_PASSWORD"] = $dbPassword }
 if($dbName) { $vars["DB_NAME"] = $dbName }
 if($dbHost) { $vars["DB_HOST"] = $dbHost }
+
 if(-not $databasePath)
 {
     $databasePath = Join-Path $PSScriptRoot "Database"

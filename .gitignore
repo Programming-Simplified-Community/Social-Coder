@@ -9,3 +9,4 @@ Database/
 .env
 .connections
 dist/
+appsettings.[dD]evelopment.json

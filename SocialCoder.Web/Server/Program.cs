@@ -1,13 +1,16 @@
-using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SocialCoder.Web.Server;
 using SocialCoder.Web.Server.Data;
 using SocialCoder.Web.Server.Models;
+using SocialCoder.Web.Server.Services.Contracts;
+using SocialCoder.Web.Server.Services.Implementations;
 using SocialCoder.Web.Shared.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddConnections();
+builder.Configuration.AddJsonConfigurationFiles();
 
 // Add services to the container.
 var connectionString = builder.Configuration["DefaultConnection"];
@@ -18,17 +21,53 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.AllowedForNewUsers = true;
 
-builder.Services.AddIdentityServer()
-    .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+    options.User.RequireUniqueEmail = true;
+    options.User.AllowedUserNameCharacters = "1234567890-_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
+});
 
-builder.Services.AddAuthentication()
-    .AddIdentityServerJwt();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.LoginPath = "/login";
+    options.LogoutPath = "/login";
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = 401;
+        return Task.CompletedTask;
+    };
+});
+
+builder.Services.AddAuthentication("MainCookie")
+    .AddGoogle(options =>
+    {
+        options.SignInScheme = IdentityConstants.ExternalScheme;
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+    })
+    .AddDiscord(options =>
+    {
+        options.SignInScheme = IdentityConstants.ExternalScheme;
+        options.ClientId = builder.Configuration["Authentication:Discord:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:Discord:ClientSecret"];
+        options.Scope.Add("identify");
+        options.Scope.Add("email");
+    });
+
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
@@ -52,7 +91,6 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseIdentityServer();
 app.UseAuthentication();
 app.UseAuthorization();
 

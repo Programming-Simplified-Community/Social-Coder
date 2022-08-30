@@ -54,6 +54,12 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.AddAuthentication("MainCookie")
+    .AddGoogle(options =>
+    {
+        options.SignInScheme = IdentityConstants.ExternalScheme;
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+    })
     .AddDiscord(options =>
     {
         options.SignInScheme = IdentityConstants.ExternalScheme;

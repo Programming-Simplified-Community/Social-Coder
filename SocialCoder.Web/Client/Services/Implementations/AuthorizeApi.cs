@@ -22,9 +22,7 @@ public class AuthorizeApi : IAuthorizeApi
     {
         try
         {
-            Console.WriteLine(_httpClient.BaseAddress);
             var result = await _httpClient.GetStringAsync("api/Auth/UserInfo");
-            Console.WriteLine(result);
             
             if (string.IsNullOrEmpty(result))
                 return new UserInfo

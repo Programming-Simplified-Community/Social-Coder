@@ -71,12 +71,12 @@ public class AuthController : ControllerBase
         try
         {
             var result = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
-
+            
             var response = await _userService.GetUserFromOAuth(result);
 
             if (!response.Success || response.Data is null)
                 return BadRequest(response.Message);
-
+            
             await _signInManager.SignInAsync(response.Data, isPersistent: false);
             return Redirect("~/");
         }

@@ -55,8 +55,15 @@ public class UserService : IUserService
         
         // Early exit if user was found
         if (user is not null)
-            return ResultOf<ApplicationUser>.Pass(user);
-        
+        {
+            var existingProviders = await _userManager.GetLoginsAsync(user);
+            
+            if(existingProviders.Any(x=>x.LoginProvider == authProvider))
+                return ResultOf<ApplicationUser>.Pass(user);
+            
+            return ResultOf<ApplicationUser>.Fail("Provider not associated with this account");
+        }
+            
         user = new ApplicationUser
         {
             Email = email,

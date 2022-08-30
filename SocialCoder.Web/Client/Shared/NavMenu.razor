@@ -5,10 +5,33 @@
 
 <MudLayout>
     <MudAppBar Elevation="1" Dense="@_dense">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleLeftDrawer"/>
+        <MudAvatar Color="Color.Warning" e Variant="Variant.Filled">
+            <MudIcon Color="Color.Dark" Icon="@Icons.Custom.Uncategorized.Radioactive" Size="Size.Large"/>
+        </MudAvatar>
+        
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.End" OnClick="@ToggleLeftDrawer"/>
+        <h1 class="">Social Coder</h1>
+        <MudSpacer></MudSpacer>
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleRightDrawer"/>
         <MudSpacer/>
+        
+        @* <MudProgressLinear Color="Color.Secondary" BufferValue="@BufferValue" Value="@Value" Style="" Class="my-7"/> *@
+
+        <div Class="d-flex justify-space-around flex-wrap mt-4">
+
+            <MudBadge Content="100" Color="Color.Primary" Overlap="true" Class="mx-6 my-4">
+                <MudIcon Icon="@Icons.Material.Filled.Face" Color="Color.Default"/>
+            </MudBadge>
+            <MudBadge Content="3" Overlap="true" Class="mx-6 my-4">
+                <MudIcon Icon="@Icons.Material.Filled.Message" Color="Color.Default"/>
+            </MudBadge>
+            <MudBadge Content="100" Color="Color.Primary" Overlap="true" Class="mx-6 my-4">
+                <MudIcon Icon="@Icons.Material.Filled.Notifications" Color="Color.Default"/>
+            </MudBadge>
+
+        </div>
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/Programming-Simplified-Community/Social-Coder" Target="_blank"/>
+
     </MudAppBar>
     <MudDrawer @bind-Open="@_openLeft" Anchor="Anchor.Left" ClipMode="_clipMode" Breakpoint="@_breakpoint" PreserveOpenState="@_preserveOpenState" Elevation="1" Variant="@DrawerVariant.Mini">
         <MudNavMenu>
@@ -16,7 +39,7 @@
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.LibraryBooks">Overview</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Group">Groups</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Person">Members</MudNavLink>
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Badge">Badges</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Badge" Href="Badges">Badges</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.QuestionMark">Quests</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Stream">Streams</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Event">Events</MudNavLink>
@@ -86,6 +109,50 @@
     {
         _openRight = !_openRight;
     }
+    
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+    
+    /* Progress bar demo
+
+    This will be used for the small xp bar on the appbar. 
+
+    */
+    /*private int Value { get; set; }
+    public int BufferValue { get; set; }
+
+    public async void SimulateProgress()
+    {
+        Value = 0;
+        BufferValue = 50;
+        do
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            Value += 4;
+            StateHasChanged();
+            await Task.Delay(500);
+            BufferValue += 5;
+        } while (Value < 100);
+
+        SimulateProgress();
+    }
+
+    protected override void OnInitialized() => SimulateProgress();
+
+    bool _disposed;
+    public void Dispose() => _disposed = true;*/
+    
+    /* Progress bar demo
+
+    End progress bar  
+
+    */
 
 
     readonly MudTheme _theme = new()
@@ -104,9 +171,6 @@
         }
     };
 
-    void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
-    }
+   
 
 }

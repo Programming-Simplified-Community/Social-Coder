@@ -8,16 +8,19 @@
         <MudAvatar Color="Color.Warning" e Variant="Variant.Filled">
             <MudIcon Color="Color.Dark" Icon="@Icons.Custom.Uncategorized.Radioactive" Size="Size.Large"/>
         </MudAvatar>
-        
+
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.End" OnClick="@ToggleLeftDrawer"/>
         <h1 class="">Social Coder</h1>
         <MudSpacer></MudSpacer>
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleRightDrawer"/>
         <MudSpacer/>
+
+        <MudProgressLinear Color="Color.Secondary" BufferValue="@BufferValue" Value="@Value" Style="width: 70px" Class="my-7"/>
         
-        @* <MudProgressLinear Color="Color.Secondary" BufferValue="@BufferValue" Value="@Value" Style="" Class="my-7"/> *@
+        <MudDivider Vertical="true" FlexItem="true"/>
 
         <div Class="d-flex justify-space-around flex-wrap mt-4">
+
 
             <MudBadge Content="100" Color="Color.Primary" Overlap="true" Class="mx-6 my-4">
                 <MudIcon Icon="@Icons.Material.Filled.Face" Color="Color.Default"/>
@@ -30,6 +33,7 @@
             </MudBadge>
 
         </div>
+        <MudDivider Vertical="true" FlexItem="true"/>
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/Programming-Simplified-Community/Social-Coder" Target="_blank"/>
 
     </MudAppBar>
@@ -109,18 +113,19 @@
     {
         _openRight = !_openRight;
     }
-    
+
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
     }
-    
+
     /* Progress bar demo
 
     This will be used for the small xp bar on the appbar. 
 
+    
     */
-    /*private int Value { get; set; }
+    private int Value { get; set; }
     public int BufferValue { get; set; }
 
     public async void SimulateProgress()
@@ -146,8 +151,8 @@
     protected override void OnInitialized() => SimulateProgress();
 
     bool _disposed;
-    public void Dispose() => _disposed = true;*/
-    
+    public void Dispose() => _disposed = true;
+
     /* Progress bar demo
 
     End progress bar  
@@ -171,6 +176,6 @@
         }
     };
 
-   
+
 
 }

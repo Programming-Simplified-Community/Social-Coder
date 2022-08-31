@@ -37,7 +37,7 @@
                     <MudItem md="2">
                         <MudButton Color="Color.Primary"
                                    OnClick="@(async () => await OnSubmit.InvokeAsync(_text))"
-                                   Variant="Variant.Filled">Post Reply</MudButton>
+                                   Variant="Variant.Filled">@SubmitButtonText</MudButton>
                     </MudItem>
                 </MudGrid>
             </MudContainer>
@@ -54,6 +54,9 @@
 
     [Parameter]
     public string Title { get; set; } = "Leave a Reply";
+
+    [Parameter]
+    public string SubmitButtonText { get; set; } = "Post Reply";
 
     [Parameter]
     public EventCallback<string> OnSubmit { get; set; }

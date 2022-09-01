@@ -1,0 +1,79 @@
+﻿@inherits AuthenticatedComponent
+
+<MudGrid Justify="Justify.Center">
+    <MudItem md="12">
+        <MudPaper Elevation="3"
+                  Width="100%"
+                  MinWidth="100%"
+                  Style="padding-top: 16px; padding-bottom:  16px;">
+            @* Header *@
+            <MudContainer>
+                <MudText Typo="Typo.h5">@Title</MudText>
+            </MudContainer>
+            
+            @* Text input *@
+            <MudContainer Style="
+                    padding-left: 0; 
+                    padding-right: 0;
+                    border-top: solid 2px gray;
+                    margin-top: 0.5rem;">
+                <MudTextField Lines="6"
+                              @ref="@_field"
+                              @bind-Value="@_text"
+                              Style="padding-left: 1rem; padding-right:  1rem; margin-top: 0;"
+                              Placeholder="@PlaceholderText"
+                              MaxLength="@MaxCharacters"/>
+            </MudContainer>
+            
+            @* Footer *@
+            <MudContainer Style="margin-top: 1rem;">
+                <MudGrid Justify="Justify.FlexEnd"
+                         Style="flex-direction: row">
+                    <MudItem md="1">
+                        <MudButton Color="Color.Secondary"
+                                   OnClick="@Discard"
+                                   Variant="Variant.Text">Discard</MudButton>
+                    </MudItem>
+                    <MudItem md="2">
+                        <MudButton Color="Color.Primary"
+                                   OnClick="@(async () => await OnSubmit.InvokeAsync(_text))"
+                                   Variant="Variant.Filled">@SubmitButtonText</MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudContainer>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    string _text;
+    MudTextField<string> _field;
+    
+    [Parameter]
+    public int MaxCharacters { get; set; } = 1000;
+
+    [Parameter]
+    public string Title { get; set; } = "Leave a Reply";
+
+    [Parameter]
+    public string SubmitButtonText { get; set; } = "Post Reply";
+
+    [Parameter]
+    public EventCallback<string> OnSubmit { get; set; }
+
+    [Parameter]
+    public EventCallback OnDiscard { get; set; }
+
+    [Parameter]
+    public string PlaceholderTextFormat { get; set; } = "Hi {0}, share your thoughts here!";
+
+    private string PlaceholderText => string.Format(PlaceholderTextFormat, Name);
+
+    async Task Discard()
+    {
+        _text = string.Empty;
+        
+        if (OnDiscard.HasDelegate)
+            await OnDiscard.InvokeAsync();
+    }
+}

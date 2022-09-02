@@ -3,19 +3,17 @@
 
 <MudThemeProvider Theme="_theme" IsDarkMode="true"></MudThemeProvider>
 
-<MudLayout>
-    <MudAppBar Elevation="1" Dense="@_dense">
+<MudLayout >
+    <MudAppBar Elevation="1" Dense="true">
         <MudAvatar Color="Color.Warning" e Variant="Variant.Filled">
             <MudIcon Color="Color.Dark" Icon="@Icons.Custom.Uncategorized.Radioactive" Size="Size.Large"/>
         </MudAvatar>
 
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.End" OnClick="@ToggleLeftDrawer"/>
         <h1 class="">Social Coder</h1>
         <MudSpacer></MudSpacer>
-        <MudSpacer/>
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleRightDrawer"/>
         <MudProgressLinear Color="Color.Secondary" BufferValue="@BufferValue" Value="@Value" Style="width: 70px" Class="my-7"/>
-        <MudDivider Vertical="true" FlexItem="true"/>
+
+        <MudDivider Vertical="true" FlexItem="true" DividerType="DividerType.Middle"/>
 
         <div Class="d-flex justify-space-around flex-wrap mt-4">
 
@@ -31,13 +29,11 @@
             </MudBadge>
 
         </div>
-        <MudDivider Vertical="true" FlexItem="true"/>
-        <MudIconButton Icon="@Icons.Custom.Brands.GitHub"  Color="Color.Inherit" Link="https://github.com/Programming-Simplified-Community/Social-Coder" Target="_blank"/>
 
     </MudAppBar>
-    <MudDrawer @bind-Open="@_openLeft" Anchor="Anchor.Left" ClipMode="DrawerClipMode.Docked"  Elevation="1" Variant="@DrawerVariant.Mini">
-        <MudNavMenu>
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Store">Newsfeed</MudNavLink>
+    <MudDrawer @bind-Open="@_openLeft" Anchor="Anchor.Left" ClipMode="_clipMode" Breakpoint="Breakpoint.Lg" PreserveOpenState="true" Elevation="1" Variant="@DrawerVariant.Mini">
+        <MudNavMenu >
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Newspaper">Newsfeed</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.LibraryBooks">Overview</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Group">Groups</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Person">Members</MudNavLink>
@@ -47,12 +43,14 @@
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Event">Events</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Forum">Forums</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Settings">Marketplace</MudNavLink>
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Size="Size.Medium" Color="Color.Inherit" Edge="Edge.End" OnClick="@ToggleLeftDrawer"/>
+
 
         </MudNavMenu>
     </MudDrawer >
-    <MudDrawer @bind-Open="@_openRight" Anchor="Anchor.Right" ClipMode="DrawerClipMode.Docked"  Elevation="1" Variant="@DrawerVariant.Mini">
+    <MudDrawer @bind-Open="@_openRight" Anchor="Anchor.Right" ClipMode="_clipMode" Breakpoint="Breakpoint.Lg" PreserveOpenState="true" Elevation="1" Variant="@DrawerVariant.Mini">
         <MudNavMenu>
-            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Store">Newsfeed</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Newspaper">Newsfeed</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.LibraryBooks">Overview</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Group">Groups</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Person">Members</MudNavLink>
@@ -62,17 +60,16 @@
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Event">Events</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Forum">Forums</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Settings">Marketplace</MudNavLink>
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Style="position: center" Size="Size.Medium" Color="Color.Inherit" Edge="Edge.End" OnClick="@ToggleRightDrawer"/>
+
 
         </MudNavMenu>
     </MudDrawer >
- 
 </MudLayout>
 
 @code {
     bool _drawerOpen;
-    bool _dense;
- 
-
+    DrawerClipMode _clipMode = DrawerClipMode.Docked;
     public bool Rtl { get; set; }
 
     bool _openLeft = false;

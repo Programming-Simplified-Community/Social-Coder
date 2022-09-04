@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SocialCoder.Web.Server;
@@ -26,7 +27,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
-
+    
     options.User.RequireUniqueEmail = true;
     options.User.AllowedUserNameCharacters = "1234567890-_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
 });
@@ -47,7 +48,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     };
 });
 
-builder.Services.AddAuthentication("MainCookie")
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddGoogle(options =>
     {
         options.SignInScheme = IdentityConstants.ExternalScheme;
@@ -61,7 +62,8 @@ builder.Services.AddAuthentication("MainCookie")
         options.ClientSecret = builder.Configuration["Authentication:Discord:ClientSecret"];
         options.Scope.Add("identify");
         options.Scope.Add("email");
-    });
+    })
+    .AddCookie();
 
 
 builder.Services.AddControllersWithViews();

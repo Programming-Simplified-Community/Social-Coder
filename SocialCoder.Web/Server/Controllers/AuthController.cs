@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,8 @@ public class AuthController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Logout()
     {
-        await _signInManager.SignOutAsync();
+        //await _signInManager.SignOutAsync();
+        await HttpContext.SignOutAsync();
         return Ok();
     }
 
@@ -44,6 +46,9 @@ public class AuthController : ControllerBase
 
         return Challenge(props, scheme);
     }
+
+    [HttpGet, Authorize]
+    public IActionResult TestAuth() => Redirect("~/");
 
     #region OAuth Callbacks (IDK Why but these were needed for this to work)
     [Route("/signin-discord")]
@@ -76,8 +81,9 @@ public class AuthController : ControllerBase
 
             if (!response.Success || response.Data is null)
                 return BadRequest(response.Message);
-            
-            await _signInManager.SignInAsync(response.Data, isPersistent: false);
+    
+            //await HttpContext.SignInAsync(response.Data);
+            await _signInManager.SignInAsync(response.Data, isPersistent: false, CookieAuthenticationDefaults.AuthenticationScheme);
             return Redirect("~/");
         }
         catch (Exception ex)

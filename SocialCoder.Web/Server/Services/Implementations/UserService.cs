@@ -35,7 +35,7 @@ public class UserService : IUserService
             _logger.LogError("Unable to determine user from external login provider: {AuthScheme}", authProvider);
             return ResultOf<ApplicationUser>.Fail("Unknown User");
         }
-
+        
         var email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value ?? string.Empty;
         var name = claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value ?? email;
         

@@ -31,8 +31,7 @@ public class AuthController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Logout()
     {
-        //await _signInManager.SignOutAsync();
-        await HttpContext.SignOutAsync();
+        await _signInManager.SignOutAsync();
         return Ok();
     }
 
@@ -79,7 +78,6 @@ public class AuthController : ControllerBase
             if (!response.Success || response.Data is null)
                 return BadRequest(response.Message);
     
-            //await HttpContext.SignInAsync(response.Data);
             await _signInManager.SignInAsync(response.Data, isPersistent: false, CookieAuthenticationDefaults.AuthenticationScheme);
             return Redirect("~/");
         }

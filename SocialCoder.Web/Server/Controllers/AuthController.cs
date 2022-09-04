@@ -47,9 +47,6 @@ public class AuthController : ControllerBase
         return Challenge(props, scheme);
     }
 
-    [HttpGet, Authorize]
-    public IActionResult TestAuth() => Redirect("~/");
-
     #region OAuth Callbacks (IDK Why but these were needed for this to work)
     [Route("/signin-discord")]
     public Task<IActionResult> SignInDiscord() => Task.FromResult<IActionResult>(Ok());

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -76,8 +77,8 @@ public class AuthController : ControllerBase
 
             if (!response.Success || response.Data is null)
                 return BadRequest(response.Message);
-            
-            await _signInManager.SignInAsync(response.Data, isPersistent: false);
+    
+            await _signInManager.SignInAsync(response.Data, isPersistent: false, CookieAuthenticationDefaults.AuthenticationScheme);
             return Redirect("~/");
         }
         catch (Exception ex)

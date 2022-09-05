@@ -14,7 +14,9 @@ public static class QueryableExtensions
     /// <typeparam name="T">Entity type we're working with</typeparam>
     /// <typeparam name="TKey">The key/column type to sort on</typeparam>
     /// <returns><see cref="IQueryable{T}"/> that is paginated</returns>
-    public static IQueryable<T> PaginatedQuery<T, TKey>(this IQueryable<T> query, PaginationRequest request, Expression<Func<T,TKey>> keySelector)
+    public static IQueryable<T> PaginatedQuery<T, TKey>(this IQueryable<T> query, 
+        PaginationRequest request, 
+        Expression<Func<T,TKey>> keySelector)
     {
         query = request.IsDescending
             ? query.OrderByDescending(keySelector)

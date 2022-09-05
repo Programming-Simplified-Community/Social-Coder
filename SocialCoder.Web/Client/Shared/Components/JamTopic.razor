@@ -12,19 +12,19 @@
             <MudList>
                 <MudListItem Icon="@Icons.TwoTone.PersonAdd" IconColor="Color.Success">
                     <MudText Typo="Typo.body1">
-                        @Topic.RegistrationStartDate.ToString("dddd, MMMM dd - yyyy")
+                        @Topic.RegistrationStartDate.ToRealLocalTime().ToString("dddd, MMMM dd - yyyy")
                     </MudText>
                     <MudText Typo="Typo.subtitle1" Color="Color.Secondary" Style="font-size: 0.6rem;">
-                        @Topic.RegistrationStartDate.ToString("t")
+                        @Topic.RegistrationStartDate.ToRealLocalTime().ToString("t")
                     </MudText>
                 </MudListItem>
                 <MudListItem Icon="@Icons.TwoTone.Event"
                              IconColor="Color.Tertiary">
                     <MudText Typo="Typo.body1">
-                        @Topic.JamStartDate.ToString("dddd, MMMM dd - yyyy")
+                        @Topic.JamStartDate.ToRealLocalTime().ToString("dddd, MMMM dd - yyyy")
                     </MudText>
                     <MudText Typo="Typo.subtitle1" Style="font-size: 0.6rem;" Color="Color.Secondary">
-                        @Topic.JamStartDate.ToString("t")
+                        @Topic.JamStartDate.ToRealLocalTime().ToString("t")
                     </MudText>
                     <MudText Typo="Typo.subtitle2" Style="font-size: 0.6rem;" Color="Color.Info">
                         Length: @((Topic.JamEndDate - Topic.JamStartDate).TotalDays) Days

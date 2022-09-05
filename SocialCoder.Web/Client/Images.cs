@@ -3,7 +3,7 @@
 public static class Images
 {
     private static readonly Random Random = new();
-    private static readonly string[] DefaultImages = {
+    private static readonly string[] DefaultBackgroundImages = {
         "https://images.unsplash.com/photo-1619472351888-f844a0b33f5b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2456&q=80",
         "https://images.unsplash.com/photo-1619472376731-3ca648a34b69?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1828&q=80",
         "https://images.unsplash.com/photo-1530714457710-6bf1899c1d32?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80",
@@ -16,11 +16,11 @@ public static class Images
     };
 
     /// <summary>
-    /// Select a random background image from <see cref="DefaultImages"/>
+    /// Select a random background image from <see cref="DefaultBackgroundImages"/>
     /// </summary>
     /// <returns></returns>
     public static string RandomBackgroundImage()
     {
-        return DefaultImages[Random.Next(0, DefaultImages.Length)];
+        return DefaultBackgroundImages[Random.Next(0, DefaultBackgroundImages.Length)];
     }
 }

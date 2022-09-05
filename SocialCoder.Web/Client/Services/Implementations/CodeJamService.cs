@@ -19,6 +19,21 @@ public class CodeJamService : ICodeJamService
         _logger = logger;
     }
 
+    public async Task<ResultOf<CodeJamViewModel>> GetTopic(int topicId, string? userId, CancellationToken cancellationToken = default)
+    {
+        var response = await _client.PostAsJsonAsync(string.Format(Endpoints.CODE_JAM_POST_GET_TOPIC, topicId),
+            new CodeJamTopicRequest
+            {
+                TopicId = topicId
+            }, cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+            return ResultOf<CodeJamViewModel>.Fail(response.ReasonPhrase!);
+
+        return await response.Content.ReadFromJsonAsync<ResultOf<CodeJamViewModel>>(
+            cancellationToken: cancellationToken) ?? ResultOf<CodeJamViewModel>.Fail("Failed to parse");
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -31,13 +46,17 @@ public class CodeJamService : ICodeJamService
     ///     behalf maybe? If something broke? For now this is fine?
     /// </remarks>
     /// <returns></returns>
-    public async Task<ResultOf> Register(CodeJamRegistrationRequest request, string? userId,
+    public async Task<ResultOf<CodeJamViewModel>> Register(CodeJamRegistrationRequest request, string? userId,
         CancellationToken cancellationToken = default)
     {
         var response =
             await _client.PostAsJsonAsync(string.Format(Endpoints.CODE_JAM_POST_TOPIC_REGISTER, request.TopicId), request, cancellationToken);
-
-        return response.IsSuccessStatusCode ? ResultOf.Pass() : ResultOf.Fail(response.ReasonPhrase ?? await response.Content.ReadAsStringAsync(cancellationToken));
+        
+        if(!response.IsSuccessStatusCode)
+            return ResultOf<CodeJamViewModel>.Fail(response.ReasonPhrase!);
+        
+        return await response.Content.ReadFromJsonAsync<ResultOf<CodeJamViewModel>>(
+            cancellationToken: cancellationToken) ?? ResultOf<CodeJamViewModel>.Fail("Failed to parse");
     }
     
     /// <summary>
@@ -50,14 +69,18 @@ public class CodeJamService : ICodeJamService
     ///     Same remarks as <see cref="Register"/>
     /// </remarks>
     /// <returns></returns>
-    public async Task<ResultOf> Abandon(CodeJamAbandonRequest request, string? userId,
+    public async Task<ResultOf<CodeJamViewModel>> Abandon(CodeJamAbandonRequest request, string? userId,
         CancellationToken cancellationToken = default)
     {
         var response =
             await _client.PostAsJsonAsync(string.Format(Endpoints.CODE_JAM_POST_TOPIC_WITHDRAW, request.TopicId), request, cancellationToken);
         
-        return response.IsSuccessStatusCode ? ResultOf.Pass() : ResultOf.Fail(response.ReasonPhrase ??
-            await response.Content.ReadAsStringAsync(cancellationToken));
+        if(!response.IsSuccessStatusCode)
+            return ResultOf<CodeJamViewModel>.Fail(response.ReasonPhrase!);
+        
+        var item = await response.Content.ReadFromJsonAsync<ResultOf<CodeJamViewModel>>(cancellationToken: cancellationToken);
+
+        return item ?? ResultOf<CodeJamViewModel>.Fail("Failed to parse");
     }
     
     public async Task<PaginatedResponse<CodeJamViewModel>> GetAllTopics(PaginationRequest? request, string? userId, CancellationToken cancellationToken = default)

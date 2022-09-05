@@ -4,6 +4,7 @@
 @using SocialCoder.Web.Shared.Requests.CodeJam
 @inject HttpClient Client
 @inject ISnackbar Snack
+@inject ICodeJamService Cj
 
 <MudItem>
     <MudPaper Style="border-radius: 25px;">
@@ -92,7 +93,8 @@
 
     [Parameter]
     public CodeJamViewModel Model { get; set; } = new();
-    public CodeJamTopic Topic => Model.Topic ?? new();
+
+    private CodeJamTopic Topic => Model.Topic;
 
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
@@ -112,30 +114,28 @@
 
     async Task Action(bool isTeam)
     {
-        var response = await Client.PostAsJsonAsync(string.Format(
-            !Model.IsRegistered 
-            ? Endpoints.CODE_JAM_POST_TOPIC_REGISTER 
-            : Endpoints.CODE_JAM_POST_TOPIC_WITHDRAW, Topic.Id), new CodeJamRegistrationRequest
-        {
-            PreferTeam = isTeam,
-            TopicId = Topic.Id
-        });
-
-        if (response.IsSuccessStatusCode)
-            Snack.Add(Model.IsRegistered ? $"Successfully withdrawn from {Topic.Title}" : $"Successfully registered for {Topic.Title}", Severity.Success);
-        else 
-            Snack.Add(response.ReasonPhrase ?? await response.Content.ReadAsStringAsync(), Severity.Error);
+        ResultOf<CodeJamViewModel> response;
 
         if (!Model.IsRegistered)
+            response = await Cj.Register(new()
+            {
+                PreferTeam = isTeam,
+                TopicId = Topic.Id
+            }, string.Empty);
+        else
+            response = await Cj.Abandon(new()
+            {
+                TopicId = Topic.Id
+            }, string.Empty);
+
+        if (!response.Success || response.Data is null)
         {
-            if (isTeam)
-                Model.TotalTeamApplicants++;
-            else
-                Model.TotalSoloApplicants++;
+            Snack.Add(response.Message, Severity.Error);
+            return;
         }
-                
-        // Flip
-        Model.IsRegistered = !Model.IsRegistered;
+
+        Snack.Add(Model.IsRegistered ? $"Successfully withdrawn from {Topic.Title}" : $"Successfully registered for {Topic.Title}", Severity.Success);
+        Model = response.Data;        
         
         StateHasChanged();
     }

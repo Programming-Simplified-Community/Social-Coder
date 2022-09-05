@@ -1,4 +1,5 @@
-﻿using SocialCoder.Web.Shared.Requests;
+﻿using SocialCoder.Web.Shared.Models.CodeJam;
+using SocialCoder.Web.Shared.Requests;
 using SocialCoder.Web.Shared.Requests.CodeJam;
 using SocialCoder.Web.Shared.ViewModels.CodeJam;
 
@@ -21,7 +22,7 @@ public interface ICodeJamService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<PaginatedResponse<CodeJamViewModel>> GetActiveTopics(SpecificDateQuery? request, string? userId, CancellationToken cancellationToken = default);
-
+    
     /// <summary>
     /// Retrieve all topics that are currently accepting applicants
     /// </summary>
@@ -30,13 +31,23 @@ public interface ICodeJamService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<PaginatedResponse<CodeJamViewModel>> GetRegisterableTopics(SpecificDateQuery? request, string? userId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieve a <see cref="CodeJamTopic"/> with specified <paramref name="topicId"/>
+    /// </summary>
+    /// <param name="topicId">Primary Key of item we're after</param>
+    /// <param name="userId">Optional user Id -- so we can populate user-specified information</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>A hydrated instance of <see cref="CodeJamViewModel"/> based on the target <see cref="CodeJamTopic"/></returns>
+    Task<ResultOf<CodeJamViewModel>> GetTopic(int topicId, string? userId,
+        CancellationToken cancellationToken = default);
     #endregion
     
     #region Registration for Topic
 
-    Task<ResultOf> Register(CodeJamRegistrationRequest request, string? userId, CancellationToken cancellationToken = default);
+    Task<ResultOf<CodeJamViewModel>> Register(CodeJamRegistrationRequest request, string? userId, CancellationToken cancellationToken = default);
 
-    Task<ResultOf> Abandon(CodeJamAbandonRequest request, string? userId, CancellationToken cancellationToken = default);
+    Task<ResultOf<CodeJamViewModel>> Abandon(CodeJamAbandonRequest request, string? userId, CancellationToken cancellationToken = default);
 
     #endregion
 }

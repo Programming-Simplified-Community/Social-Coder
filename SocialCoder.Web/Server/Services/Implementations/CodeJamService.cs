@@ -33,16 +33,22 @@ public class CodeJamService : ICodeJamService
         if (user is null)
             return ResultOf<CodeJamViewModel>.Fail("Invalid Request");
 
-        // TODO: Can we combine these into 1 database call
-        // Must be a valid topic AND active
-        if(!await _context.CodeJamTopics.AnyAsync(x=>x.Id == request.TopicId && x.IsActive, cancellationToken))
-            return ResultOf<CodeJamViewModel>.Fail("Invalid Request");
-        
-        // Cannot have registered already
-        if (await _context.CodeJamRegistrations.AnyAsync(x => x.UserId == userId && x.CodeJamTopicId == request.TopicId,
-                cancellationToken))
-            return ResultOf<CodeJamViewModel>.Fail("Already registered");
-        
+        var check = await (from topic in _context.CodeJamTopics
+            where topic.Id == request.TopicId && topic.IsActive
+
+            let reg = (from reg in _context.CodeJamRegistrations
+                where reg.UserId == userId && reg.CodeJamTopicId == request.TopicId
+                select reg).Any()
+
+            select new
+            {
+                Topic = topic,
+                IsRegistered = reg
+            }).FirstOrDefaultAsync(cancellationToken);
+
+        if (check is null) return ResultOf<CodeJamViewModel>.Fail("Invalid Request");
+        if (check.IsRegistered) return ResultOf<CodeJamViewModel>.Fail("Already registered");
+
         _context.CodeJamRegistrations.Add(new()
         {
             UserId = userId,
@@ -65,17 +71,31 @@ public class CodeJamService : ICodeJamService
         // Must be a valid user
         if (user is null)
             return ResultOf<CodeJamViewModel>.Fail("Invalid Request");
+
+        var resultSet = await (from reg in _context.CodeJamRegistrations
+            join topic in _context.CodeJamTopics
+                on reg.CodeJamTopicId equals topic.Id
+            where topic.Id == request.TopicId && reg.UserId == userId
+            select new
+            {
+                Registration = reg,
+                Topic = topic
+            }).FirstOrDefaultAsync(cancellationToken);
+
+        if (resultSet is null)
+            return ResultOf<CodeJamViewModel>.Fail("You weren't registered for this topic");
+
+        // If a user abandons a code jam PRIOR to it actually starting we will hard delete the record
+        // Allowing the user to re-register if they choose.
+        if (DateTime.UtcNow <= resultSet.Topic.JamStartDate)
+        {
+            _context.CodeJamRegistrations.Remove(resultSet.Registration);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return await GetTopic(request.TopicId, userId, cancellationToken);
+        }
         
-        // TODO: Can we combine these into 1 database call
-        // Must have an existing registration for the selected topic
-        var registration =
-            await _context.CodeJamRegistrations.FirstOrDefaultAsync(
-                x => x.CodeJamTopicId == request.TopicId && x.UserId == userId, cancellationToken);
-
-        if (registration is null)
-            return ResultOf<CodeJamViewModel>.Fail("You weren't registered for that!");
-
-        registration.AbandonedOn = DateTime.UtcNow;
+        resultSet.Registration.AbandonedOn = DateTime.UtcNow;
         await _context.SaveChangesAsync(cancellationToken);
 
         return await GetTopic(request.TopicId, userId, cancellationToken);

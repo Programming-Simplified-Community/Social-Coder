@@ -92,14 +92,14 @@ public class CodeJamService : ICodeJamService
             items = await (from topic in _context.CodeJamTopics
 
                 let isRegistered = (from reg in _context.CodeJamRegistrations
-                    where reg.UserId == userId && reg.CodeJamTopicId == topic.Id
+                    where reg.UserId == userId && reg.CodeJamTopicId == topic.Id && reg.AbandonedOn == null
                     select reg).Any()
 
                 let soloApps = (from reg in _context.CodeJamRegistrations
-                    where reg.CodeJamTopicId == topic.Id && !reg.PreferTeam
+                    where reg.CodeJamTopicId == topic.Id && !reg.PreferTeam && reg.AbandonedOn == null
                     select reg).Count()
 
-                let total = (from reg in _context.CodeJamRegistrations where reg.CodeJamTopicId == topic.Id select reg)
+                let total = (from reg in _context.CodeJamRegistrations where reg.CodeJamTopicId == topic.Id  && reg.AbandonedOn == null select reg)
                     .Count()
                     
                 select new CodeJamViewModel
@@ -145,14 +145,14 @@ public class CodeJamService : ICodeJamService
                 where request.Date >= topic.JamStartDate && request.Date <= topic.JamEndDate
                 
                 let isRegistered = (from reg in _context.CodeJamRegistrations
-                    where reg.UserId == userId && reg.CodeJamTopicId == topic.Id
+                    where reg.UserId == userId && reg.CodeJamTopicId == topic.Id && reg.AbandonedOn == null
                     select reg).Any()
 
                 let soloApps = (from reg in _context.CodeJamRegistrations
-                    where reg.CodeJamTopicId == topic.Id && !reg.PreferTeam
+                    where reg.CodeJamTopicId == topic.Id && !reg.PreferTeam && reg.AbandonedOn == null
                     select reg).Count()
 
-                let total = (from reg in _context.CodeJamRegistrations where reg.CodeJamTopicId == topic.Id select reg)
+                let total = (from reg in _context.CodeJamRegistrations where reg.CodeJamTopicId == topic.Id && reg.AbandonedOn == null select reg)
                     .Count()
                     
                 select new CodeJamViewModel
@@ -202,10 +202,10 @@ public class CodeJamService : ICodeJamService
                     select reg).Any()
 
                 let soloApps = (from reg in _context.CodeJamRegistrations
-                    where reg.CodeJamTopicId == topic.Id && !reg.PreferTeam
+                    where reg.CodeJamTopicId == topic.Id && !reg.PreferTeam  && reg.AbandonedOn == null
                     select reg).Count()
 
-                let total = (from reg in _context.CodeJamRegistrations where reg.CodeJamTopicId == topic.Id select reg)
+                let total = (from reg in _context.CodeJamRegistrations where reg.CodeJamTopicId == topic.Id && reg.AbandonedOn == null select reg)
                     .Count()
                     
                 select new CodeJamViewModel

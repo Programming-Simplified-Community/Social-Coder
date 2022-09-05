@@ -62,11 +62,28 @@
                 var color = !Model.IsRegistered ? Color.Tertiary : Color.Warning;
                 var text = !Model.IsRegistered ? "Register" : "Withdraw";
             }
-            <MudButton IconColor="@color" StartIcon="@icon"
-                       OnClick="@(async ()=> await Action())">
-                @text
-            </MudButton>        
             
+            @if (Model.IsRegistered)
+            {
+                <MudButton IconColor="@color" StartIcon="@icon"
+                           OnClick="@(async ()=> await Action(false))">
+                    @text
+                </MudButton>    
+            }
+            else
+            {
+                <MudMenu Label="Register" Variant="Variant.Text" Color="@color">
+                    <div class="d-flex align-content-center">
+                        <MudTooltip Text="Solo">
+                            <MudIconButton Class="mx-2" Color="Color.Tertiary" Icon="@Icons.Filled.Person" OnClick="@(async()=>await Action(false))"/>
+                        </MudTooltip>
+                        
+                        <MudTooltip Text="Team">
+                            <MudIconButton Class="mx-2" Color="Color.Info" Icon="@Icons.Filled.People" OnClick="@(async()=>await Action(true))"/>
+                        </MudTooltip>
+                    </div>
+                </MudMenu>
+            }
         </MudContainer>
     </MudPaper>
 </MudItem>
@@ -93,14 +110,14 @@
         _image = $"background-image: url(\"{_image}\");";
     }
 
-    async Task Action()
+    async Task Action(bool isTeam)
     {
         var response = await Client.PostAsJsonAsync(string.Format(
             !Model.IsRegistered 
             ? Endpoints.CODE_JAM_POST_TOPIC_REGISTER 
             : Endpoints.CODE_JAM_POST_TOPIC_WITHDRAW, Topic.Id), new CodeJamRegistrationRequest
         {
-            PreferTeam = true,
+            PreferTeam = isTeam,
             TopicId = Topic.Id
         });
 
@@ -108,5 +125,18 @@
             Snack.Add(Model.IsRegistered ? $"Successfully withdrawn from {Topic.Title}" : $"Successfully registered for {Topic.Title}", Severity.Success);
         else 
             Snack.Add(response.ReasonPhrase ?? await response.Content.ReadAsStringAsync(), Severity.Error);
+
+        if (!Model.IsRegistered)
+        {
+            if (isTeam)
+                Model.TotalTeamApplicants++;
+            else
+                Model.TotalSoloApplicants++;
+        }
+                
+        // Flip
+        Model.IsRegistered = !Model.IsRegistered;
+        
+        StateHasChanged();
     }
 }

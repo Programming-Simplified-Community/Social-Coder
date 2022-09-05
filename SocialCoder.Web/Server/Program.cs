@@ -7,6 +7,7 @@ using SocialCoder.Web.Server.Models;
 using SocialCoder.Web.Server.Services.Contracts;
 using SocialCoder.Web.Server.Services.Implementations;
 using SocialCoder.Web.Shared.Extensions;
+using SocialCoder.Web.Shared.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,6 +71,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICodeJamService, CodeJamService>();
 
 var app = builder.Build();
 

@@ -19,7 +19,30 @@ public static class SeedDb
 
         var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+    
+        // give us a couple starting topics to work with for testing
+        if (!context.CodeJamTopics.Any())
+        {
+            Random random = new();
+            for (var i = 0; i < 10; i++)
+            {
+                var registrationStart = DateTime.Now.AddMonths(-random.Next(0, 3));
+                var start = DateTime.Now.AddDays(-random.Next(0, 31));
+                var end = start.AddDays(random.Next(7, 30));
 
+                context.CodeJamTopics.Add(new()
+                {
+                    Title = $"Topic {i}",
+                    Description = "Just another code jam here",
+                    JamStartDate = start,
+                    JamEndDate = end,
+                    RegistrationStartDate = registrationStart
+                });
+            }
+
+            await context.SaveChangesAsync();
+        }
+        
         // If our users table has at least 1 user we'll skip this process
         if (context.Users.Any())
             return;

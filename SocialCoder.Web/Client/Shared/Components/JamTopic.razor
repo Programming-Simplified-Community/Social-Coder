@@ -1,0 +1,62 @@
+﻿@using SocialCoder.Web.Shared.Models.CodeJam
+
+<MudItem>
+    <MudPaper Style="border-radius: 25px;">
+        <MudContainer
+            Class="codejam-topic-background-image"
+            Style="@_image"/>
+        <MudContainer Class="pb-3">
+            <MudText Typo="Typo.h4">@Topic.Title</MudText>
+
+            @* Display dates for topic *@
+            <MudList>
+                <MudListItem Icon="@Icons.TwoTone.PersonAdd" IconColor="Color.Success">
+                    <MudText Typo="Typo.body1">
+                        @Topic.RegistrationStartDate.ToString("dddd, MMMM dd - yyyy")
+                    </MudText>
+                    <MudText Typo="Typo.subtitle1" Color="Color.Secondary" Style="font-size: 0.6rem;">
+                        @Topic.RegistrationStartDate.ToString("t")
+                    </MudText>
+                </MudListItem>
+                <MudListItem Icon="@Icons.TwoTone.Event"
+                             IconColor="Color.Tertiary">
+                    <MudText Typo="Typo.body1">
+                        @Topic.JamStartDate.ToString("dddd, MMMM dd - yyyy")
+                    </MudText>
+                    <MudText Typo="Typo.subtitle1" Style="font-size: 0.6rem;" Color="Color.Secondary">
+                        @Topic.JamStartDate.ToString("t")
+                    </MudText>
+                    <MudText Typo="Typo.subtitle2" Style="font-size: 0.6rem;" Color="Color.Info">
+                        Length: @((Topic.JamEndDate - Topic.JamStartDate).TotalDays) Days
+                    </MudText>
+                </MudListItem>
+            </MudList>
+
+            <MudText Typo="Typo.body1" Style="color: #9aa4bf">
+                @Topic.Description
+            </MudText>
+        </MudContainer>
+    </MudPaper>
+</MudItem>
+
+@code {
+    [Parameter]
+    public CodeJamTopic Topic { get; set; } = new();
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
+
+    string _image;
+    Dictionary<string, object> backgroundAttributes = new();
+    
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _image = string.IsNullOrEmpty(Topic.BackgroundImageUrl) 
+            ? Images.RandomBackgroundImage() 
+            : Topic.BackgroundImageUrl;
+        _image = $"background-image: url(\"{_image}\");";
+    }
+
+}

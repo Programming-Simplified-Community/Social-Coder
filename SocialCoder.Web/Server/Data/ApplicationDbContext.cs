@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SocialCoder.Web.Server.Models;
 using SocialCoder.Web.Shared.Models;
+using SocialCoder.Web.Shared.Models.CodeJam;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 #pragma warning disable CS8618
@@ -31,5 +32,11 @@ namespace SocialCoder.Web.Server.Data
         public DbSet<Badge> Badges { get; set; }
         public DbSet<BadgeProgress> BadgeProgress { get; set; }
         public DbSet<BadgeRequirement> BadgeRequirements { get; set; }
+        
+        #region Code Jam
+
+        public DbSet<CodeJamTopic> CodeJamTopics { get; set; }
+
+        #endregion
     }
 }

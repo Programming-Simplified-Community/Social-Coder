@@ -36,6 +36,7 @@ namespace SocialCoder.Web.Server.Data
         #region Code Jam
 
         public DbSet<CodeJamTopic> CodeJamTopics { get; set; }
+        public DbSet<CodeJamRegistration> CodeJamRegistrations { get; set; }
 
         #endregion
     }

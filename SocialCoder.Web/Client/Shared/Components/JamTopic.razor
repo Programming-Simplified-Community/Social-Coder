@@ -1,4 +1,9 @@
 ﻿@using SocialCoder.Web.Shared.Models.CodeJam
+@using SocialCoder.Web.Shared.ViewModels.CodeJam
+@using SocialCoder.Web.Shared
+@using SocialCoder.Web.Shared.Requests.CodeJam
+@inject HttpClient Client
+@inject ISnackbar Snack
 
 <MudItem>
     <MudPaper Style="border-radius: 25px;">
@@ -35,13 +40,42 @@
             <MudText Typo="Typo.body1" Style="color: #9aa4bf">
                 @Topic.Description
             </MudText>
+            
+            <MudGrid Class="mt-6 mb-4">
+                <MudItem md="6">
+                    <MudText Typo="Typo.h6" Align="Align.Center" Style="font-size: 1rem;">Solo Applicants</MudText>
+                    <MudText Typo="Typo.subtitle1" Align="Align.Center" Style="font-size: 0.75rem; color: #9aa4bf">
+                        @Model.TotalSoloApplicants/@Model.TotalApplicants
+                    </MudText>
+                </MudItem>
+
+                <MudItem md="6">
+                    <MudText Typo="Typo.h6" Align="Align.Center" Style="font-size: 1rem;">Team Applicants</MudText>
+                    <MudText Typo="Typo.subtitle1" Align="Align.Center" Style="font-size: 0.75rem; color: #9aa4bf">
+                        @Model.TotalTeamApplicants/@Model.TotalApplicants
+                    </MudText>
+                </MudItem>
+            </MudGrid>
+        
+            @{
+                var icon = !Model.IsRegistered ? Icons.Filled.PersonAdd : Icons.Filled.ExitToApp;
+                var color = !Model.IsRegistered ? Color.Tertiary : Color.Warning;
+                var text = !Model.IsRegistered ? "Register" : "Withdraw";
+            }
+            <MudButton IconColor="@color" StartIcon="@icon"
+                       OnClick="@(async ()=> await Action())">
+                @text
+            </MudButton>        
+            
         </MudContainer>
     </MudPaper>
 </MudItem>
 
 @code {
+
     [Parameter]
-    public CodeJamTopic Topic { get; set; } = new();
+    public CodeJamViewModel Model { get; set; } = new();
+    public CodeJamTopic Topic => Model.Topic ?? new();
 
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
@@ -59,4 +93,20 @@
         _image = $"background-image: url(\"{_image}\");";
     }
 
+    async Task Action()
+    {
+        var response = await Client.PostAsJsonAsync(string.Format(
+            !Model.IsRegistered 
+            ? Endpoints.CODE_JAM_POST_TOPIC_REGISTER 
+            : Endpoints.CODE_JAM_POST_TOPIC_WITHDRAW, Topic.Id), new CodeJamRegistrationRequest
+        {
+            PreferTeam = true,
+            TopicId = Topic.Id
+        });
+
+        if (response.IsSuccessStatusCode)
+            Snack.Add(Model.IsRegistered ? $"Successfully withdrawn from {Topic.Title}" : $"Successfully registered for {Topic.Title}", Severity.Success);
+        else 
+            Snack.Add(response.ReasonPhrase ?? await response.Content.ReadAsStringAsync(), Severity.Error);
+    }
 }

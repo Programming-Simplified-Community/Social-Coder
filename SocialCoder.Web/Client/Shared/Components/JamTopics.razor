@@ -1,21 +1,22 @@
 ﻿@using SocialCoder.Web.Shared.Models.CodeJam
+@using SocialCoder.Web.Shared.ViewModels.CodeJam
 @inject ICodeJamService Cj
 
 <MudGrid Spacing="3" Justify="Justify.Center">
     @foreach (var topic in topics)
     {
-        <JamTopic Topic="topic"/>
+        <JamTopic Model="topic"/>
     }
 </MudGrid>
 
 @code {
-    List<CodeJamTopic> topics = new();
+    List<CodeJamViewModel> topics = new();
     
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
-        var response = await Cj.GetAllTopics(null);
+        var response = await Cj.GetAllTopics(null,null);
         topics = response.Items.ToList();
     }
 }

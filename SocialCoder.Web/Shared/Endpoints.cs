@@ -51,6 +51,22 @@ public static class Endpoints
     public const string CODE_JAM_POST_TOPICS = $"{CODE_JAM_BASE}/Topics";
     public const string CODE_JAM_POST_TOPICS_ACTIVE = $"{CODE_JAM_POST_TOPICS}/active";
     public const string CODE_JAM_POST_TOPICS_OPEN = $"{CODE_JAM_POST_TOPICS}/open";
+    
+    /// <summary>
+    /// String format
+    /// <list type="number">
+    ///     <item>Topic Id</item>
+    /// </list>
+    /// </summary>
+    public const string CODE_JAM_POST_TOPIC_REGISTER = $"{CODE_JAM_POST_TOPICS}/{{0}}/register";
+
+    /// <summary>
+    /// String format
+    /// <list type="number">
+    ///     <item>Topic Id</item>
+    /// </list>
+    /// </summary>
+    public const string CODE_JAM_POST_TOPIC_WITHDRAW = $"{CODE_JAM_POST_TOPICS}/{{0}}/withdraw";
 
     #endregion
 }

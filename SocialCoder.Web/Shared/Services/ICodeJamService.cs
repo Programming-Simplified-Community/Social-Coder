@@ -7,6 +7,10 @@ namespace SocialCoder.Web.Shared.Services;
 
 public interface ICodeJamService
 {
+    #region Administrative
+    Task<ResultOf> Delete(int topicId, CancellationToken cancellationToken = default);
+    #endregion
+    
     #region Topics
     /// <summary>
     /// Retrieve all topics

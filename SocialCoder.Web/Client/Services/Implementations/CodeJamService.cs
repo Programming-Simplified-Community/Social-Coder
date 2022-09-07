@@ -19,6 +19,21 @@ public class CodeJamService : ICodeJamService
         _logger = logger;
     }
 
+    #region Administrative
+
+    public async Task<ResultOf> Delete(int topicId, CancellationToken cancellationToken = default)
+    {
+        var response =
+            await _client.DeleteAsync(string.Format(Endpoints.CODEJAM_DELETE_TOPIC, topicId), cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+            return ResultOf.Fail(response.ReasonPhrase ?? "Was unable to delete");
+
+        return await response.Content.ReadFromJsonAsync<ResultOf>(cancellationToken: cancellationToken)
+               ?? ResultOf.Fail("Failed to parse");
+    }
+    #endregion
+    
     public async Task<ResultOf<CodeJamViewModel>> GetTopic(int topicId, string? userId, CancellationToken cancellationToken = default)
     {
         var response = await _client.PostAsJsonAsync(string.Format(Endpoints.CODE_JAM_POST_GET_TOPIC, topicId),

@@ -59,6 +59,14 @@ public static class Endpoints
     /// </list>
     /// </summary>
     public const string CODE_JAM_POST_GET_TOPIC = $"{CODE_JAM_BASE}/{{0}}";
+
+    /// <summary>
+    /// String format
+    /// <list type="number">
+    ///     <item>Topic Id</item>
+    /// </list>
+    /// </summary>
+    public const string CODEJAM_DELETE_TOPIC = $"{CODE_JAM_POST_TOPICS}/{{0}}/delete";
     
     /// <summary>
     /// String format

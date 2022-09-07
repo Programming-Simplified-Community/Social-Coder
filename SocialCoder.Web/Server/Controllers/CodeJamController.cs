@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SocialCoder.Web.Server.Models;
 using SocialCoder.Web.Shared;
-using SocialCoder.Web.Shared.Models.CodeJam;
 using SocialCoder.Web.Shared.Requests;
 using SocialCoder.Web.Shared.Requests.CodeJam;
 using SocialCoder.Web.Shared.Services;
@@ -13,7 +12,7 @@ using SocialCoder.Web.Shared.ViewModels.CodeJam;
 namespace SocialCoder.Web.Server.Controllers;
 
 [ApiController, Route("/api/[controller]/[action]")]
-public class CodeJamController : ControllerBase
+public partial class CodeJamController : ControllerBase
 {
     private readonly ICodeJamService _cj;
     private readonly UserManager<ApplicationUser> _userManager;

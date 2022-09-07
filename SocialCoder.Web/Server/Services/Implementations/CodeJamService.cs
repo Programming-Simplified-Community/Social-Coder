@@ -22,6 +22,22 @@ public class CodeJamService : ICodeJamService
         _userManager = userManager;
         _logger = logger;
     }
+    
+    #region Administrative
+
+    public async Task<ResultOf> Delete(int topicId, CancellationToken cancellationToken = default)
+    {
+        var topic = await _context.CodeJamTopics.FirstOrDefaultAsync(x => x.Id == topicId, cancellationToken);
+
+        if (topic is null)
+            return ResultOf.Fail("Invalid Topic");
+
+        _context.CodeJamTopics.Remove(topic);
+        await _context.SaveChangesAsync(cancellationToken);
+        
+        return ResultOf.Pass();
+    }
+    #endregion
 
     public async Task<ResultOf<CodeJamViewModel>> Register(CodeJamRegistrationRequest request, string? userId, CancellationToken cancellationToken = default)
     {

@@ -66,7 +66,7 @@ public static class Endpoints
     ///     <item>Topic Id</item>
     /// </list>
     /// </summary>
-    public const string CODEJAM_DELETE_TOPIC = $"{CODE_JAM_POST_TOPICS}/{{0}}/delete";
+    public const string CODEJAM_DELETE_TOPIC = $"{CODE_JAM_BASE}/admin/topics{{0}}";
     
     /// <summary>
     /// String format
@@ -83,6 +83,17 @@ public static class Endpoints
     /// </list>
     /// </summary>
     public const string CODE_JAM_POST_TOPIC_WITHDRAW = $"{CODE_JAM_POST_TOPICS}/{{0}}/withdraw";
+
+
+    public const string CODE_JAM_POST_TOPICS_ADMIN = $"{CODE_JAM_BASE}/admin/topics";
+    
+    /// <summary>
+    /// String format
+    /// <list type="number">
+    ///     <item>Topic Id</item>
+    /// </list>
+    /// </summary>
+    public const string CODE_JAM_POST_DELETE_TOPIC = $"{CODE_JAM_BASE}/admin/topics/{{0}}";
 
     #endregion
 }

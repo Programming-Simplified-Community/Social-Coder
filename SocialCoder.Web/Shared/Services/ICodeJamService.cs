@@ -8,7 +8,21 @@ namespace SocialCoder.Web.Shared.Services;
 public interface ICodeJamService
 {
     #region Administrative
+    /// <summary>
+    /// Enable an administrator to delete topic
+    /// </summary>
+    /// <param name="topicId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     Task<ResultOf> Delete(int topicId, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// As an administrator -- 
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<PaginatedResponse<CodeJamAdminViewModel>> AdminGetTopics(PaginationRequest? request, CancellationToken cancellationToken = default);
     #endregion
     
     #region Topics

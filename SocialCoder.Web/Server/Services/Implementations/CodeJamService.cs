@@ -37,6 +37,75 @@ public class CodeJamService : ICodeJamService
         
         return ResultOf.Pass();
     }
+
+    public async Task<PaginatedResponse<CodeJamAdminViewModel>> AdminGetTopics(PaginationRequest? request,
+        CancellationToken cancellationToken = default)
+    {
+        List<CodeJamAdminViewModel> items;
+
+        if (request is null || request.PageSize <= 0)
+        {
+            items = await (from topic in _context.CodeJamTopics
+                let soloApps = (from reg in _context.CodeJamRegistrations
+                    where reg.CodeJamTopicId == topic.Id
+                          && reg.AbandonedOn == null && !reg.PreferTeam
+                    select reg).Count()
+                let totalApps = (from reg in _context.CodeJamRegistrations
+                    where reg.CodeJamTopicId == topic.Id &&
+                          reg.AbandonedOn == null
+                    select reg).Count()
+
+                select new CodeJamAdminViewModel
+                {
+                    Topic = topic,
+                    TotalSoloApplicants = soloApps,
+                    TotalTeamApplicants = totalApps - soloApps
+                }).ToListAsync(cancellationToken);
+            return new PaginatedResponse<CodeJamAdminViewModel>
+            {
+                Items = items,
+                IsDescending = false,
+                PageNumber = 1,
+                PageSize = items.Count,
+                TotalPages = 1,
+                TotalRecords = items.Count
+            };
+        }
+
+        var baseQuery = request.IsDescending
+            ? _context.CodeJamTopics.OrderByDescending(x => x.JamStartDate)
+            : _context.CodeJamTopics.OrderBy(x => x.JamStartDate);
+
+        items = await (from topic in baseQuery
+            let soloApps = (from reg in _context.CodeJamRegistrations
+                where reg.CodeJamTopicId == topic.Id
+                      && reg.AbandonedOn == null && !reg.PreferTeam
+                select reg).Count()
+            let total = (from reg in _context.CodeJamRegistrations
+                where reg.CodeJamTopicId == topic.Id
+                      && reg.AbandonedOn == null
+                select reg).Count()
+            select new CodeJamAdminViewModel
+            {
+                Topic = topic,
+                TotalSoloApplicants = soloApps,
+                TotalTeamApplicants = total - soloApps
+            })
+            .Skip((request.PageNumber-1)*request.PageSize)
+            .Take(request.PageSize)
+            .ToListAsync(cancellationToken);
+
+        var grandTotal = await _context.CodeJamTopics.CountAsync(cancellationToken);
+        return new PaginatedResponse<CodeJamAdminViewModel>
+        {
+            Items = items,
+            IsDescending = request.IsDescending,
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize,
+            TotalPages = (int)Math.Ceiling((double)grandTotal / request.PageSize),
+            TotalRecords = grandTotal
+        };
+    }
     #endregion
 
     public async Task<ResultOf<CodeJamViewModel>> Register(CodeJamRegistrationRequest request, string? userId, CancellationToken cancellationToken = default)

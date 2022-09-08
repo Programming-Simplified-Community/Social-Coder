@@ -21,6 +21,22 @@ public class CodeJamService : ICodeJamService
 
     #region Administrative
 
+    public async Task<PaginatedResponse<CodeJamAdminViewModel>> AdminGetTopics(PaginationRequest? request,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await _client.PostAsJsonAsync(Endpoints.CODE_JAM_POST_TOPICS_ADMIN, request,
+            cancellationToken: cancellationToken);
+        
+        if(!response.IsSuccessStatusCode)
+        {
+            _logger.LogError("Failed to fetch paginated topics for administrator: {StatusCode}. {Error}", response.StatusCode, response.ReasonPhrase);
+            return new PaginatedResponse<CodeJamAdminViewModel>();
+        }
+
+        return await response.Content.ReadFromJsonAsync<PaginatedResponse<CodeJamAdminViewModel>>(cancellationToken: cancellationToken) ??
+               new PaginatedResponse<CodeJamAdminViewModel>();
+    }
+
     public async Task<ResultOf> Delete(int topicId, CancellationToken cancellationToken = default)
     {
         var response =

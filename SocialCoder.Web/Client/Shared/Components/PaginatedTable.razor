@@ -1,7 +1,7 @@
 ﻿@typeparam TItem
 
 @* ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract *@
-@if(Items == null || Items.Items == null)
+@if(_items == null || _items.Items == null)
 {
     <MudGrid Justify="Justify.Center">
         <MudItem>
@@ -11,15 +11,15 @@
 }
 else
 {
-    <MudTable Items="Items.Items"
+    <MudTable Items="_items.Items"
               Hover
               Elevation="3"
-              Loading="IsFetching"
+              Loading="_isFetching"
               LoadingProgressColor="Color.Info"
               Striped
               Virtualize>
         <HeaderContent>
-            @PaginationHeader
+            @HeaderContent
         </HeaderContent>
         <RowTemplate>
             @RowTemplate(context)
@@ -30,15 +30,15 @@ else
                 <MudIconButton Icon="@Icons.Filled.NavigateBefore" Color="Color.Tertiary" OnClick="PreviousPage" Disabled="@(!HasPrevious)"/>
                 <MudMenu>
                     <ActivatorContent>
-                        <MudText Typo="Typo.h6">@PaginationSettings.PageNumber of @Items.TotalPages</MudText>
+                        <MudText Typo="Typo.h6">@_paginationSettings.PageNumber of @_items.TotalPages</MudText>
                     </ActivatorContent>
                     <ChildContent>
                         @foreach (var size in Constants.PageSizes)
                         {
-                            var color = PaginationSettings.PageSize == size ? Theme.PaletteDark.InfoLighten : Theme.PaletteDark.White;
+                            var color = _paginationSettings.PageSize == size ? Theme.PaletteDark.InfoLighten : Theme.PaletteDark.White;
                             var style = $"color: {color};";
 
-                            <MudMenuItem OnClick="@(async () => { PaginationSettings.PageSize = size; await OnPageSizeChanged(); })" Style="@style">
+                            <MudMenuItem OnClick="@(async () => { _paginationSettings.PageSize = size; await OnPageSizeChanged(); })" Style="@style">
                                 @size
                             </MudMenuItem>
                         }

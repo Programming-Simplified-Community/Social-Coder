@@ -6,7 +6,7 @@
 
 <PaginatedTable TItem="CodeJamAdminViewModel" 
                 FetchDataFunc="FetchData">
-    <PaginationHeader>
+    <HeaderContent>
         <MudTh>Title</MudTh>
         <MudTh>Registration</MudTh>
         <MudTh>Active Period</MudTh>
@@ -14,7 +14,7 @@
         <MudTh>Team Applicants</MudTh>
         <MudTh>Solo Applicants</MudTh>
         <MudTh></MudTh>
-    </PaginationHeader>
+    </HeaderContent>
     <RowTemplate>
         <MudTd>@context.Topic.Title</MudTd>
         <MudTd>

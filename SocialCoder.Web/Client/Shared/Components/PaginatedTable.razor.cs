@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using SocialCoder.Web.Shared.Requests;
 
-namespace SocialCoder.Web.Client.Components;
+namespace SocialCoder.Web.Client.Shared.Components;
 
-public abstract class PaginationComponent<TItem> : ComponentBase
+public partial class PaginatedTable<TItem>
 {
     /// <summary>
     /// Utilize to track stored settings for descending / page size
@@ -16,7 +16,7 @@ public abstract class PaginationComponent<TItem> : ComponentBase
     /// <summary>
     /// Settings that are used during the pagination request. Tracks the current page number, page size, and ascending/descending
     /// </summary>
-    protected PaginationRequest PaginationSettings { get; private set; }
+    public PaginationRequest PaginationSettings { get; private set; }
 
     /// <summary>
     /// Invoked whenever the user changes page
@@ -24,6 +24,12 @@ public abstract class PaginationComponent<TItem> : ComponentBase
     [Parameter] 
     public EventCallback OnPageChange { get; set; }
 
+    [Parameter] 
+    public RenderFragment<TItem> RowTemplate { get; set; }
+    
+    [Parameter]
+    public RenderFragment PaginationHeader { get; set; }
+    
     protected MudTheme Theme { get; set; } = new();
 
     protected PaginatedResponse<TItem> Items { get; set; }
@@ -33,12 +39,16 @@ public abstract class PaginationComponent<TItem> : ComponentBase
     /// </summary>
     protected bool IsFetching { get; set; }
 
-    protected abstract Task<PaginatedResponse<TItem>> FetchData();
-    
+    /// <summary>
+    /// Function utilized when fetching data
+    /// </summary>
+    [Parameter] 
+    public Func<PaginationRequest, Task<PaginatedResponse<TItem>>> FetchDataFunc { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-
+        
         var pageSize = 10;
         var isDescending = false;
         
@@ -64,7 +74,7 @@ public abstract class PaginationComponent<TItem> : ComponentBase
     private async Task ReRender()
     {
         IsFetching = true;
-        Items = await FetchData();
+        Items = await FetchDataFunc(PaginationSettings);
         IsFetching = false;
 
         StateHasChanged();

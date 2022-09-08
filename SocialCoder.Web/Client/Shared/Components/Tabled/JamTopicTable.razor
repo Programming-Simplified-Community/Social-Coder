@@ -1,97 +1,53 @@
 ﻿@using SocialCoder.Web.Shared.Requests
 @using SocialCoder.Web.Shared.ViewModels.CodeJam
 @using SocialCoder.Web.Shared.Models.CodeJam
-@inherits PaginationComponent<CodeJamAdminViewModel>
 
 @inject ICodeJamService _cj
 
-@* TODO: Figure out how to abstract this view ... *@
+<PaginatedTable TItem="CodeJamAdminViewModel" 
+                FetchDataFunc="FetchData">
+    <PaginationHeader>
+        <MudTh>Title</MudTh>
+        <MudTh>Registration</MudTh>
+        <MudTh>Active Period</MudTh>
+        <MudTh>Status</MudTh>
+        <MudTh>Team Applicants</MudTh>
+        <MudTh>Solo Applicants</MudTh>
+        <MudTh></MudTh>
+    </PaginationHeader>
+    <RowTemplate>
+        <MudTd>@context.Topic.Title</MudTd>
+        <MudTd>
+            @context.Topic.RegistrationStartDate.ToString("d")
+            <MudIcon Icon="@Icons.Filled.ArrowRight" Style="position: relative; top: 7px"/>
+            @context.Topic.JamStartDate.ToString("d")
+        </MudTd>
+        <MudTd>
+            @context.Topic.JamStartDate.ToString("d")
+            <MudIcon Icon="@Icons.Filled.ArrowRight" Style="position: relative; top: 7px"/>
+            @context.Topic.JamEndDate.ToString("d")
+        </MudTd>
+        <MudTd>
+            @{
+                var state = GetStatus(context.Topic);
 
-@* ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract *@
-@if(Items == null || Items.Items == null)
-{
-    <MudGrid Justify="Justify.Center">
-        <MudItem>
-            <MudProgressCircular Indeterminate="true" Color="Color.Tertiary" Size="Size.Large"/>
-        </MudItem>
-    </MudGrid>
-}
-else
-{
-    <MudTable Items="Items.Items"
-              Hover
-              Elevation="3"
-              Loading="IsFetching"
-              LoadingProgressColor="Color.Info"
-              Striped
-              Virtualize>
-        <HeaderContent>
-            <MudTh>Title</MudTh>
-            <MudTh>Registration</MudTh>
-            <MudTh>Active Period</MudTh>
-            <MudTh>Status</MudTh>
-            <MudTh>Team Applicants</MudTh>
-            <MudTh>Solo Applicants</MudTh>
-            <MudTh></MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd>@context.Topic.Title</MudTd>
-            <MudTd>
-                @context.Topic.RegistrationStartDate.ToString("d")
-                <MudIcon Icon="@Icons.Filled.ArrowRight" Style="position: relative; top: 7px"/>
-                @context.Topic.JamStartDate.ToString("d")
-            </MudTd>
-            <MudTd>
-                @context.Topic.JamStartDate.ToString("d")
-                <MudIcon Icon="@Icons.Filled.ArrowRight" Style="position: relative; top: 7px"/>
-                @context.Topic.JamEndDate.ToString("d")
-            </MudTd>
-            <MudTd>
-                @{
-                    var state = GetStatus(context.Topic);
- 
-                    if (!string.IsNullOrEmpty(state.Text))
-                    {
-                        <MudTooltip Text="@state.Text">
-                            <MudIcon Color="Color.Secondary" Icon="@state.Icon"/>
-                        </MudTooltip>
-                    }
+                if (!string.IsNullOrEmpty(state.Text))
+                {
+                    <MudTooltip Text="@state.Text">
+                        <MudIcon Color="Color.Secondary" Icon="@state.Icon"/>
+                    </MudTooltip>
                 }
-            </MudTd>
-            <MudTd>@context.TotalTeamApplicants</MudTd>
-            <MudTd>@context.TotalSoloApplicants</MudTd>
-            <MudTd>
-                <MudButton Color="Color.Error">
-                    <MudIcon Icon="@Icons.Filled.Delete"/>
-                </MudButton>
-            </MudTd>
-        </RowTemplate>
-        <PagerContent>
-            <MudToolBar Style="display: flex; justify-content: center;">
-                <MudIconButton Icon="@Icons.Filled.FirstPage" Color="Color.Secondary" OnClick="ToFirstPage" Disabled="@(!HasPrevious)"/>
-                <MudIconButton Icon="@Icons.Filled.NavigateBefore" Color="Color.Tertiary" OnClick="PreviousPage" Disabled="@(!HasPrevious)"/>
-                <MudMenu>
-                    <ActivatorContent>
-                        <MudText Typo="Typo.h6">@PaginationSettings.PageNumber of @Items.TotalPages</MudText>
-                    </ActivatorContent>
-                    <ChildContent>
-                        @foreach (var size in Constants.PageSizes)
-                        {
-                            var color = PaginationSettings.PageSize == size ? Theme.PaletteDark.InfoLighten : Theme.PaletteDark.White;
-                            var style = $"color: {color};";
-                            
-                            <MudMenuItem OnClick="@(async () => { PaginationSettings.PageSize = size; await OnPageSizeChanged(); })" Style="@style">
-                                @size
-                            </MudMenuItem>
-                        }
-                    </ChildContent>
-                </MudMenu>
-                <MudIconButton Icon="@Icons.Filled.NavigateNext" Color="Color.Tertiary" OnClick="NextPage" Disabled="@(!HasNext)"/>
-                <MudIconButton Icon="@Icons.Filled.LastPage" Color="Color.Secondary" OnClick="ToLastPage" Disabled="@(!HasNext)"/>
-            </MudToolBar>
-        </PagerContent>
-    </MudTable>
-}
+            }
+        </MudTd>
+        <MudTd>@context.TotalTeamApplicants</MudTd>
+        <MudTd>@context.TotalSoloApplicants</MudTd>
+        <MudTd>
+            <MudButton Color="Color.Error">
+                <MudIcon Icon="@Icons.Filled.Delete"/>
+            </MudButton>
+        </MudTd>
+    </RowTemplate>
+</PaginatedTable>
 
 @code {
     private (string Text, string Icon) GetStatus(CodeJamTopic topic)
@@ -108,8 +64,8 @@ else
             ? ("Completed", Icons.Filled.Done) 
             : (string.Empty, Icons.Filled.AccessTime);
     }
-
-    protected override async Task<PaginatedResponse<CodeJamAdminViewModel>> FetchData()
-        => await _cj.AdminGetTopics(PaginationSettings);
+    
+    private async Task<PaginatedResponse<CodeJamAdminViewModel>> FetchData(PaginationRequest settings)
+        => await _cj.AdminGetTopics(settings);
 
 }

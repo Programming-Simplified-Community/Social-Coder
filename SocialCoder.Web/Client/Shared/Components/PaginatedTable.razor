@@ -1,0 +1,52 @@
+﻿@typeparam TItem
+
+@* ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract *@
+@if(Items == null || Items.Items == null)
+{
+    <MudGrid Justify="Justify.Center">
+        <MudItem>
+            <MudProgressCircular Indeterminate="true" Color="Color.Tertiary" Size="Size.Large"/>
+        </MudItem>
+    </MudGrid>
+}
+else
+{
+    <MudTable Items="Items.Items"
+              Hover
+              Elevation="3"
+              Loading="IsFetching"
+              LoadingProgressColor="Color.Info"
+              Striped
+              Virtualize>
+        <HeaderContent>
+            @PaginationHeader
+        </HeaderContent>
+        <RowTemplate>
+            @RowTemplate(context)
+        </RowTemplate>
+        <PagerContent>
+            <MudToolBar Style="display: flex; justify-content: center;">
+                <MudIconButton Icon="@Icons.Filled.FirstPage" Color="Color.Secondary" OnClick="ToFirstPage" Disabled="@(!HasPrevious)"/>
+                <MudIconButton Icon="@Icons.Filled.NavigateBefore" Color="Color.Tertiary" OnClick="PreviousPage" Disabled="@(!HasPrevious)"/>
+                <MudMenu>
+                    <ActivatorContent>
+                        <MudText Typo="Typo.h6">@PaginationSettings.PageNumber of @Items.TotalPages</MudText>
+                    </ActivatorContent>
+                    <ChildContent>
+                        @foreach (var size in Constants.PageSizes)
+                        {
+                            var color = PaginationSettings.PageSize == size ? Theme.PaletteDark.InfoLighten : Theme.PaletteDark.White;
+                            var style = $"color: {color};";
+
+                            <MudMenuItem OnClick="@(async () => { PaginationSettings.PageSize = size; await OnPageSizeChanged(); })" Style="@style">
+                                @size
+                            </MudMenuItem>
+                        }
+                    </ChildContent>
+                </MudMenu>
+                <MudIconButton Icon="@Icons.Filled.NavigateNext" Color="Color.Tertiary" OnClick="NextPage" Disabled="@(!HasNext)"/>
+                <MudIconButton Icon="@Icons.Filled.LastPage" Color="Color.Secondary" OnClick="ToLastPage" Disabled="@(!HasNext)"/>
+            </MudToolBar>
+        </PagerContent>
+    </MudTable>
+}

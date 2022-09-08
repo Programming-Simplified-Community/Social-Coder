@@ -3,17 +3,23 @@ version: "3.8"
 # TODO: test this, figure out proper HTTPS/SSL setup
 services:
   social-coder-api-db:
+    container_name: social-coder-api-db
     image: mysql:latest
     ports:
       - "3306:3306"
     expose:
       - "3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=my-awesome-password
-      - MYSQL_DATABASE='social-coder'
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
     volumes:
-      - C:\Users\Will_\RiderProjects\Social-Coder\Database:/var/lib/mysql
-        
+      - ${DB_PATH}:/var/lib/mysql
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=${DB_PASSWORD} --execute \"SHOW DATABASES;\""
+      interval: 2s
+      timeout: 20s
+      retries: 10
+
   social-coder-api:
     build:
       context: .
@@ -29,5 +35,5 @@ services:
       - $USERPROFILE\.aspnet\https:/https/
     depends_on:
       - social-coder-api-db
-      
+    
     

@@ -1,25 +1,45 @@
-﻿<CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(App).Assembly">
-        <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
-                <NotAuthorized>
-                    @if (context.User.Identity?.IsAuthenticated != true)
-                    {
-                        <RedirectToLogin />
-                    }
-                    else
-                    {
-                        <p role="alert">You are not authorized to access this resource.</p>
-                    }
-                </NotAuthorized>
-            </AuthorizeRouteView>
-            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-        </Found>
-        <NotFound>
+﻿<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+            <Authorizing>
+                <MudContainer Class="mt-12">
+                    <MudGrid Justify="Justify.Center" Spacing="3">
+                        <MudItem md="2" Style="display: flex; justify-content: center">
+                            <MudProgressCircular Color="Color.Info"
+                                                 Size="Size.Large"
+                                                 Indeterminate="true"/>            
+                        </MudItem>
+                        <MudItem md="12" Style="display: flex; justify-content: center">
+                            <MudText Typo="Typo.button" Align="Align.Center">
+                                Authorizing...
+                            </MudText>
+                        </MudItem>
+                    </MudGrid>
+                </MudContainer>
+            </Authorizing>
+            <NotAuthorized>
+                <RedirectToLogin/>
+            </NotAuthorized>
+        </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <CascadingAuthenticationState>
             <PageTitle>Not found</PageTitle>
-            <LayoutView Layout="@typeof(MainLayout)">
-                <p role="alert">Sorry, there's nothing at this address.</p>
-            </LayoutView>
-        </NotFound>
-    </Router>
-</CascadingAuthenticationState>
+                    <LayoutView Layout="@typeof(MainLayout)">
+                        <MudContainer>
+                            <MudGrid Justify="Justify.Center" Spacing="3">
+                                <MudItem md="12">
+                                    <MudAlert Icon="@Icons.Filled.Warning"
+                                              Severity="Severity.Warning"
+                                              Elevation="3"
+                                              ContentAlignment="HorizontalAlignment.Center">
+                                        Sorry, there's nothing at this address.
+                                    </MudAlert>
+                                </MudItem>
+                            </MudGrid>
+                        </MudContainer>
+                    </LayoutView>
+        </CascadingAuthenticationState>
+    </NotFound>
+</Router>

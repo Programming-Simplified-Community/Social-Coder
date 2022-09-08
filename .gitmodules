@@ -1,0 +1,3 @@
+[submodule "Scripts"]
+	path = Scripts
+	url = https://github.com/Programming-Simplified-Community/Scripts

@@ -4,13 +4,17 @@
 <MudThemeProvider Theme="_theme" IsDarkMode="true"></MudThemeProvider>
 
 <MudLayout >
-    <MudAppBar Elevation="1" Dense="true">
+    <MudAppBar Elevation="1" Dense="false">
         <MudAvatar Color="Color.Warning" e Variant="Variant.Filled">
-            <MudIcon Color="Color.Dark"  Icon="@Icons.Custom.Uncategorized.Radioactive" Size="Size.Large"/>
+            <MudIcon Color="Color.Dark" Icon="@Icons.Custom.Uncategorized.Radioactive" Size="Size.Large"/>
         </MudAvatar>
 
         <h1 class="" style="padding-left: 10px">Social Coder</h1>
         <MudSpacer></MudSpacer>
+        <MudDivider Vertical="true" FlexItem="true" DividerType="DividerType.Middle"/>
+        <MudTextField @bind-Value="Search" Label="Search here for people and groups" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Filled.Search" AdornmentColor="Color.Secondary"/>
+        <MudDivider Vertical="true" FlexItem="true" DividerType="DividerType.Middle"/>
+
         <MudProgressLinear Color="Color.Secondary" BufferValue="@BufferValue" Value="@Value" Style="width: 70px" Class="my-7"/>
 
         <MudDivider Vertical="true" FlexItem="true" DividerType="DividerType.Middle"/>
@@ -44,6 +48,7 @@
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Event">Events</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Forum">Forums</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Settings">Marketplace</MudNavLink>
+            <MudSpacer/>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.ChevronRight" OnClick="@ToggleLeftDrawer"></MudNavLink>
 
 
@@ -52,8 +57,13 @@
 
     <MudDrawer @bind-Open="@_openRight" Anchor="Anchor.Right" ClipMode="_clipMode" Breakpoint="Breakpoint.Lg" PreserveOpenState="true" Elevation="1" Variant="@DrawerVariant.Mini">
         <MudNavMenu >
+            <MudBadge Color="Color.Success" Overlap="true" Bordered="true">
+                <MudAvatar Image="images/jonny.jpg"/>
+            </MudBadge>
+            <MudDivider/>
             <div class="chat-button">
-                <MudButton Variant="Variant.Filled"  StartIcon="@Icons.Filled.ChevronLeft" Color="Color.Primary" OnClick="@ToggleRightDrawer">Messages / Chat</MudButton>
+                <MudSpacer/>
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.ChevronLeft" Color="Color.Primary" OnClick="@ToggleRightDrawer">Messages / Chat</MudButton>
             </div>
 
         </MudNavMenu>
@@ -64,6 +74,7 @@
     bool _drawerOpen;
     DrawerClipMode _clipMode = DrawerClipMode.Docked;
     public bool Rtl { get; set; }
+    public string Search { get; set; }
 
     bool _openLeft = false;
     bool _openRight = false;

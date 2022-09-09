@@ -18,7 +18,7 @@ builder.Configuration.AddJsonConfigurationFiles();
 var connectionString = builder.Configuration["DefaultConnection"];
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+    options.UseNpgsql(connectionString);
 });
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -73,6 +73,12 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICodeJamService, CodeJamService>();
 
+builder.Services.AddGraphQLServer()
+    .AddQueryType<Query>()
+    .AddProjections()
+    .AddFiltering()
+    .AddSorting();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -98,6 +104,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapGraphQL();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");

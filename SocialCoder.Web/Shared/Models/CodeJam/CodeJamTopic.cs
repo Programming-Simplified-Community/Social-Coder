@@ -31,5 +31,6 @@ public class CodeJamTopic
     /// Time in which this topic will start accepting applicants
     /// </summary>
     public DateTime RegistrationStartDate { get; set; }
-    
+
+    public virtual ICollection<CodeJamRegistration> CodeJamRegistrations { get; set; } = null!;
 }

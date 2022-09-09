@@ -4,21 +4,23 @@ version: "3.8"
 services:
   social-coder-api-db:
     container_name: social-coder-api-db
-    image: mysql:latest
+    image: postgres:latest
     ports:
-      - "3306:3306"
+      - "5432:5432"
     expose:
-      - "3306"
+      - "5432"
     environment:
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
-      - MYSQL_DATABASE=${DB_NAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
-      - ${DB_PATH}:/var/lib/mysql
+      - ${DB_PATH}:/var/lib/postgresql/data
     healthcheck:
-      test: "/usr/bin/mysql --user=root --password=${DB_PASSWORD} --execute \"SHOW DATABASES;\""
-      interval: 2s
-      timeout: 20s
-      retries: 10
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   social-coder-api:
     build:

@@ -47,8 +47,8 @@ public static class SeedDb
             Random random = new();
             for (var i = 0; i < 10; i++)
             {
-                var registrationStart = DateTime.Now.AddMonths(-random.Next(0, 3));
-                var start = DateTime.Now.AddDays(-random.Next(0, 31));
+                var registrationStart = DateTime.UtcNow.AddMonths(-random.Next(0, 3));
+                var start = DateTime.UtcNow.AddDays(-random.Next(0, 31));
                 var end = start.AddDays(random.Next(7, 30));
 
                 context.CodeJamTopics.Add(new()

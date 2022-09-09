@@ -5,4 +5,4 @@ cd $scriptPath
 $funcPath = [IO.Path]::Combine($PSScriptRoot, "Scripts", "funcs.ps1")
 . $funcPath
 
-startDb -composeFolder $PSScriptRoot -serviceName "social-coder-api-db" -projectFolder "$([IO.Path]::Combine($PSScriptRoot, "SocialCoder.Web", "Server"))"
+startDb -composeFolder $PSScriptRoot -serviceName "social-coder-api-db" -projectFolder "$([IO.Path]::Combine($PSScriptRoot, "SocialCoder.Web", "Server"))" -image "$([System.Environment]::GetEnvironmentVariable("DB_DOCKER_IMAGE"))"

@@ -16,10 +16,18 @@ builder.Configuration.AddJsonConfigurationFiles();
 
 // Add services to the container.
 var connectionString = builder.Configuration["DefaultConnection"];
+
+/*
+ *  Having the database as transient prevents multiple queries happening on the
+ *  same DbContext -- which throws an exception.
+ *
+ *  Especially when using GraphQL pulling from multiple endpoints.
+ */
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseNpgsql(connectionString);
-});
+}, ServiceLifetime.Transient);
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

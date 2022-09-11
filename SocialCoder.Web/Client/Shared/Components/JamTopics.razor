@@ -1,32 +1,67 @@
 ﻿@using SocialCoder.Web.Shared.Models.CodeJam
 @using SocialCoder.Web.Shared.ViewModels.CodeJam
-@using SocialCoder.Web.Client.GraphQL
-@inject ICodeJamService Cj
-@inject SocialCoderGraphQL _graph
+@inject ILogger<JamTopics> _logger
 
 <MudGrid Spacing="3" Justify="Justify.Center">
-    @foreach (var topic in topics)
-    {
-        <JamTopic Model="topic"/>
-    }
+    <UseGetTopicsWithUserInfo Take="10" Skip="0" Context="context">
+        <ErrorContent>
+            <MudAlert Icon="@Icons.Filled.Error" Severity="Severity.Error" Style="width: 100%">
+                Oops!
+            </MudAlert>
+            <MudList>
+                @foreach (var error in context)
+                {
+                    <MudListItem>
+                        <MudText Typo="Typo.body1">
+                            @error.Message
+                        </MudText>
+                        <MudText Typo="Typo.body1">
+                            @error.Code
+                        </MudText>
+                        @if (error.Exception is not null)
+                        {
+                            <MudText Typo="Typo.subtitle1" Color="Color.Error">
+                                @error.Exception.ToString()
+                            </MudText>
+                        }
+                        @if (error.Path is not null)
+                        {
+                            @foreach (var path in error.Path)
+                            {
+                                <MudText Typo="Typo.subtitle2">@path.ToString()</MudText>
+                            }
+                        }
+                        @if (error.Locations is not null)
+                        {
+                            <MudText Typo="Typo.subtitle1">
+                                @string.Join("<br>", error.Locations)
+                            </MudText>    
+                        }
+                    </MudListItem>
+                }
+            </MudList>
+        </ErrorContent>
+        <ChildContent>
+            @if (context.Topics?.Items is not null)
+            {
+                foreach (var topic in context.Topics.Items)
+                {
+                    <JamTopic Model="topic"/>
+                }
+            }
+            else
+            {
+                <MudPaper Elevation="3" MinWidth="300px">
+                    <MudText Align="Align.Center">
+                        No records.
+                    </MudText>
+                </MudPaper>
+            }
+        </ChildContent>
+        <LoadingContent>
+            <MudProgressCircular Indeterminate="true"
+                                 Color="Color.Info"
+                                 Size="Size.Large"/>
+        </LoadingContent>
+    </UseGetTopicsWithUserInfo>
 </MudGrid>
-
-@code {
-    List<CodeJamViewModel> topics = new();
-    
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-
-        var repsonse = await _graph.FetchTopicCards(new()
-        {
-            IsDescending = false,
-            PageNumber = 0,
-            PageSize = 5
-        }, string.Empty);
-        
-        
-    // var response = await Cj.GetAllTopics(null,null);
-    // topics = response.Items.ToList();
-    }
-}

@@ -12,48 +12,48 @@
             Class="codejam-topic-background-image"
             Style="@_image"/>
         <MudContainer Class="pb-3">
-            <MudText Typo="Typo.h4">@Topic.Title</MudText>
+            <MudText Typo="Typo.h4">@Model.Title</MudText>
 
             @* Display dates for topic *@
             <MudList>
                 <MudListItem Icon="@Icons.TwoTone.PersonAdd" IconColor="Color.Success">
                     <MudText Typo="Typo.body1">
-                        @Topic.RegistrationStartDate.ToRealLocalTime().ToString("dddd, MMMM dd - yyyy")
+                        @Model.RegistrationStartDate.ToRealLocalTime().ToString("dddd, MMMM dd - yyyy")
                     </MudText>
                     <MudText Typo="Typo.subtitle1" Color="Color.Secondary" Style="font-size: 0.6rem;">
-                        @Topic.RegistrationStartDate.ToRealLocalTime().ToString("t")
+                        @Model.RegistrationStartDate.ToRealLocalTime().ToString("t")
                     </MudText>
                 </MudListItem>
                 <MudListItem Icon="@Icons.TwoTone.Event"
                              IconColor="Color.Tertiary">
                     <MudText Typo="Typo.body1">
-                        @Topic.JamStartDate.ToRealLocalTime().ToString("dddd, MMMM dd - yyyy")
+                        @Model.JamStartDate.ToRealLocalTime().ToString("dddd, MMMM dd - yyyy")
                     </MudText>
                     <MudText Typo="Typo.subtitle1" Style="font-size: 0.6rem;" Color="Color.Secondary">
-                        @Topic.JamStartDate.ToRealLocalTime().ToString("t")
+                        @Model.JamStartDate.ToRealLocalTime().ToString("t")
                     </MudText>
                     <MudText Typo="Typo.subtitle2" Style="font-size: 0.6rem;" Color="Color.Info">
-                        Length: @((Topic.JamEndDate - Topic.JamStartDate).TotalDays) Days
+                        Length: @((Model.JamEndDate - Model.JamStartDate).TotalDays) Days
                     </MudText>
                 </MudListItem>
             </MudList>
 
             <MudText Typo="Typo.body1" Style="color: #9aa4bf">
-                @Topic.Description
+                @Model.Description
             </MudText>
             
             <MudGrid Class="mt-6 mb-4">
                 <MudItem md="6">
                     <MudText Typo="Typo.h6" Align="Align.Center" Style="font-size: 1rem;">Solo Applicants</MudText>
                     <MudText Typo="Typo.subtitle1" Align="Align.Center" Style="font-size: 0.75rem; color: #9aa4bf">
-                        @Model.TotalSoloApplicants/@Model.TotalApplicants
+                        @Model.SoloApplicants/@Model.TotalApplicants
                     </MudText>
                 </MudItem>
 
                 <MudItem md="6">
                     <MudText Typo="Typo.h6" Align="Align.Center" Style="font-size: 1rem;">Team Applicants</MudText>
                     <MudText Typo="Typo.subtitle1" Align="Align.Center" Style="font-size: 0.75rem; color: #9aa4bf">
-                        @Model.TotalTeamApplicants/@Model.TotalApplicants
+                        @Model.TeamApplicants/@Model.TotalApplicants
                     </MudText>
                 </MudItem>
             </MudGrid>
@@ -92,12 +92,7 @@
 @code {
 
     [Parameter]
-    public CodeJamViewModel Model { get; set; } = new();
-
-    private CodeJamTopic Topic => Model.Topic;
-
-    [Parameter(CaptureUnmatchedValues = true)]
-    public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
+    public IGetTopicsWithUserInfo_Topics_Items Model { get; set; }
 
     string _image;
     Dictionary<string, object> backgroundAttributes = new();
@@ -106,9 +101,9 @@
     {
         base.OnInitialized();
 
-        _image = string.IsNullOrEmpty(Topic.BackgroundImageUrl) 
+        _image = string.IsNullOrEmpty(Model.BackgroundImageUrl) 
             ? Images.RandomBackgroundImage() 
-            : Topic.BackgroundImageUrl;
+            : Model.BackgroundImageUrl;
         _image = $"background-image: url(\"{_image}\");";
     }
 
@@ -120,12 +115,12 @@
             response = await Cj.Register(new()
             {
                 PreferTeam = isTeam,
-                TopicId = Topic.Id
+                TopicId = Model.TopicId
             }, string.Empty);
         else
             response = await Cj.Abandon(new()
             {
-                TopicId = Topic.Id
+                TopicId = Model.TopicId
             }, string.Empty);
 
         if (!response.Success || response.Data is null)
@@ -134,8 +129,18 @@
             return;
         }
 
-        Snack.Add(Model.IsRegistered ? $"Successfully withdrawn from {Topic.Title}" : $"Successfully registered for {Topic.Title}", Severity.Success);
-        Model = response.Data;        
+        Snack.Add(Model.IsRegistered ? $"Successfully withdrawn from {Model.Title}" : $"Successfully registered for {Model.Title}", Severity.Success);
+        Model = new GetTopicsWithUserInfo_Topics_Items_CodeJamTopic(response.Data.IsRegistered,
+            response.Data.Topic.Id,
+            response.Data.Topic.BackgroundImageUrl,
+            response.Data.Topic.RegistrationStartDate,
+            response.Data.Topic.JamStartDate,
+            response.Data.Topic.JamEndDate,
+            response.Data.Topic.Title,
+            response.Data.Topic.Description,
+            response.Data.TotalSoloApplicants,
+            response.Data.TotalTeamApplicants,
+            response.Data.TotalApplicants, true);        
         
         StateHasChanged();
     }

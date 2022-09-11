@@ -9,17 +9,19 @@
 
   <ItemGroup>
     <PackageReference Include="Discord.OAuth2.AspNetCore" Version="3.0.0" />
-    <PackageReference Include="HotChocolate.AspNetCore" Version="12.13.2" />
-    <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="12.13.2" />
-    <PackageReference Include="HotChocolate.Data.EntityFramework" Version="12.13.2" />
-    <PackageReference Include="HotChocolate.Types" Version="12.13.2" />
+    <PackageReference Include="HotChocolate" Version="13.0.0-preview.48" />
+    <PackageReference Include="HotChocolate.Abstractions" Version="13.0.0-preview.48" />
+    <PackageReference Include="HotChocolate.AspNetCore" Version="13.0.0-preview.48" />
+    <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="13.0.0-preview.48" />
+    <PackageReference Include="HotChocolate.Data.EntityFramework" Version="13.0.0-preview.48" />
+    <PackageReference Include="HotChocolate.Types" Version="13.0.0-preview.48" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="6.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Twitter" Version="6.0.8" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.8" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.6" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
+    
   </ItemGroup>
 
   <ItemGroup>
@@ -28,12 +30,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.6" />
-    <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="6.0.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="6.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.8" />
   </ItemGroup>
   
   <Target Name="CopyConnectionsFile" AfterTargets="AfterBuild">

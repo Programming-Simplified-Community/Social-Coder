@@ -1,0 +1,28 @@
+﻿query GetTopicsWithUserInfo($take:Int, $skip:Int, $userId: String){
+    topics(take: $take, skip: $skip) {
+
+        pageInfo {
+            hasNextPage,
+            hasPreviousPage
+        }
+
+        items {
+            isRegistered(userId: $userId)
+            ...TopicCardInfo
+        }
+    }
+}
+
+fragment TopicCardInfo on CodeJamTopic {
+    topicId,
+    backgroundImageUrl,
+    registrationStartDate,
+    jamStartDate,
+    jamEndDate,
+    title,
+    description,
+    soloApplicants,
+    teamApplicants,
+    totalApplicants,
+    isActive
+}

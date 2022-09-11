@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SocialCoder.Web.Shared;
+using SocialCoder.Web.Shared.Models.CodeJam;
 using SocialCoder.Web.Shared.Requests;
 using SocialCoder.Web.Shared.ViewModels.CodeJam;
 
@@ -20,10 +21,14 @@ public partial class CodeJamController
         => await _cj.Delete(topicId, cancellationToken);
 
     [Authorize(Roles = Roles.Administrator),
-     Route("/api/[controller]/admin/topics"),
-     HttpPost]
-    public async Task<PaginatedResponse<CodeJamAdminViewModel>> AdminGetTopics(PaginationRequest? request,
-        CancellationToken cancellationToken)
-        => await _cj.AdminGetTopics(request, cancellationToken);
-
+     HttpPut,
+     Route("/api/[controller]/admin/topics/{topicId:int}")]
+    public async Task<ResultOf<CodeJamTopic>> AdminUpdateTopic([FromRoute] int topicId, [FromBody] CodeJamTopic topic,
+        CancellationToken cancellationToken = default)
+    {
+        if (topicId != topic.Id) 
+            return ResultOf<CodeJamTopic>.Fail("Invalid Request");
+        
+        return await _cj.AdminUpdateTopic(topic, cancellationToken);
+    }
 }

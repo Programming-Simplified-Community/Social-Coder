@@ -12,6 +12,7 @@
     <PackageReference Include="HotChocolate.AspNetCore" Version="12.13.2" />
     <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="12.13.2" />
     <PackageReference Include="HotChocolate.Data.EntityFramework" Version="12.13.2" />
+    <PackageReference Include="HotChocolate.Types" Version="12.13.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="6.0.8" />

@@ -93,16 +93,4 @@ public partial class CodeJamController : ControllerBase
 
         return response;
     }
-    
-    [HttpPost]
-    public async Task<PaginatedResponse<CodeJamViewModel>> Topics(PaginationRequest pagination, CancellationToken cancellationToken)
-        => await _cj.GetAllTopics(pagination, HttpContext.User.Claims.FirstOrDefault(x=>x.Type == ClaimTypes.NameIdentifier)?.Value, cancellationToken);
-
-    [HttpPost, Route("/api/[controller]/Topics/active")] // TODO: Figure out how to capture user provided date times -- into their culture
-    public async Task<PaginatedResponse<CodeJamViewModel>> ActiveTopics(SpecificDateQuery query, CancellationToken cancellationToken)
-        => await _cj.GetActiveTopics(query, HttpContext.User.Claims.FirstOrDefault(x=>x.Type == ClaimTypes.NameIdentifier)?.Value,  cancellationToken);
-
-    [HttpPost, Route("/api/[controller]/Topics/open")]  // TODO: Figure out how to capture user provided date times -- into their culture
-    public async Task<PaginatedResponse<CodeJamViewModel>> OpenTopics(SpecificDateQuery query, CancellationToken cancellationToken)
-        => await _cj.GetRegisterableTopics(query, HttpContext.User.Claims.FirstOrDefault(x=>x.Type == ClaimTypes.NameIdentifier)?.Value,  cancellationToken);
 }

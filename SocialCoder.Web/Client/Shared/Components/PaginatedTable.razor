@@ -22,7 +22,10 @@ else
             @HeaderContent
         </HeaderContent>
         <RowTemplate>
-            @RowTemplate(context)
+            @if (RowTemplate != null)
+            {
+                @RowTemplate(context)
+            }
         </RowTemplate>
         <PagerContent>
             <MudToolBar Style="display: flex; justify-content: center;">

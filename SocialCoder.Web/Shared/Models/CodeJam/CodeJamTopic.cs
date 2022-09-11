@@ -1,7 +1,11 @@
-﻿namespace SocialCoder.Web.Shared.Models.CodeJam;
+﻿using HotChocolate;
+using HotChocolate.Types;
+
+namespace SocialCoder.Web.Shared.Models.CodeJam;
 
 public class CodeJamTopic
 {
+    [GraphQLType(typeof(IdType))]
     public int Id { get; set; }
 
     public string Title { get; set; } = default!;

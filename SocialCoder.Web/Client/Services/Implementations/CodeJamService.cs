@@ -21,22 +21,6 @@ public class CodeJamService : ICodeJamService
 
     #region Administrative
 
-    public async Task<PaginatedResponse<CodeJamAdminViewModel>> AdminGetTopics(PaginationRequest? request,
-        CancellationToken cancellationToken = default)
-    {
-        var response = await _client.PostAsJsonAsync(Endpoints.CODE_JAM_POST_TOPICS_ADMIN, request,
-            cancellationToken: cancellationToken);
-        
-        if(!response.IsSuccessStatusCode)
-        {
-            _logger.LogError("Failed to fetch paginated topics for administrator: {StatusCode}. {Error}", response.StatusCode, response.ReasonPhrase);
-            return new PaginatedResponse<CodeJamAdminViewModel>();
-        }
-
-        return await response.Content.ReadFromJsonAsync<PaginatedResponse<CodeJamAdminViewModel>>(cancellationToken: cancellationToken) ??
-               new PaginatedResponse<CodeJamAdminViewModel>();
-    }
-
     public async Task<ResultOf> Delete(int topicId, CancellationToken cancellationToken = default)
     {
         var response =
@@ -48,6 +32,18 @@ public class CodeJamService : ICodeJamService
         return await response.Content.ReadFromJsonAsync<ResultOf>(cancellationToken: cancellationToken)
                ?? ResultOf.Fail("Failed to parse");
     }
+
+    public async Task<ResultOf<CodeJamTopic>> AdminUpdateTopic(CodeJamTopic topic, CancellationToken cancellationToken = default)
+    {
+        var response = await _client.PutAsJsonAsync(string.Format(Endpoints.CODE_JAM_PUT_TOPIC, topic.Id), topic, cancellationToken);
+        
+        if(!response.IsSuccessStatusCode)
+            return ResultOf<CodeJamTopic>.Fail(response.ReasonPhrase ?? "Failed to update");
+
+        return await response.Content.ReadFromJsonAsync<ResultOf<CodeJamTopic>>(cancellationToken: cancellationToken) ??
+               ResultOf<CodeJamTopic>.Fail("Unable to parse");
+    }
+
     #endregion
     
     public async Task<ResultOf<CodeJamViewModel>> GetTopic(int topicId, string? userId, CancellationToken cancellationToken = default)

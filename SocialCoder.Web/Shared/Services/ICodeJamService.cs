@@ -15,41 +15,17 @@ public interface ICodeJamService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<ResultOf> Delete(int topicId, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
-    /// As an administrator -- 
+    /// Update a topic
     /// </summary>
-    /// <param name="request"></param>
+    /// <param name="topic"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<PaginatedResponse<CodeJamAdminViewModel>> AdminGetTopics(PaginationRequest? request, CancellationToken cancellationToken = default);
+    Task<ResultOf<CodeJamTopic>> AdminUpdateTopic(CodeJamTopic topic, CancellationToken cancellationToken = default);
     #endregion
     
     #region Topics
-    /// <summary>
-    /// Retrieve all topics
-    /// </summary>
-    /// <returns></returns>
-    Task<PaginatedResponse<CodeJamViewModel>> GetAllTopics(PaginationRequest? request, string? userId, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Retrieve all topics that are currently active
-    /// </summary>
-    /// <param name="request"></param>
-    /// <param name="userId"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    Task<PaginatedResponse<CodeJamViewModel>> GetActiveTopics(SpecificDateQuery? request, string? userId, CancellationToken cancellationToken = default);
-    
-    /// <summary>
-    /// Retrieve all topics that are currently accepting applicants
-    /// </summary>
-    /// <param name="request"></param>
-    /// <param name="userId"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    Task<PaginatedResponse<CodeJamViewModel>> GetRegisterableTopics(SpecificDateQuery? request, string? userId, CancellationToken cancellationToken = default);
-
     /// <summary>
     /// Retrieve a <see cref="CodeJamTopic"/> with specified <paramref name="topicId"/>
     /// </summary>

@@ -1,6 +1,8 @@
 ﻿@using SocialCoder.Web.Shared.Models.CodeJam
 @using SocialCoder.Web.Shared.ViewModels.CodeJam
+@using SocialCoder.Web.Client.GraphQL
 @inject ICodeJamService Cj
+@inject SocialCoderGraphQL _graph
 
 <MudGrid Spacing="3" Justify="Justify.Center">
     @foreach (var topic in topics)
@@ -16,7 +18,15 @@
     {
         await base.OnInitializedAsync();
 
-        var response = await Cj.GetAllTopics(null,null);
-        topics = response.Items.ToList();
+        var repsonse = await _graph.FetchTopicCards(new()
+        {
+            IsDescending = false,
+            PageNumber = 0,
+            PageSize = 5
+        }, string.Empty);
+        
+        
+    // var response = await Cj.GetAllTopics(null,null);
+    // topics = response.Items.ToList();
     }
 }

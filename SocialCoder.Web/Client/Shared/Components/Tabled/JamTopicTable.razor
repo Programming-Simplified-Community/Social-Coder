@@ -64,8 +64,8 @@
             ? ("Completed", Icons.Filled.Done) 
             : (string.Empty, Icons.Filled.AccessTime);
     }
-    
+
     private async Task<PaginatedResponse<CodeJamAdminViewModel>> FetchData(PaginationRequest settings)
-        => await _cj.AdminGetTopics(settings);
+        => throw new NotImplementedException();
 
 }

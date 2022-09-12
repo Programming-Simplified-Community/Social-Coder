@@ -39,8 +39,4 @@
     <TypeScriptCompile Include="Typescript\Hexagon.ts" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Auth" />
-  </ItemGroup>
-
 </Project>

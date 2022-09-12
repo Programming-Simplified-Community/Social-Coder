@@ -1,9 +1,11 @@
 ﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using SocialCoder.Web.Client.Models;
 using SocialCoder.Web.Shared.Requests;
+using StrawberryShake;
 
-namespace SocialCoder.Web.Client.Shared.Components;
+namespace SocialCoder.Web.Client.Shared.Components.Utility;
 
 /// <summary>
 ///     <para>
@@ -31,11 +33,10 @@ public partial class PaginatedTable<TItem>
     [Inject]
     protected ILocalStorageService Storage { get; set; }
 
-    /// <summary>
-    /// Settings that are used during the pagination request. Tracks the current page number, page size, and ascending/descending
-    /// </summary>
-    private PaginationRequest _paginationSettings = new();
 
+    [Parameter] public int PageSize { get; set; }
+    [Parameter] public int PageNumber { get; set; }
+    
     /// <summary>
     /// Invoked whenever the user changes page
     /// </summary>
@@ -53,13 +54,19 @@ public partial class PaginatedTable<TItem>
     /// </summary>
     [Parameter]
     public RenderFragment? HeaderContent { get; set; }
-    
+
+    /// <summary>
+    /// When an error occurs when interacting with GraphQL, this fragment can be used to help display those errors.
+    /// </summary>
+    [Parameter] 
+    public RenderFragment<IClientError>? ErrorContent { get; set; }
+
     /// <summary>
     /// Accessibility to theme colors
     /// </summary>
     private MudTheme Theme { get; set; } = new();
 
-    private PaginatedResponse<TItem>? _items;
+    private QueryResponse<TItem>? _items;
 
     /// <summary>
     /// Boolean value that can be utilized for when data is being fetched
@@ -70,37 +77,34 @@ public partial class PaginatedTable<TItem>
     /// Function utilized when fetching data
     /// </summary>
     [Parameter] 
-    public Func<PaginationRequest, Task<PaginatedResponse<TItem>>> FetchDataFunc { get; set; }
+    public Func<PageInfo, Task<QueryResponse<TItem>>> FetchDataFunc { get; set; }
 
     /// <summary>
     /// Are there any pages before the one we're on right now?
     /// </summary>
-    private bool HasPrevious => _paginationSettings.PageNumber > 1;
+    private bool HasPrevious => PageNumber > 1;
+
+    private int TotalPages => (int)Math.Ceiling((double)(_items?.TotalDbCount ?? 1) / PageSize);
     
     /// <summary>
     /// Are there any pages after the one we're on right now?
     /// </summary>
-    private bool HasNext => _paginationSettings.PageNumber < (_items?.TotalPages ?? 1);
-    
+    private bool HasNext => PageNumber < TotalPages;
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        
-        var pageSize = 10;
-        var isDescending = false;
-        
-        if (await Storage.ContainKeyAsync("PageSize"))
-            pageSize = await Storage.GetItemAsync<int>("PageSize");
 
-        if (await Storage.ContainKeyAsync("IsDescending"))
-            isDescending = await Storage.GetItemAsync<bool>("IsDescending");
-
-        _paginationSettings = new PaginationRequest
+        if (PageSize <= 0) // trying not to have an empty data set here
         {
-            IsDescending = isDescending,
-            PageNumber = 1,
-            PageSize = pageSize
-        };
+            if (await Storage.ContainKeyAsync("PageSize"))
+                PageSize = await Storage.GetItemAsync<int>("PageSize");
+            else
+                PageSize = 10;
+        }
+
+        if (PageNumber <= 0)
+            PageNumber = 1;
         
         await ReRender();
     }
@@ -112,7 +116,7 @@ public partial class PaginatedTable<TItem>
     private async Task ReRender()
     {
         _isFetching = true;
-        _items = await FetchDataFunc(_paginationSettings);
+        _items = await FetchDataFunc(new(PageSize, (PageNumber-1)*PageSize));
         _isFetching = false;
 
         StateHasChanged();
@@ -124,10 +128,10 @@ public partial class PaginatedTable<TItem>
     /// </summary>
     protected virtual async Task NextPage()
     {
-        if (_paginationSettings.PageNumber + 1 > _items.TotalPages)
+        if (PageNumber + 1 > TotalPages)
             return;
 
-        _paginationSettings.PageNumber++;
+        PageNumber++;
         await ReRender();
         
         if(OnPageChange.HasDelegate)
@@ -139,10 +143,10 @@ public partial class PaginatedTable<TItem>
     /// </summary>
     protected virtual async Task PreviousPage()
     {
-        if (_paginationSettings.PageNumber <= 1)
+        if (PageNumber <= 1)
             return;
 
-        _paginationSettings.PageNumber--;
+        PageNumber--;
         await ReRender();
         
         if(OnPageChange.HasDelegate)
@@ -154,10 +158,10 @@ public partial class PaginatedTable<TItem>
     /// </summary>
     protected virtual async Task ToLastPage()
     {
-        if (_paginationSettings.PageNumber >= _items.TotalPages)
+        if (PageNumber >= TotalPages)
             return;
         
-        _paginationSettings.PageNumber = _items.TotalPages;
+        PageNumber = TotalPages;
         await ReRender();
         
         if(OnPageChange.HasDelegate)
@@ -169,10 +173,10 @@ public partial class PaginatedTable<TItem>
     /// </summary>
     protected virtual async Task ToFirstPage()
     {
-        if (_paginationSettings.PageNumber <= 1)
+        if (PageNumber <= 1)
             return;
 
-        _paginationSettings.PageNumber = 1;
+        PageNumber = 1;
         await ReRender();
 
         if (OnPageChange.HasDelegate)
@@ -185,21 +189,9 @@ public partial class PaginatedTable<TItem>
     /// </summary>
     protected virtual async Task OnPageSizeChanged()
     {
-        await Storage.SetItemAsync("PageSize", _paginationSettings.PageSize);
+        await Storage.SetItemAsync("PageSize", PageSize);
         await ReRender();
 
-        if (OnPageChange.HasDelegate)
-            await OnPageChange.InvokeAsync();
-    }
-
-    /// <summary>
-    /// Callback for when the descending option has changed
-    /// </summary>
-    protected virtual async Task OnDescendingChanged()
-    {
-        await Storage.SetItemAsync("IsDescending", _paginationSettings.IsDescending);
-        await ReRender();
-        
         if (OnPageChange.HasDelegate)
             await OnPageChange.InvokeAsync();
     }

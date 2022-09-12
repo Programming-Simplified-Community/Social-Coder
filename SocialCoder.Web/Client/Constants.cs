@@ -6,4 +6,6 @@ public static class Constants
     {
         5, 10, 25, 50, 100, 250, 500
     };
+
+    public const string UserId = "ID";
 }

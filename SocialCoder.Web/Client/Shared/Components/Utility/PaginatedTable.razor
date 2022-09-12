@@ -9,6 +9,18 @@
         </MudItem>
     </MudGrid>
 }
+else if (_items.Errors is not null && _items.Errors.Any() && ErrorContent is not null)
+{
+    <MudGrid Spacing="3">
+        <MudItem md="3" sm="4">
+            @foreach (var error in _items.Errors)
+            {
+                @ErrorContent(error)
+            }
+        </MudItem>    
+    </MudGrid>
+    
+}
 else
 {
     <MudTable Items="_items.Items"
@@ -33,15 +45,15 @@ else
                 <MudIconButton Icon="@Icons.Filled.NavigateBefore" Color="Color.Tertiary" OnClick="PreviousPage" Disabled="@(!HasPrevious)"/>
                 <MudMenu>
                     <ActivatorContent>
-                        <MudText Typo="Typo.h6">@_paginationSettings.PageNumber of @_items.TotalPages</MudText>
+                        <MudText Typo="Typo.h6">@PageNumber of @TotalPages</MudText>
                     </ActivatorContent>
                     <ChildContent>
                         @foreach (var size in Constants.PageSizes)
                         {
-                            var color = _paginationSettings.PageSize == size ? Theme.PaletteDark.InfoLighten : Theme.PaletteDark.White;
+                            var color = PageSize == size ? Theme.PaletteDark.InfoLighten : Theme.PaletteDark.White;
                             var style = $"color: {color};";
 
-                            <MudMenuItem OnClick="@(async () => { _paginationSettings.PageSize = size; await OnPageSizeChanged(); })" Style="@style">
+                            <MudMenuItem OnClick="@(async () => { PageSize = size; await OnPageSizeChanged(); })" Style="@style">
                                 @size
                             </MudMenuItem>
                         }

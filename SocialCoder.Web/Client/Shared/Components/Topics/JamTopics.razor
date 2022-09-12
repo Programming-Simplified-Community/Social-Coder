@@ -1,12 +1,8 @@
-﻿@using SocialCoder.Web.Shared.Models.CodeJam
-@using SocialCoder.Web.Shared.ViewModels.CodeJam
-@inject ILogger<JamTopics> _logger
-
-<MudGrid Spacing="3" Justify="Justify.Center">
-    <UseGetTopicsWithUserInfo Take="10" Skip="0" Context="context">
+﻿<MudGrid Spacing="3" Justify="Justify.Center" Class="mt-3">
+    <UseGetTopicsWithUserInfo Take="10" Skip="0" Strategy="ExecutionStrategy.CacheAndNetwork">
         <ErrorContent>
             <MudAlert Icon="@Icons.Filled.Error" Severity="Severity.Error" Style="width: 100%">
-                Oops!
+                Oops! Double check the GraphQL Schema! They could be out-of-sync.
             </MudAlert>
             <MudList>
                 @foreach (var error in context)

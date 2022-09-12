@@ -109,46 +109,4 @@ public class CodeJamService : ICodeJamService
 
         return item ?? ResultOf<CodeJamViewModel>.Fail("Failed to parse");
     }
-    
-    public async Task<PaginatedResponse<CodeJamViewModel>> GetAllTopics(PaginationRequest? request, string? userId, CancellationToken cancellationToken = default)
-    {
-        var response = await _client.PostAsJsonAsync(Endpoints.CODE_JAM_POST_TOPICS, request ?? new(), cancellationToken);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            _logger.LogError("Failed to retrieve topics. {Code}\n{Message}", response.StatusCode, response.ReasonPhrase);
-            return new();
-        }
-
-        return await response.Content.ReadFromJsonAsync<PaginatedResponse<CodeJamViewModel>>(cancellationToken: cancellationToken) ?? new();
-    }
-
-    public async Task<PaginatedResponse<CodeJamViewModel>> GetActiveTopics(SpecificDateQuery? request, string? userId,
-        CancellationToken cancellationToken = default)
-    {
-        var response = await _client.PostAsJsonAsync(Endpoints.CODE_JAM_POST_TOPICS_ACTIVE, request ?? new() { Date = DateTime.UtcNow}, cancellationToken);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            _logger.LogError("Failed to retrieve topics. {Code}\n{Message}", response.StatusCode, response.ReasonPhrase);
-            return new();
-        }
-
-        return await response.Content.ReadFromJsonAsync<PaginatedResponse<CodeJamViewModel>>(cancellationToken: cancellationToken) ?? new();
-    }
-
-    public async Task<PaginatedResponse<CodeJamViewModel>> GetRegisterableTopics(SpecificDateQuery? request, string? userId,
-        CancellationToken cancellationToken = default)
-    {
-        var response = await _client.PostAsJsonAsync(Endpoints.CODE_JAM_POST_TOPICS_OPEN, request ?? new() { Date = DateTime.UtcNow}, cancellationToken);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            _logger.LogError("Failed to retrieve registrable topics. {Code}\n{Message}", response.StatusCode,
-                response.ReasonPhrase);
-            return new();
-        }
-        
-        return await response.Content.ReadFromJsonAsync<PaginatedResponse<CodeJamViewModel>>(cancellationToken: cancellationToken) ?? new();
-    }
 }

@@ -104,6 +104,7 @@ type TopicsCollectionSegment {
   A flattened list of the items.
   """
   items: [CodeJamTopic!]
+  totalCount: Int!
 }
 
 input IntOperationFilterInput {

@@ -9,7 +9,7 @@ namespace SocialCoder.Web.Server.GraphQL.CodeJamTopics;
 
 public class CodeJamTopicQueries
 {
-    [UsePaging, UseOffsetPaging, UseProjection, UseFiltering, UseSorting]
+    [UsePaging, UseOffsetPaging(IncludeTotalCount = true), UseProjection, UseFiltering, UseSorting]
     public IOrderedQueryable<CodeJamTopic> GetTopics([Service] ApplicationDbContext context)
         => context.CodeJamTopics.OrderBy(x=>x.JamStartDate);
 }

@@ -9,7 +9,9 @@
         items {
             isRegistered(userId: $userId)
             ...TopicCardInfo
-        }
+        },
+        
+        totalCount
     }
 }
 

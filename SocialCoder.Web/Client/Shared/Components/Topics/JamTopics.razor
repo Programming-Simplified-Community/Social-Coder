@@ -1,5 +1,7 @@
-﻿<MudGrid Spacing="3" Justify="Justify.Center" Class="mt-3">
-    <UseGetTopicsWithUserInfo Take="10" Skip="0" Strategy="ExecutionStrategy.CacheAndNetwork">
+﻿@inherits QueryComponent
+
+<MudGrid Spacing="3" Justify="Justify.Center" Class="mt-3">
+    <UseGetTopicsWithUserInfo Take="10" Skip="0" UserId="@UserId" Strategy="ExecutionStrategy.CacheAndNetwork">
         <ErrorContent>
             <MudAlert Icon="@Icons.Filled.Error" Severity="Severity.Error" Style="width: 100%">
                 Oops! Double check the GraphQL Schema! They could be out-of-sync.

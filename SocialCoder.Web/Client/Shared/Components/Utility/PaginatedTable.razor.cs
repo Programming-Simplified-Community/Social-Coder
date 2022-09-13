@@ -60,13 +60,19 @@ public partial class PaginatedTable<TItem>
     /// </summary>
     [Parameter] 
     public RenderFragment<IClientError>? ErrorContent { get; set; }
+    
+    /// <summary>
+    /// Same convention MudBlazor has, this is the toolbar that appears on the top of a mud blazor table.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ToolBarContent { get; set; }
 
     /// <summary>
     /// Accessibility to theme colors
     /// </summary>
     private MudTheme Theme { get; set; } = new();
 
-    private QueryResponse<TItem>? _items;
+    public QueryResponse<TItem>? Items;
 
     /// <summary>
     /// Boolean value that can be utilized for when data is being fetched
@@ -84,13 +90,55 @@ public partial class PaginatedTable<TItem>
     /// </summary>
     private bool HasPrevious => PageNumber > 1;
 
-    private int TotalPages => (int)Math.Ceiling((double)(_items?.TotalDbCount ?? 1) / PageSize);
+    private int TotalPages => (int)Math.Ceiling((double)(Items?.TotalDbCount ?? 1) / PageSize);
     
     /// <summary>
     /// Are there any pages after the one we're on right now?
     /// </summary>
     private bool HasNext => PageNumber < TotalPages;
 
+    public void Refresh() => StateHasChanged();
+
+    /// <summary>
+    /// Find item in our table, and replace it with <paramref name="newItem"/>
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    ///     This is mostly tailored for graphQL stuff. Which apparently has readonly properties. So in order
+    ///     to modify items in the array, we have to swap them out with a new value and rerender.
+    /// </para>
+    /// <para>
+    ///     It is possible though, that there's a better way of handling GraphQL stuff... 
+    /// </para>
+    /// </remarks>
+    /// <param name="search"></param>
+    /// <param name="newItem"></param>
+    public void ReplaceItem(Predicate<TItem> search, TItem newItem)
+    {
+        if (Items?.Items is null)
+            return;
+
+        var index = -1;
+        for(var i = 0; i < Items.Items.Count; i++)
+            if (search(Items.Items[i]))
+            {
+                index = i;
+                break;
+            }
+
+        if (index < 0)
+            return;
+
+        Items.Items[index] = newItem;
+        Refresh();
+    }
+
+    /// <summary>
+    /// Remove <paramref name="item"/> from table
+    /// </summary>
+    /// <param name="item"></param>
+    public void RemoveItem(TItem item) => Items?.Items?.Remove(item);
+    
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -116,7 +164,7 @@ public partial class PaginatedTable<TItem>
     private async Task ReRender()
     {
         _isFetching = true;
-        _items = await FetchDataFunc(new(PageSize, (PageNumber-1)*PageSize));
+        Items = await FetchDataFunc(new(PageSize, (PageNumber-1)*PageSize));
         _isFetching = false;
 
         StateHasChanged();

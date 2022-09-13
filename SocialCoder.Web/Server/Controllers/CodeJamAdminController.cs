@@ -31,4 +31,11 @@ public partial class CodeJamController
         
         return await _cj.AdminUpdateTopic(topic, cancellationToken);
     }
+
+    [Authorize(Roles = Roles.Administrator),
+     HttpPost,
+     Route("/api/[controller]/admin/topics/create")]
+    public async Task<ResultOf<CodeJamTopic>> AdminCreateTopic([FromBody] CodeJamTopic topic,
+        CancellationToken cancellationToken = default)
+        => await _cj.AdminCreateTopic(topic, cancellationToken);
 }

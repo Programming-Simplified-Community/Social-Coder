@@ -2,7 +2,7 @@
 @inject ISnackbar Snack
 @inject ICodeJamService Cj
 
-<MudItem>
+<MudItem md="4">
     <MudPaper Style="border-radius: 25px;">
         <MudContainer
             Class="codejam-topic-background-image"
@@ -35,7 +35,7 @@
             </MudList>
 
             <MudText Typo="Typo.body1" Style="color: #9aa4bf">
-                @Model.Description
+                @(new MarkupString(Model.Description.Replace("\n","<br/>")))
             </MudText>
             
             <MudGrid Class="mt-6 mb-4">

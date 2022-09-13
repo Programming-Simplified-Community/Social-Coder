@@ -27,6 +27,12 @@ namespace SocialCoder.Web.Server.Data
                 .HasMany(x => x.Requirements)
                 .WithOne(x => x.Badge)
                 .HasForeignKey(x=>x.BadgeId);
+
+            e.Entity<CodeJamTopic>()
+                .HasMany(x => x.CodeJamRegistrations)
+                .WithOne(x => x.CodeJamTopic)
+                .HasForeignKey(x => x.CodeJamTopicId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         public DbSet<Badge> Badges { get; set; }

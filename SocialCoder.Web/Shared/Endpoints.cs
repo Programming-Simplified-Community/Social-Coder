@@ -51,8 +51,6 @@ public static class Endpoints
 
     private const string CODE_JAM_BASE = $"{API_BASE}/CodeJam";
     public const string CODE_JAM_POST_TOPICS = $"{CODE_JAM_BASE}/Topics";
-    public const string CODE_JAM_POST_TOPICS_ACTIVE = $"{CODE_JAM_POST_TOPICS}/active";
-    public const string CODE_JAM_POST_TOPICS_OPEN = $"{CODE_JAM_POST_TOPICS}/open";
     
     /// <summary>
     /// String format
@@ -68,7 +66,7 @@ public static class Endpoints
     ///     <item>Topic Id</item>
     /// </list>
     /// </summary>
-    public const string CODEJAM_DELETE_TOPIC = $"{CODE_JAM_BASE}/admin/topics{{0}}";
+    public const string CODEJAM_DELETE_TOPIC = $"{CODE_JAM_BASE}/admin/topics/{{0}}";
     
     /// <summary>
     /// String format
@@ -102,6 +100,8 @@ public static class Endpoints
     /// </list>
     /// </summary>
     public const string CODE_JAM_DELETE_TOPIC = $"{CODE_JAM_BASE}/admin/topics/{{0}}";
+
+    public const string CODE_JAM_POST_CREATE_TOPIC = $"{CODE_JAM_BASE}/admin/topics/create";
 
     #endregion
 }

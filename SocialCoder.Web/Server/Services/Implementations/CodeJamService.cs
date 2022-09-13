@@ -26,13 +26,28 @@ public class CodeJamService : ICodeJamService
     
     #region Administrative
 
+    public async Task<ResultOf<CodeJamTopic>> AdminCreateTopic(CodeJamTopic topic,
+        CancellationToken cancellationToken = default)
+    {
+        if (topic.Id > 0)
+            return ResultOf<CodeJamTopic>.Fail("This topic already exists");
+        topic.RegistrationStartDate = topic.RegistrationStartDate.ToUniversalTime();
+        topic.JamStartDate = topic.JamStartDate.ToUniversalTime();
+        topic.JamEndDate = topic.JamEndDate.ToUniversalTime();
+        _context.CodeJamTopics.Add(topic);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return ResultOf<CodeJamTopic>.Pass(topic);
+    }
+
     public async Task<ResultOf> Delete(int topicId, CancellationToken cancellationToken = default)
     {
-        var topic = await _context.CodeJamTopics.FirstOrDefaultAsync(x => x.Id == topicId, cancellationToken);
+        var topic = await _context.CodeJamTopics
+            .FirstOrDefaultAsync(x => x.Id == topicId, cancellationToken);
 
         if (topic is null)
             return ResultOf.Fail("Invalid Topic");
-
+        
         _context.CodeJamTopics.Remove(topic);
         await _context.SaveChangesAsync(cancellationToken);
         
@@ -41,9 +56,23 @@ public class CodeJamService : ICodeJamService
 
     public async Task<ResultOf<CodeJamTopic>> AdminUpdateTopic(CodeJamTopic topic, CancellationToken cancellationToken = default)
     {
-        _context.CodeJamTopics.Update(topic);
+        // Just to validate the item does actually exist
+        var item = await _context.CodeJamTopics.FirstOrDefaultAsync(x => x.Id == topic.Id, cancellationToken);
+
+        if (item is null)
+            return ResultOf<CodeJamTopic>.Fail("Invalid Topic");
+
+        item.Title = topic.Title;
+        item.Description = topic.Description;
+        item.JamStartDate = topic.JamStartDate.ToUniversalTime();
+        item.JamEndDate = topic.JamEndDate.ToUniversalTime();
+        item.RegistrationStartDate = topic.RegistrationStartDate.ToUniversalTime();
+        item.BackgroundImageUrl = topic.BackgroundImageUrl;
+        item.IsActive = topic.IsActive;
+
+        _context.CodeJamTopics.Update(item);
         await _context.SaveChangesAsync(cancellationToken);
-        return ResultOf<CodeJamTopic>.Pass(topic);
+        return ResultOf<CodeJamTopic>.Pass(item);
     }
     #endregion
 

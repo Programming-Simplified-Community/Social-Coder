@@ -32,4 +32,6 @@ public class CodeJamRegistration
     /// User wants to be on a team
     /// </summary>
     public bool PreferTeam { get; set; } = true;
+
+    public CodeJamTopic CodeJamTopic { get; set; }
 }

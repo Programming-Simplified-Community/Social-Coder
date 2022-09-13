@@ -21,6 +21,17 @@ public class CodeJamService : ICodeJamService
 
     #region Administrative
 
+    public async Task<ResultOf<CodeJamTopic>> AdminCreateTopic(CodeJamTopic topic, CancellationToken cancellationToken = default)
+    {
+        var response = await _client.PostAsJsonAsync(Endpoints.CODE_JAM_POST_CREATE_TOPIC, topic, cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+            return ResultOf<CodeJamTopic>.Fail(response.ReasonPhrase ?? "Was unable to create");
+
+        return await response.Content.ReadFromJsonAsync<ResultOf<CodeJamTopic>>(cancellationToken: cancellationToken)
+               ?? ResultOf<CodeJamTopic>.Fail("Failed to parse");
+    }
+
     public async Task<ResultOf> Delete(int topicId, CancellationToken cancellationToken = default)
     {
         var response =

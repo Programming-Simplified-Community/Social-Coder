@@ -1,7 +1,7 @@
 ﻿@typeparam TItem
 
 @* ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract *@
-@if(_items == null || _items.Items == null)
+@if(Items == null || Items.Items == null)
 {
     <MudGrid Justify="Justify.Center">
         <MudItem>
@@ -9,11 +9,11 @@
         </MudItem>
     </MudGrid>
 }
-else if (_items.Errors is not null && _items.Errors.Any() && ErrorContent is not null)
+else if (Items.Errors is not null && Items.Errors.Any() && ErrorContent is not null)
 {
     <MudGrid Spacing="3">
         <MudItem md="3" sm="4">
-            @foreach (var error in _items.Errors)
+            @foreach (var error in Items.Errors)
             {
                 @ErrorContent(error)
             }
@@ -23,13 +23,16 @@ else if (_items.Errors is not null && _items.Errors.Any() && ErrorContent is not
 }
 else
 {
-    <MudTable Items="_items.Items"
+    <MudTable Items="Items.Items"
               Hover
               Elevation="3"
               Loading="_isFetching"
               LoadingProgressColor="Color.Info"
               Striped
               Virtualize>
+        <ToolBarContent>
+            @ToolBarContent
+        </ToolBarContent>
         <HeaderContent>
             @HeaderContent
         </HeaderContent>

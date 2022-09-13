@@ -7,7 +7,7 @@ public class QueryResponse<TEntity>
     /// <summary>
     /// Items returned from Query
     /// </summary>
-    public IReadOnlyList<TEntity> Items { get; set; }
+    public IList<TEntity> Items { get; set; }
 
     public IReadOnlyList<IClientError>? Errors { get; set; }
 

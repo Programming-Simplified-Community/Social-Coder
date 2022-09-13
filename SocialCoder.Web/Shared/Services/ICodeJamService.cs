@@ -23,6 +23,14 @@ public interface ICodeJamService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<ResultOf<CodeJamTopic>> AdminUpdateTopic(CodeJamTopic topic, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Create a new topic
+    /// </summary>
+    /// <param name="topic">Topic to create</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<ResultOf<CodeJamTopic>> AdminCreateTopic(CodeJamTopic topic, CancellationToken cancellationToken = default);
     #endregion
     
     #region Topics

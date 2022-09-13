@@ -36,5 +36,6 @@ public class CodeJamTopic
     /// </summary>
     public DateTime RegistrationStartDate { get; set; }
 
-    public virtual ICollection<CodeJamRegistration> CodeJamRegistrations { get; set; } = null!;
+    public virtual ICollection<CodeJamRegistration> CodeJamRegistrations { get; set; } =
+        new List<CodeJamRegistration>();
 }

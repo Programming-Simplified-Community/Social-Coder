@@ -1,0 +1,37 @@
+﻿@using System.Globalization
+@inject IJSRuntime Js
+@inject NavigationManager Nav
+
+<div style="position: relative;">
+    <MudSelect @bind-Value="Culture"
+               Style="max-width: 75px; top: -11px;"
+               DisableUnderLine="true"
+               AdornmentIcon="@Icons.Filled.Language"
+               AdornmentColor="Color.Surface">
+        @foreach (var item in _supportedCultures)
+        {
+            <MudSelectItem Class="mt-0" Value="item"/>
+        }
+    </MudSelect>
+</div>
+
+@code {
+
+    private CultureInfo[] _supportedCultures = {
+        new("en-US")
+    };
+
+    private CultureInfo Culture
+    {
+        get => CultureInfo.CurrentCulture;
+        set
+        {
+            if (CultureInfo.CurrentCulture == value)
+                return;
+
+            var js = (IJSInProcessRuntime)Js;
+            js.InvokeVoid("blazorCulture.set", value.Name);
+            Nav.NavigateTo(Nav.Uri, forceLoad: true);
+        }
+    }
+}

@@ -33,5 +33,5 @@ loadEnvFile
 
 # create our connection string based on the values in our .env
 $connectionEnvPath = Join-Path $PSScriptRoot ".connections"
-$connectionString = "server=$([System.Environment]::GetEnvironmentVariable("DB_HOST"));user=root;password=$([System.Environment]::GetEnvironmentVariable("DB_PASSWORD"));database=$([System.Environment]::GetEnvironmentVariable("DB_NAME"))"
+$connectionString = "Server=$([System.Environment]::GetEnvironmentVariable("DB_HOST"));port=5432;User Id=$([System.Environment]::GetEnvironmentVariable("DB_USER"));Password=$([System.Environment]::GetEnvironmentVariable("DB_PASSWORD"));Database=$([System.Environment]::GetEnvironmentVariable("DB_NAME"))"
 createEnv @{ DefaultConnection = "$connectionString"; } -saveTo $connectionEnvPath

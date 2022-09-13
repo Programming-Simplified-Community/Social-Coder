@@ -1,8 +1,12 @@
-﻿#pragma warning disable CS8618
+﻿using HotChocolate;
+using HotChocolate.Types;
+
+#pragma warning disable CS8618
 namespace SocialCoder.Web.Shared.Models;
 
 public class BadgeRequirement
 {
+    [GraphQLType(typeof(IdType))]
     public int Id { get; set; }
 
     /// <summary>

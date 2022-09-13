@@ -6,6 +6,11 @@
 
 This project is geared towards building a social-media like experience for programmers!
 
+Clearly, this is a work in progress app but here's a sneak peak on current progress!
+![WIP Code Jam Topics](imgs/code-jam-topics.png)
+1. OAuth login via Google or Discord (will add more)
+2. Ability to view code jams
+3. Ability to register/withdraw from code jams
 
 If you're interested in contributing here's [Environment](Environment.md) setup instructions/suggestions.
 

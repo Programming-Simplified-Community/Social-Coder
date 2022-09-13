@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.Memory;
 using SocialCoder.Web.Server.Data;
 using SocialCoder.Web.Server.Models;
+using SocialCoder.Web.Shared;
 using SocialCoder.Web.Shared.Models;
 
 namespace SocialCoder.Web.Server;
@@ -13,112 +15,118 @@ public static class SeedDb
     /// <param name="serviceProvider"></param>
     public static async Task Seed(IServiceProvider serviceProvider)
     {
+        var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+        
+        // CREATE ROLES that our application requires to operate (at least base ones)
+        if (!context.Roles.Any())
+        {
+            var adminRole = await roleManager.CreateAsync(new IdentityRole(Roles.Administrator));
+            var eventCoordinatorRole = await roleManager.CreateAsync(new IdentityRole(Roles.EventCoordinator));
+
+            List<string> errors = new();
+            
+            if (!adminRole.Succeeded)
+                errors.Add(string.Join("\n", adminRole.Errors.Select(x => x.Description)));
+            
+            if (!eventCoordinatorRole.Succeeded)
+                errors.Add(string.Join("\n", eventCoordinatorRole.Errors.Select(x => x.Description)));
+
+            if (errors.Any())
+                throw new Exception(string.Join("\n", errors));
+        }
+
+        // At this point, anything after is for testing. So if we're in release mode -- don't add our test material
         #if RELEASE
         return;
         #endif
-
-        var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-        var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
-
-        // If our users table has at least 1 user we'll skip this process
-        if (context.Users.Any())
-            return;
-
-        var adminName = "admin";
-        var adminEmail = "admin@test.com";
-
-        var user = new ApplicationUser
+        
+        // give us a couple starting topics to work with for testing
+        if (!context.CodeJamTopics.Any())
         {
-            UserName = adminName,
-            NormalizedEmail = adminEmail.ToUpper(),
-            NormalizedUserName = adminName.ToUpper(),
-            Email = adminEmail
-        };
+            Random random = new();
+            for (var i = 0; i < 10; i++)
+            {
+                var registrationStart = DateTime.UtcNow.AddMonths(-random.Next(0, 3));
+                var start = DateTime.UtcNow.AddDays(-random.Next(0, 31));
+                var end = start.AddDays(random.Next(7, 30));
 
-        var result = await userManager.CreateAsync(user, "Testing@123");
+                context.CodeJamTopics.Add(new()
+                {
+                    Title = $"Topic {i}",
+                    Description = "Just another code jam here",
+                    JamStartDate = start,
+                    JamEndDate = end,
+                    RegistrationStartDate = registrationStart
+                });
+            }
 
-        if (!result.Succeeded)
-        {
-            Console.Error.WriteLine(string.Join("\n", result.Errors.Select(x => x.Description)));
-            Environment.Exit(1);
+            await context.SaveChangesAsync();
         }
         
-        await context.SaveChangesAsync();
-
-        var gold = new Badge
+        // GENERATE BADGES
+        if (!context.Badges.Any())
         {
-            Title = "Gold",
-            Description = "Highest marks!",
-            Requirement = 100,
-            BadgeType = BadgeType.Badge,
-            ImagePath = "../img/badge/gold-b",
-            RewardExperience = 50
-        };
+            var gold = new Badge
+            {
+                Title = "Gold",
+                Description = "Highest marks!",
+                Requirement = 100,
+                BadgeType = BadgeType.Badge,
+                ImagePath = "../img/badge/gold-b",
+                RewardExperience = 50
+            };
 
-        var bronze = new Badge
-        {
-            Title = "Bronze",
-            Description = "Good job!",
-            Requirement = 60,
-            BadgeType = BadgeType.Badge,
-            ImagePath = "../img/badge/bronzec-b",
-            RewardExperience = 30
-        };
+            var bronze = new Badge
+            {
+                Title = "Bronze",
+                Description = "Good job!",
+                Requirement = 60,
+                BadgeType = BadgeType.Badge,
+                ImagePath = "../img/badge/bronzec-b",
+                RewardExperience = 30
+            };
 
-        var platinum = new Badge
-        {
-            Title = "Platinum",
-            Description = "You're on fire!",
-            Requirement = 150,
-            BadgeType = BadgeType.Badge,
-            ImagePath = "../img/badge/platinum-b",
-            RewardExperience = 75
-        };
+            var platinum = new Badge
+            {
+                Title = "Platinum",
+                Description = "You're on fire!",
+                Requirement = 150,
+                BadgeType = BadgeType.Badge,
+                ImagePath = "../img/badge/platinum-b",
+                RewardExperience = 75
+            };
 
-        var silver = new Badge
-        {
-            Title = "Silver",
-            Description = "Not too bad!",
-            Requirement = 25,
-            BadgeType = BadgeType.Badge,
-            ImagePath = "../img/badge/silver-b",
-            RewardExperience = 10,
-        };
+            var silver = new Badge
+            {
+                Title = "Silver",
+                Description = "Not too bad!",
+                Requirement = 25,
+                BadgeType = BadgeType.Badge,
+                ImagePath = "../img/badge/silver-b",
+                RewardExperience = 10,
+            };
 
-        context.Badges.AddRange(gold, bronze, platinum, silver);
-        await context.SaveChangesAsync();
-        
-        context.BadgeRequirements.AddRange(new BadgeRequirement
-            {
-                BadgeId = bronze.Id,
-                RequiredBadgeId = silver.Id
-            },
-            new()
-            {
-              BadgeId  = gold.Id,
-              RequiredBadgeId = bronze.Id
-            },
-            new()
-            {
-                BadgeId = platinum.Id,
-                RequiredBadgeId = gold.Id
-            });
-        
-        await context.SaveChangesAsync();
-        
-        context.BadgeProgress.AddRange(new BadgeProgress
-            {
-                BadgeId = silver.Id,
-                Progress = silver.Requirement,
-                IsCompleted = true,
-                UserId = user.Id
-            },
-            new()
-            {
-                BadgeId = bronze.Id,
-                UserId = user.Id,
-                Progress = 22
-            });
-        await context.SaveChangesAsync();
+            context.Badges.AddRange(gold, bronze, platinum, silver);
+            await context.SaveChangesAsync();
+
+            context.BadgeRequirements.AddRange(new BadgeRequirement
+                {
+                    BadgeId = bronze.Id,
+                    RequiredBadgeId = silver.Id
+                },
+                new()
+                {
+                    BadgeId = gold.Id,
+                    RequiredBadgeId = bronze.Id
+                },
+                new()
+                {
+                    BadgeId = platinum.Id,
+                    RequiredBadgeId = gold.Id
+                });
+
+            await context.SaveChangesAsync();
+        }
     }
 }

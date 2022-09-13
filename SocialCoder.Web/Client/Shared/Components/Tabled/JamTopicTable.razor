@@ -1,0 +1,174 @@
+﻿@using SocialCoder.Web.Shared.Requests
+@using SocialCoder.Web.Shared.ViewModels.CodeJam
+@using SocialCoder.Web.Shared.Models.CodeJam
+@using SocialCoder.Web.Client.Models
+@using SocialCoder.Web.Client.Shared.Components.Dialogs
+@inherits QueryComponent
+@inject ICodeJamService _cj
+@inject IDialogService _dialogService
+@inject ISnackbar _snack
+
+<MudContainer Class="mt-3 mb-3">
+    <PaginatedTable TItem="IGetTopicsWithUserInfo_Topics_Items"
+                    @ref="@_table"
+                    FetchDataFunc="FetchData">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Code Jam Topics</MudText>
+            <MudSpacer/>
+            <MudButton StartIcon="@Icons.Filled.Create" IconColor="Color.Info" OnClick="@(async ()=> await ShowDialog(null))">
+                New Topic
+            </MudButton>
+        </ToolBarContent>
+        <ErrorContent>
+            <MudPaper Elevation="3">
+                <MudAlert Severity="Severity.Error" Icon="@Icons.Filled.Error">
+                    <MudText Typo="Typo.h6">@context.Message</MudText>
+                </MudAlert>
+
+                @if (context.Exception is not null)
+                {
+                    <MudText Typo="Typo.subtitle1">
+                        @context.Exception.ToString()
+                    </MudText>
+                }
+
+                <MudText Color="Color.Info" Typo="Typo.caption" Style="font-size: 0.75rem;">
+                    @context.Code
+                </MudText>
+            </MudPaper>
+        </ErrorContent>
+        <HeaderContent>
+            <MudTh>Title</MudTh>
+            <MudTh>Registration</MudTh>
+            <MudTh>Active Period</MudTh>
+            <MudTh>Status</MudTh>
+            <MudTh>Team Applicants</MudTh>
+            <MudTh>Solo Applicants</MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.Title</MudTd>
+            <MudTd>
+                @context.RegistrationStartDate.ToString("d")
+                <MudIcon Icon="@Icons.Filled.ArrowRight" Style="position: relative; top: 7px"/>
+                @context.JamStartDate.ToString("d")
+            </MudTd>
+            <MudTd>
+                @context.JamStartDate.ToString("d")
+                <MudIcon Icon="@Icons.Filled.ArrowRight" Style="position: relative; top: 7px"/>
+                @context.JamEndDate.ToString("d")
+            </MudTd>
+            <MudTd>
+                @{
+                    var state = GetStatus(context);
+
+                    if (!string.IsNullOrEmpty(state.Text))
+                    {
+                        <MudTooltip Text="@state.Text">
+                            <MudIcon Color="Color.Secondary" Icon="@state.Icon"/>
+                        </MudTooltip>
+                    }
+                }
+            </MudTd>
+            <MudTd>@context.TeamApplicants</MudTd>
+            <MudTd>@context.SoloApplicants</MudTd>
+            <MudTd>
+                <MudButton Color="Color.Error" OnClick="@(async () => await DeleteCodeJam(context))">
+                    <MudIcon Icon="@Icons.Filled.Delete"/>
+                </MudButton>
+
+                <MudButton StartIcon="@Icons.Filled.Edit" IconColor="Color.Info" OnClick="@(async () => await ShowDialog(context))">
+
+                </MudButton>
+            </MudTd>
+        </RowTemplate>
+    </PaginatedTable>
+</MudContainer>
+
+@code {
+    private PaginatedTable<IGetTopicsWithUserInfo_Topics_Items> _table;
+    private (string Text, string Icon) GetStatus(IGetTopicsWithUserInfo_Topics_Items topic)
+    {
+        var now = DateTime.UtcNow;
+
+        if (now >= topic.RegistrationStartDate && now <= topic.JamStartDate)
+            return ("Accepting Applicants", Icons.Filled.AppRegistration);
+        
+        if (now >= topic.JamStartDate && now <= topic.JamEndDate)
+            return ("Active", Icons.Filled.Campaign);
+
+        return now >= topic.JamEndDate 
+            ? ("Completed", Icons.Filled.Done) 
+            : (string.Empty, Icons.Filled.AccessTime);
+    }
+
+    private async Task DeleteCodeJam(IGetTopicsWithUserInfo_Topics_Items topic)
+    {
+        var response = await _cj.Delete(topic.TopicId);
+
+        if (!response.Success)
+            _snack.Add(response.Message ?? "Failed to delete topic", Severity.Error);
+        else
+        {
+            _snack.Add("Successfully deleted topic", Severity.Success);
+            _table.RemoveItem(topic);
+            StateHasChanged();
+        }
+    }
+
+    private async Task<QueryResponse<IGetTopicsWithUserInfo_Topics_Items>> FetchData(PageInfo info)
+    {
+        var response = await GraphQLClient.GetTopicsWithUserInfo.ExecuteAsync(info.Take, info.Skip, UserId);
+        
+        return new QueryResponse<IGetTopicsWithUserInfo_Topics_Items>
+        {
+            Errors = response.Errors,
+            Items = response.Data?.Topics?.Items?.ToList() ?? new List<IGetTopicsWithUserInfo_Topics_Items>(),
+            TotalDbCount = response.Data?.Topics?.TotalCount ?? 0
+        };
+    }
+
+    private DialogOptions _options = new()
+    {
+        FullWidth = true,
+        MaxWidth = MaxWidth.Large,
+        Position = DialogPosition.Center
+    };
+    
+    private async Task ShowDialog(IGetTopicsWithUserInfo_Topics_Items? item)
+    {
+        DialogParameters parameters = new();
+        parameters.Add(nameof(TopicDialog.Incoming), item);
+
+        var dialog = _dialogService.Show<TopicDialog>("Topic Dialog", parameters, _options);
+        var result = await dialog.Result;
+
+        if (result.Cancelled || result.Data is null)
+            return;
+
+        var data = (CodeJamTopic) result.Data;
+        
+        // For certain items here provided by GraphQL -- we're just reusing old data
+        // the primary info we wanted to have updated is TOPIC specific
+        var newItem = new GetTopicsWithUserInfo_Topics_Items_CodeJamTopic(
+            item?.IsRegistered ?? false,
+            data.Id,
+            data.BackgroundImageUrl,
+            data.RegistrationStartDate,
+            data.JamStartDate,
+            data.JamEndDate,
+            data.Title,
+            data.Description,
+            item?.SoloApplicants ?? 0,
+            item?.TeamApplicants ?? 0,
+            item?.TotalApplicants ?? 0,
+            data.IsActive);
+
+        if (item is not null)
+            _table.ReplaceItem(x => x.TopicId == item.TopicId, newItem);
+        else
+            _table.Items?.Items.Add(newItem);
+        
+        StateHasChanged();
+    }
+}

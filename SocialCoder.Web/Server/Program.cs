@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SocialCoder.Web.Server;
 using SocialCoder.Web.Server.Data;
+using SocialCoder.Web.Server.GraphQL.CodeJamTopics;
 using SocialCoder.Web.Server.Models;
 using SocialCoder.Web.Server.Services.Contracts;
 using SocialCoder.Web.Server.Services.Implementations;
 using SocialCoder.Web.Shared.Extensions;
+using SocialCoder.Web.Shared.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +17,18 @@ builder.Configuration.AddJsonConfigurationFiles();
 
 // Add services to the container.
 var connectionString = builder.Configuration["DefaultConnection"];
+
+/*
+ *  Having the database as transient prevents multiple queries happening on the
+ *  same DbContext -- which throws an exception.
+ *
+ *  Especially when using GraphQL pulling from multiple endpoints.
+ */
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-});
+    options.UseNpgsql(connectionString);
+}, ServiceLifetime.Transient);
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -70,6 +80,14 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICodeJamService, CodeJamService>();
+
+builder.Services.AddGraphQLServer()
+    .AddQueryType<CodeJamTopicQueries>()
+    .AddTypeExtension<CodeJamTopicQueryExtensions>()
+    .AddProjections()
+    .AddFiltering()
+    .AddSorting();
 
 var app = builder.Build();
 
@@ -96,6 +114,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapGraphQL();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");

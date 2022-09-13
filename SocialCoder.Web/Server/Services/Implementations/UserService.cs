@@ -94,7 +94,30 @@ public class UserService : IUserService
                 string.Join("\n", addLoginResult.Errors.Select(x=>x.Description)));
             return ResultOf<ApplicationUser>.Fail("Unable to add external login provided");
         }
+
+        /*
+           Our application requires at least 1 administrator. Considering the owner of this platform
+           is going to be the FIRST to login - we'll make them administrator. 
+           
+           This does however mean that down the road we SHOULD NOT remove an admin role from a user if no other 
+           user has the admin role. Otherwise a random user who signs up could potentially receive this
+           elevated role...
+        */
+
+        var admins = await _userManager.GetUsersInRoleAsync(Roles.Administrator);
         
+        if(admins.Count > 0)  // If we have admins don't add this user to admin role
+            return ResultOf<ApplicationUser>.Pass(user);
+
+        var roleResult = await _userManager.AddToRoleAsync(user, Roles.Administrator);
+
+        if (!roleResult.Succeeded)
+            _logger.LogError("Was unable to add {Role} to {User}. {Error}",
+                Roles.Administrator,
+                name,
+                string.Join("\n", roleResult.Errors.Select(x => x.Description)));
+        else 
+            _logger.LogInformation("Added {User} to {Role}", name, Roles.Administrator);
         return ResultOf<ApplicationUser>.Pass(user);
     }
 }

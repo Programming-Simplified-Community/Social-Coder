@@ -121,14 +121,14 @@ input BasicUserAccountInfoFilterInput {
   and: [BasicUserAccountInfoFilterInput!]
   or: [BasicUserAccountInfoFilterInput!]
   userId: StringOperationFilterInput
-  email: StringOperationFilterInput
   username: StringOperationFilterInput
+  email: StringOperationFilterInput
 }
 
 input BasicUserAccountInfoSortInput {
   userId: SortEnumType
-  email: SortEnumType
   username: SortEnumType
+  email: SortEnumType
 }
 
 """
@@ -258,8 +258,8 @@ type CodeJamTopic {
 
 type BasicUserAccountInfo {
   userId: String!
-  email: String!
   username: String!
+  email: String!
 }
 
 """

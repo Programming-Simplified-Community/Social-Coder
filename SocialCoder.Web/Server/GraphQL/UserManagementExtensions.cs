@@ -12,7 +12,6 @@ public sealed class UserManagementExtensions
     /// <param name="user"></param>
     /// <param name="cancellationToken"></param>
     /// <param name="context"></param>
-    /// <param name="userId"></param>
     /// <returns></returns>
     public async Task<List<string>> GetUserRoles([Parent] BasicUserAccountInfo user,
         CancellationToken cancellationToken,

@@ -1,0 +1,64 @@
+﻿@page "/Admin/UserManagement"
+@inherits QueryComponent
+@using Microsoft.AspNetCore.Authorization
+@using SocialCoder.Web.Client.Models
+@attribute [Authorize(Roles = Roles.ELEVATED_ROLES)]
+<MudContainer>
+    <PaginatedTable TItem="IGetBasicUserAccounts_Users_Items"
+                    FetchDataFunc="FetchData">
+        <ErrorContent>
+            <MudPaper Elevation="3">
+                <MudAlert Severity="Severity.Error"
+                          Icon="@Icons.Filled.Error">
+                    <MudText Typo="Typo.h6">@context.Message</MudText>
+                </MudAlert>
+                @if (context.Exception is not null)
+                {
+                    <MudText Typo="Typo.subtitle1">
+                        @context.Exception.ToString()
+                    </MudText>
+                }
+                <MudText Typo="Typo.caption" Color="Color.Info" Style="font-size: 0.75rem">
+                    @context.Code
+                </MudText>
+            </MudPaper>
+        </ErrorContent>
+        <HeaderContent>
+            <MudTh>Username</MudTh>
+            <MudTh>Email</MudTh>
+            <MudTh>Roles</MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.Username</MudTd>
+            <MudTd>@context.Email</MudTd>
+            <MudTd>
+                
+            </MudTd>
+            <MudTd>
+                <MudButton StartIcon="@Icons.Filled.TimeToLeave"
+                           IconColor="Color.Tertiary">
+                    Ban
+                </MudButton>
+                <MudButton StartIcon="@Icons.Filled.Delete"
+                           IconColor="Color.Error">
+                    Wipe/Delete
+                </MudButton>
+            </MudTd>
+        </RowTemplate>
+    </PaginatedTable>
+</MudContainer>
+@code {
+
+    private async Task<QueryResponse<IGetBasicUserAccounts_Users_Items>>  FetchData(PageInfo info)
+    {
+        var response = await GraphQLClient.GetBasicUserAccounts.ExecuteAsync(info.Take, info.Skip);
+
+        return new QueryResponse<IGetBasicUserAccounts_Users_Items>
+        {
+            Errors = response.Errors,
+            Items = response.Data?.Users?.Items?.ToList() ?? new List<IGetBasicUserAccounts_Users_Items>(),
+            TotalDbCount = response.Data?.Users?.TotalCount ?? 0
+        };
+    }
+}

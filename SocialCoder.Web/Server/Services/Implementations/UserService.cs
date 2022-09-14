@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Text;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +20,25 @@ public class UserService : IUserService
         _logger = logger;
     }
 
+    /// <summary>
+    /// <para>
+    ///     Checks to see if <paramref name="claimType"/> exists within <paramref name="claims"/>.
+    /// </para>
+    ///
+    /// <para>
+    ///     If it exists, <paramref name="claim"/> will be set to the found claim. Otherwise, it will be null
+    /// </para>
+    /// </summary>
+    /// <param name="claims"></param>
+    /// <param name="claimType"></param>
+    /// <param name="claim"></param>
+    /// <returns>True if <paramref name="claimType"/> exists in <paramref name="claims"/></returns>
+    bool HasClaim(ref List<Claim> claims, string claimType, out Claim? claim)
+    {
+        claim = claims.FirstOrDefault(x => x.Type == claimType);
+        return claim is not null;
+    }
+    
     public async Task<ResultOf<ApplicationUser>> GetUserFromOAuth(AuthenticateResult authResult)
     {
         if (!authResult.Succeeded)
@@ -95,6 +115,22 @@ public class UserService : IUserService
             return ResultOf<ApplicationUser>.Fail("Unable to add external login provided");
         }
 
+        #region Claims we want to capture from an OAuth Provider
+        
+        List<Claim> claimsToAdd = new();
+        
+        // Do we have a github url?
+        if (HasClaim(ref claims, ClaimConstants.GITHUB_URL, out var githubUrl))
+            claimsToAdd.Add(githubUrl!);
+        
+        // Do we have a github name?
+        if(HasClaim(ref claims, ClaimConstants.GITHUB_NAME, out var githubUsername))
+            claimsToAdd.Add(githubUsername!);
+
+        if (claimsToAdd.Any())
+            await _userManager.AddClaimsAsync(user, claimsToAdd);
+        
+        #endregion
         /*
            Our application requires at least 1 administrator. Considering the owner of this platform
            is going to be the FIRST to login - we'll make them administrator. 

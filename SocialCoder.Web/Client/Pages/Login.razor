@@ -35,7 +35,7 @@ else
                                 "twitter" => Icons.Custom.Brands.Twitter,
                                 "instagram" => Icons.Custom.Brands.Instagram,
                                 _ => Icons.Filled.QuestionMark
-                                };
+                            };
 
                             var challengeUrl = $"/api/auth/challenge/{provider.Name}";
                             <MudNavLink Href="@challengeUrl" Icon="@icon">@provider.DisplayName</MudNavLink>

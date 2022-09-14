@@ -86,3 +86,14 @@ the following services:
     - Add Authorized `JavaScript origins`: `https://localhost:7159`
     - Authorized Redirect URIs: `https://localhost:7159/signin-google`
     - Save and grab the `Client ID` and `Client Secret`. Shove this into `Google`. Should be self explanatory that the pattern here is `ProviderName` equals the Service name we're using for OAuth.
+
+#### Github
+
+[Register Github App](https://github.com/settings/applications/new)
+
+- Application name can be whatever you want for testing purposes.
+- Homepage URL
+  - https://github.com/Programming-Simplified-Community/Social-Coder
+- Authorization callback URL
+  - https://localhost:7159/signin-github
+- Grab the ClientID, and ClientSecret and put them in the `appsettings.development.json` file under `Github`

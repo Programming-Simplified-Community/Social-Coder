@@ -1,0 +1,18 @@
+﻿query GetBasicUserAccounts($take: Int, $skip: Int) {
+    users(take: $take, skip: $skip) {
+        totalCount,
+        pageInfo {
+            hasNextPage,
+            hasPreviousPage
+        },
+        items {
+            ...BasicUserInfo
+        }
+    }
+}
+
+fragment BasicUserInfo on BasicUserAccountInfo {
+    userId,
+    username,
+    email
+}

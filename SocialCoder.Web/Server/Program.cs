@@ -100,6 +100,7 @@ builder.Services.AddScoped<ICodeJamService, CodeJamService>();
 builder.Services.AddGraphQLServer()
     .AddQueryType<GraphQLQueries>()
     .AddTypeExtension<CodeJamTopicQueryExtensions>()
+    .AddTypeExtension<UserManagementExtensions>()
     .AddProjections()
     .AddFiltering()
     .AddSorting();

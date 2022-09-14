@@ -260,6 +260,7 @@ type BasicUserAccountInfo {
   userId: String!
   username: String!
   email: String!
+  userRoles: [String!]!
 }
 
 """
@@ -279,12 +280,6 @@ input CodeJamRegistrationFilterInput {
   codeJamTopic: CodeJamTopicFilterInput
 }
 
-type AuthorizeDirective {
-  policy: String
-  roles: [String!]
-  apply: ApplyPolicy!
-}
-
 type CodeJamRegistration {
   id: ID
   userId: String!
@@ -293,6 +288,12 @@ type CodeJamRegistration {
   abandonedOn: DateTime
   preferTeam: Boolean!
   codeJamTopic: CodeJamTopic!
+}
+
+type AuthorizeDirective {
+  policy: String
+  roles: [String!]
+  apply: ApplyPolicy!
 }
 
 enum ApplyPolicy {

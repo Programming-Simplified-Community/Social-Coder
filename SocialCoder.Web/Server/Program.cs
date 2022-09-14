@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SocialCoder.Web.Server;
 using SocialCoder.Web.Server.Data;
-using SocialCoder.Web.Server.GraphQL.CodeJamTopics;
+using SocialCoder.Web.Server.GraphQL;
 using SocialCoder.Web.Server.Models;
 using SocialCoder.Web.Server.Services.Contracts;
 using SocialCoder.Web.Server.Services.Implementations;
 using SocialCoder.Web.Shared.Extensions;
 using SocialCoder.Web.Shared.Services;
+using GraphQLQueries = SocialCoder.Web.Server.GraphQL.GraphQLQueries;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -97,7 +98,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICodeJamService, CodeJamService>();
 
 builder.Services.AddGraphQLServer()
-    .AddQueryType<CodeJamTopicQueries>()
+    .AddQueryType<GraphQLQueries>()
     .AddTypeExtension<CodeJamTopicQueryExtensions>()
     .AddProjections()
     .AddFiltering()

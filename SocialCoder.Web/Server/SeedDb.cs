@@ -21,17 +21,22 @@ public static class SeedDb
         // CREATE ROLES that our application requires to operate (at least base ones)
         if (!context.Roles.Any())
         {
-            var adminRole = await roleManager.CreateAsync(new IdentityRole(Roles.Administrator));
-            var eventCoordinatorRole = await roleManager.CreateAsync(new IdentityRole(Roles.EventCoordinator));
+            var roles = new[]
+            {
+                Roles.Owner,
+                Roles.Administrator,
+                Roles.EventCoordinator
+            };
 
             List<string> errors = new();
-            
-            if (!adminRole.Succeeded)
-                errors.Add(string.Join("\n", adminRole.Errors.Select(x => x.Description)));
-            
-            if (!eventCoordinatorRole.Succeeded)
-                errors.Add(string.Join("\n", eventCoordinatorRole.Errors.Select(x => x.Description)));
 
+            foreach (var roleName in roles)
+            {
+                var result = await roleManager.CreateAsync(new IdentityRole(roleName));
+                if(!result.Succeeded)
+                    errors.Add(string.Join("\n", result.Errors.Select(x=>x.Description)));
+            }
+            
             if (errors.Any())
                 throw new Exception(string.Join("\n", errors));
         }

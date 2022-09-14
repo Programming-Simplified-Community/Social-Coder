@@ -9,7 +9,7 @@
 <AuthorizeView>
     <Authorized>
         @{
-            var isAdmin = context.User.Claims.Any(x => x.Type == ClaimTypes.Role && x.Value == Roles.Administrator);
+            var isAdmin = context.User.Claims.Any(x => x.Type == ClaimTypes.Role && x.Value is Roles.Administrator or Roles.Owner);
             var iconColor = isAdmin ? Color.Tertiary : Color.Inherit;
             var iconClass = isAdmin ? Icons.Filled.AdminPanelSettings : Icons.Filled.ManageAccounts;
         }

@@ -140,12 +140,12 @@ public class UserService : IUserService
            elevated role...
         */
 
-        var admins = await _userManager.GetUsersInRoleAsync(Roles.Administrator);
+        var owners = await _userManager.GetUsersInRoleAsync(Roles.Owner);
         
-        if(admins.Count > 0)  // If we have admins don't add this user to admin role
+        if(owners.Count > 0)  // we need to have an owner which is most likely the first person to login
             return ResultOf<ApplicationUser>.Pass(user);
 
-        var roleResult = await _userManager.AddToRoleAsync(user, Roles.Administrator);
+        var roleResult = await _userManager.AddToRoleAsync(user, Roles.Owner);
 
         if (!roleResult.Succeeded)
             _logger.LogError("Was unable to add {Role} to {User}. {Error}",

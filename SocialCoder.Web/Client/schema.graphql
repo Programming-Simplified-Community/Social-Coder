@@ -1,5 +1,5 @@
 ﻿schema {
-  query: CodeJamTopicQueries
+  query: GraphQLQueries
 }
 
 """
@@ -37,7 +37,7 @@ directive @stream(
   if: Boolean
 ) on FIELD
 
-type CodeJamTopicQueries {
+type GraphQLQueries {
   topics(
     skip: Int
     take: Int
@@ -64,6 +64,32 @@ type CodeJamTopicQueries {
     where: CodeJamTopicFilterInput
     order: [CodeJamTopicSortInput!]
   ): TopicsCollectionSegment
+  users(
+    skip: Int
+    take: Int
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    where: BasicUserAccountInfoFilterInput
+    order: [BasicUserAccountInfoSortInput!]
+  ): UsersCollectionSegment
 }
 
 input CodeJamTopicFilterInput {
@@ -91,6 +117,20 @@ input CodeJamTopicSortInput {
   registrationStartDate: SortEnumType
 }
 
+input BasicUserAccountInfoFilterInput {
+  and: [BasicUserAccountInfoFilterInput!]
+  or: [BasicUserAccountInfoFilterInput!]
+  userId: StringOperationFilterInput
+  email: StringOperationFilterInput
+  username: StringOperationFilterInput
+}
+
+input BasicUserAccountInfoSortInput {
+  userId: SortEnumType
+  email: SortEnumType
+  username: SortEnumType
+}
+
 """
 A segment of a collection.
 """
@@ -104,6 +144,22 @@ type TopicsCollectionSegment {
   A flattened list of the items.
   """
   items: [CodeJamTopic!]
+  totalCount: Int!
+}
+
+"""
+A segment of a collection.
+"""
+type UsersCollectionSegment {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+
+  """
+  A flattened list of the items.
+  """
+  items: [BasicUserAccountInfo!]
   totalCount: Int!
 }
 
@@ -200,6 +256,12 @@ type CodeJamTopic {
   soloApplicants: Int!
 }
 
+type BasicUserAccountInfo {
+  userId: String!
+  email: String!
+  username: String!
+}
+
 """
 The `DateTime` scalar represents an ISO-8601 compliant date time type.
 """
@@ -214,6 +276,13 @@ input CodeJamRegistrationFilterInput {
   registeredOn: DateTimeOperationFilterInput
   abandonedOn: DateTimeOperationFilterInput
   preferTeam: BooleanOperationFilterInput
+  codeJamTopic: CodeJamTopicFilterInput
+}
+
+type AuthorizeDirective {
+  policy: String
+  roles: [String!]
+  apply: ApplyPolicy!
 }
 
 type CodeJamRegistration {
@@ -223,4 +292,10 @@ type CodeJamRegistration {
   registeredOn: DateTime!
   abandonedOn: DateTime
   preferTeam: Boolean!
+  codeJamTopic: CodeJamTopic!
+}
+
+enum ApplyPolicy {
+  BEFORE_RESOLVER
+  AFTER_RESOLVER
 }

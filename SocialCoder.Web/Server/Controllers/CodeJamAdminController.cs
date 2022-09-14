@@ -14,13 +14,13 @@ namespace SocialCoder.Web.Server.Controllers;
 
 public partial class CodeJamController
 {
-    [Authorize(Roles = Roles.Administrator),
+    [Authorize(Roles = Roles.ELEVATED_ROLES),
      Route("/api/[controller]/admin/topics/{topicId:int}"),
      HttpDelete]
     public async Task<ResultOf> DeleteTopic([FromRoute] int topicId, CancellationToken cancellationToken)
         => await _cj.Delete(topicId, cancellationToken);
 
-    [Authorize(Roles = Roles.Administrator),
+    [Authorize(Roles = Roles.ELEVATED_ROLES),
      HttpPut,
      Route("/api/[controller]/admin/topics/{topicId:int}")]
     public async Task<ResultOf<CodeJamTopic>> AdminUpdateTopic([FromRoute] int topicId, [FromBody] CodeJamTopic topic,
@@ -32,7 +32,7 @@ public partial class CodeJamController
         return await _cj.AdminUpdateTopic(topic, cancellationToken);
     }
 
-    [Authorize(Roles = Roles.Administrator),
+    [Authorize(Roles = Roles.ELEVATED_ROLES),
      HttpPost,
      Route("/api/[controller]/admin/topics/create")]
     public async Task<ResultOf<CodeJamTopic>> AdminCreateTopic([FromBody] CodeJamTopic topic,

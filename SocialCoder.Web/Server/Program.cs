@@ -73,6 +73,20 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Scope.Add("identify");
         options.Scope.Add("email");
     })
+    .AddGitHub(options =>
+    {
+        options.SignInScheme = IdentityConstants.ExternalScheme;
+        options.ClientId = builder.Configuration["Authentication:Github:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:Github:ClientSecret"];
+
+        options.Scope.Add("public_repo");
+        options.Scope.Add("read:org");
+        options.Scope.Add("gist");
+        options.Scope.Add("read:user");
+        options.Scope.Add("user:email");
+        options.Scope.Add("user:follow");
+        options.Scope.Add("read:project");
+    })
     .AddCookie();
 
 

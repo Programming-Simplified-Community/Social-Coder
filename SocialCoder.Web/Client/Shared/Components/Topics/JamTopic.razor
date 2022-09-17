@@ -1,5 +1,4 @@
-﻿@inject HttpClient Client
-@inject ISnackbar Snack
+﻿@inject ISnackbar Snack
 @inject ICodeJamService Cj
 
 <MudItem md="4">
@@ -101,7 +100,7 @@
         base.OnInitialized();
         Console.WriteLine($"UserId: {UserId}");
         _image = string.IsNullOrEmpty(Model.BackgroundImageUrl) 
-            ? Images.RandomBackgroundImage() 
+            ? Images.RandomBackgroundImage()  
             : Model.BackgroundImageUrl;
         _image = $"background-image: url(\"{_image}\");";
     }

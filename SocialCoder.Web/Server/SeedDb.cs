@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Caching.Memory;
 using SocialCoder.Web.Server.Data;
-using SocialCoder.Web.Server.Models;
 using SocialCoder.Web.Shared;
 using SocialCoder.Web.Shared.Models;
 

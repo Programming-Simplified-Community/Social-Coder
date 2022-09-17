@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using System.Text;
 using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;

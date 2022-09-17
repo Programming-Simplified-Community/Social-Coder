@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SocialCoder.Web.Shared;
-using SocialCoder.Web.Shared.Models.CodeJam;
-using SocialCoder.Web.Shared.Requests;
-using SocialCoder.Web.Shared.ViewModels.CodeJam;
 
 namespace SocialCoder.Web.Server.Controllers;
 

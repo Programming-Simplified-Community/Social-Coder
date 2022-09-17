@@ -1,11 +1,8 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using SocialCoder.Web.Server.Models;
 using SocialCoder.Web.Server.Services.Contracts;
 using SocialCoder.Web.Shared;
-using SocialCoder.Web.Shared.Requests;
 using SocialCoder.Web.Shared.Requests.CodeJam;
 using SocialCoder.Web.Shared.ViewModels.CodeJam;
 

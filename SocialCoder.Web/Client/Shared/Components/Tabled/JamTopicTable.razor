@@ -4,9 +4,9 @@
 @using SocialCoder.Web.Client.Models
 @using SocialCoder.Web.Client.Shared.Components.Dialogs
 @inherits QueryComponent
-@inject ICodeJamService _cj
-@inject IDialogService _dialogService
-@inject ISnackbar _snack
+@inject ICodeJamService Cj
+@inject IDialogService DialogService
+@inject ISnackbar Snack
 
 <MudContainer Class="mt-3 mb-3">
     <PaginatedTable TItem="IGetTopicsWithUserInfo_Topics_Items"
@@ -86,6 +86,10 @@
 </MudContainer>
 
 @code {
+
+    [CascadingParameter(Name = "UserId")]
+    public string UserId { get; set; }
+
     private PaginatedTable<IGetTopicsWithUserInfo_Topics_Items> _table;
     private (string Text, string Icon) GetStatus(IGetTopicsWithUserInfo_Topics_Items topic)
     {
@@ -104,13 +108,13 @@
 
     private async Task DeleteCodeJam(IGetTopicsWithUserInfo_Topics_Items topic)
     {
-        var response = await _cj.Delete(topic.TopicId);
+        var response = await Cj.Delete(topic.TopicId, UserId);
 
         if (!response.Success)
-            _snack.Add(response.Message ?? "Failed to delete topic", Severity.Error);
+            Snack.Add(response.Message ?? "Failed to delete topic", Severity.Error);
         else
         {
-            _snack.Add("Successfully deleted topic", Severity.Success);
+            Snack.Add("Successfully deleted topic", Severity.Success);
             _table.RemoveItem(topic);
             StateHasChanged();
         }
@@ -140,7 +144,7 @@
         DialogParameters parameters = new();
         parameters.Add(nameof(TopicDialog.Incoming), item);
 
-        var dialog = _dialogService.Show<TopicDialog>("Topic Dialog", parameters, _options);
+        var dialog = DialogService.Show<TopicDialog>("Topic Dialog", parameters, _options);
         var result = await dialog.Result;
 
         if (result.Cancelled || result.Data is null)

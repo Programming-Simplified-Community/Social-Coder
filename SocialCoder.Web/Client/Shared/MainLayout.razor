@@ -1,5 +1,8 @@
 ﻿@using MudBlazor.Utilities
+@using Blazored.LocalStorage
 @inherits LayoutComponentBase
+
+@inject ILocalStorageService _storage
 
 <MudThemeProvider Theme="_theme" IsDarkMode="true" />
 <MudDialogProvider />
@@ -19,12 +22,15 @@
         <NavMenu/>
     </MudDrawer>
     <MudMainContent>
-        @Body
+        <CascadingValue Name="UserId" TValue="string" Value="_userId">
+            @Body
+        </CascadingValue>
     </MudMainContent>
 </MudLayout>
 
 @code {
     bool _drawerOpen;
+    string _userId;
 
     readonly MudTheme _theme = new()
     {
@@ -41,6 +47,12 @@
             Surface = new MudColor("1d2333")
         }
     };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _userId = await _storage.GetItemAsStringAsync(Constants.UserId);
+    }
 
     void DrawerToggle()
     {

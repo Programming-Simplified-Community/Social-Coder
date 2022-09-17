@@ -90,13 +90,16 @@
     [Parameter]
     public IGetTopicsWithUserInfo_Topics_Items Model { get; set; }
 
+    [CascadingParameter(Name = "UserId")]
+    public string UserId { get; set; }
+
     string _image;
     Dictionary<string, object> backgroundAttributes = new();
     
     protected override void OnInitialized()
     {
         base.OnInitialized();
-
+        Console.WriteLine($"UserId: {UserId}");
         _image = string.IsNullOrEmpty(Model.BackgroundImageUrl) 
             ? Images.RandomBackgroundImage() 
             : Model.BackgroundImageUrl;
@@ -112,12 +115,12 @@
             {
                 PreferTeam = isTeam,
                 TopicId = Model.TopicId
-            }, string.Empty);
+            }, UserId);
         else
             response = await Cj.Abandon(new()
             {
                 TopicId = Model.TopicId
-            }, string.Empty);
+            }, UserId);
 
         if (!response.Success || response.Data is null)
         {
@@ -127,13 +130,13 @@
 
         Snack.Add(Model.IsRegistered ? $"Successfully withdrawn from {Model.Title}" : $"Successfully registered for {Model.Title}", Severity.Success);
         Model = new GetTopicsWithUserInfo_Topics_Items_CodeJamTopic(response.Data.IsRegistered,
-            response.Data.Topic.Id,
-            response.Data.Topic.BackgroundImageUrl,
-            response.Data.Topic.RegistrationStartDate,
-            response.Data.Topic.JamStartDate,
-            response.Data.Topic.JamEndDate,
-            response.Data.Topic.Title,
-            response.Data.Topic.Description,
+            Model.TopicId,
+            Model.BackgroundImageUrl,
+            Model.RegistrationStartDate,
+            Model.JamStartDate,
+            Model.JamEndDate,
+            Model.Title,
+            Model.Description,
             response.Data.TotalSoloApplicants,
             response.Data.TotalTeamApplicants,
             response.Data.TotalApplicants, true);        

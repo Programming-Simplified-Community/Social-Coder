@@ -1,0 +1,11 @@
+﻿mutation RegisterCodeJam($topicId: Int!, $preferTeam: Boolean!, $userId: String!) {
+    register(request: {topicId: $topicId, preferTeam: $preferTeam}, userId: $userId) {
+        success,
+        message,
+        data {
+            totalTeamApplicants,
+            totalSoloApplicants,
+            totalApplicants
+        }
+    }
+}

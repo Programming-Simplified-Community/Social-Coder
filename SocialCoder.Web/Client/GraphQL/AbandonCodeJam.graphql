@@ -1,0 +1,11 @@
+﻿mutation AbandonCodeJam($topicId: Int!, $userId: String!) {
+    abandon(request: { topicId: $topicId }, userId: $userId) {
+        success,
+        message,
+        data {
+            totalSoloApplicants,
+            totalApplicants,
+            totalTeamApplicants
+        }
+    }    
+}

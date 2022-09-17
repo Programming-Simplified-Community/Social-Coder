@@ -1,9 +1,7 @@
-﻿using System.Net.Http.Json;
+﻿using SocialCoder.Web.Client.Services.Contracts;
 using SocialCoder.Web.Shared;
 using SocialCoder.Web.Shared.Models.CodeJam;
-using SocialCoder.Web.Shared.Requests;
 using SocialCoder.Web.Shared.Requests.CodeJam;
-using SocialCoder.Web.Shared.Services;
 using SocialCoder.Web.Shared.ViewModels.CodeJam;
 using StrawberryShake;
 
@@ -11,13 +9,11 @@ namespace SocialCoder.Web.Client.Services.Implementations;
 
 public class CodeJamService : ICodeJamService
 {
-    private readonly HttpClient _client;
     private readonly ILogger<CodeJamService> _logger;
     private readonly SocialCoderGraphQLClient _graph;
     
-    public CodeJamService(HttpClient client, ILogger<CodeJamService> logger, SocialCoderGraphQLClient graph)
+    public CodeJamService(ILogger<CodeJamService> logger, SocialCoderGraphQLClient graph)
     {
-        _client = client;
         _logger = logger;
         _graph = graph;
     }
@@ -53,7 +49,7 @@ public class CodeJamService : ICodeJamService
         
         return ResultOf<CodeJamTopic>.Pass(new CodeJamTopic
         {
-            Id = data.TopicId,
+            Id = data!.TopicId,
             Title = data.Title,
             Description = data.Description,
             BackgroundImageUrl = data.BackgroundImageUrl,
@@ -63,18 +59,14 @@ public class CodeJamService : ICodeJamService
         });
     }
 
-    public async Task<ResultOf> Delete(int topicId, CancellationToken cancellationToken = default)
+    public async Task<ResultOf> Delete(int topicId, string userId, CancellationToken cancellationToken = default)
     {
         var response = await _graph.DeleteCodeJamTopic.ExecuteAsync(topicId, cancellationToken);
 
-        if (response.IsErrorResult() || response.Data is null)
-        {
-            var errors = string.Join("\n", response.Errors.Select(x => x.Message));
-            _logger.LogError("Error with GraphQL: {Error}", errors);
-            return ResultOf.Fail(errors);
-        }
-        
-        return ResultOf.Pass();
+        if (!response.IsErrorResult() && response.Data is not null) return ResultOf.Pass();
+        var errors = string.Join("\n", response.Errors.Select(x => x.Message));
+        _logger.LogError("Error with GraphQL: {Error}", errors);
+        return ResultOf.Fail(errors);
     }
 
     public async Task<ResultOf<CodeJamTopic>> AdminUpdateTopic(CodeJamTopic topic, CancellationToken cancellationToken = default)
@@ -118,18 +110,6 @@ public class CodeJamService : ICodeJamService
     #endregion
 
     /// <summary>
-    /// Here for now. Trying to keep API between server/client as similar as possible.
-    /// </summary>
-    /// <param name="topicId"></param>
-    /// <param name="userId"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public Task<ResultOf<CodeJamViewModel>> GetTopic(int topicId, string? userId,
-        CancellationToken cancellationToken = default)
-        => throw new NotImplementedException();
-
-    /// <summary>
     /// 
     /// </summary>
     /// <param name="request"></param>
@@ -141,17 +121,29 @@ public class CodeJamService : ICodeJamService
     ///     behalf maybe? If something broke? For now this is fine?
     /// </remarks>
     /// <returns></returns>
-    public async Task<ResultOf<CodeJamViewModel>> Register(CodeJamRegistrationRequest request, string? userId,
+    public async Task<ResultOf<CodeJamViewModel>> Register(CodeJamRegistrationRequest request, string userId,
         CancellationToken cancellationToken = default)
     {
         var response =
-            await _client.PostAsJsonAsync(string.Format(Endpoints.CODE_JAM_POST_TOPIC_REGISTER, request.TopicId), request, cancellationToken);
+            await _graph.RegisterCodeJam.ExecuteAsync(request.TopicId, request.PreferTeam, userId, cancellationToken);
+
+        if (response.IsErrorResult() || response.Data is null)
+        {
+            var errors = string.Join("\n", response.Errors.Select(x => x.Message));
+            _logger.LogError("Error with GraphQL {Method}, {Error}", nameof(Register), errors);
+            return ResultOf<CodeJamViewModel>.Fail(errors);
+        }
         
-        if(!response.IsSuccessStatusCode)
-            return ResultOf<CodeJamViewModel>.Fail(response.ReasonPhrase!);
-        
-        return await response.Content.ReadFromJsonAsync<ResultOf<CodeJamViewModel>>(
-            cancellationToken: cancellationToken) ?? ResultOf<CodeJamViewModel>.Fail("Failed to parse");
+        if(!response.Data.Register.Success)
+            return ResultOf<CodeJamViewModel>.Fail(response.Data.Register.Message ?? "Error registering");
+
+        var data = response.Data.Register.Data!;
+        return ResultOf<CodeJamViewModel>.Pass(new()
+        {
+            TotalSoloApplicants = data.TotalSoloApplicants,
+            TotalTeamApplicants = data.TotalTeamApplicants,
+            IsRegistered = true
+        });
     }
     
     /// <summary>
@@ -164,17 +156,27 @@ public class CodeJamService : ICodeJamService
     ///     Same remarks as <see cref="Register"/>
     /// </remarks>
     /// <returns></returns>
-    public async Task<ResultOf<CodeJamViewModel>> Abandon(CodeJamAbandonRequest request, string? userId,
+    public async Task<ResultOf<CodeJamViewModel>> Abandon(CodeJamAbandonRequest request, string userId,
         CancellationToken cancellationToken = default)
     {
-        var response =
-            await _client.PostAsJsonAsync(string.Format(Endpoints.CODE_JAM_POST_TOPIC_WITHDRAW, request.TopicId), request, cancellationToken);
-        
-        if(!response.IsSuccessStatusCode)
-            return ResultOf<CodeJamViewModel>.Fail(response.ReasonPhrase!);
-        
-        var item = await response.Content.ReadFromJsonAsync<ResultOf<CodeJamViewModel>>(cancellationToken: cancellationToken);
+        var response = await _graph.AbandonCodeJam.ExecuteAsync(request.TopicId, userId, cancellationToken);
 
-        return item ?? ResultOf<CodeJamViewModel>.Fail("Failed to parse");
+        if (response.IsErrorResult() || response.Data is null)
+        {
+            var errors = string.Join("\n", response.Errors.Select(x => x.Message));
+            _logger.LogError("Error with GraphQL {Method}, {Error}", nameof(Abandon), errors);
+            return ResultOf<CodeJamViewModel>.Fail(errors);
+        }
+        
+        if(!response.Data.Abandon.Success)
+            return ResultOf<CodeJamViewModel>.Fail(response.Data.Abandon.Message ?? "Error abandoned");
+
+        var data = response.Data.Abandon.Data!;
+        return ResultOf<CodeJamViewModel>.Pass(new()
+        {
+            TotalSoloApplicants = data.TotalSoloApplicants,
+            TotalTeamApplicants = data.TotalTeamApplicants,
+            IsRegistered = false
+        });
     }
 }

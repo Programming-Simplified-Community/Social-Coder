@@ -63,3 +63,8 @@
         </LoadingContent>
     </UseGetTopicsWithUserInfo>
 </MudGrid>
+
+@code{
+    [CascadingParameter(Name = "UserId")]
+    public string UserId { get; set; }
+}

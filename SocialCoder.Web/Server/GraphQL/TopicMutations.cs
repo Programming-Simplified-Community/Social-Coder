@@ -1,14 +1,26 @@
 ﻿using HotChocolate.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using SocialCoder.Web.Server.Data;
+using SocialCoder.Web.Server.Services.Contracts;
 using SocialCoder.Web.Shared;
 using SocialCoder.Web.Shared.Models.CodeJam;
 using SocialCoder.Web.Shared.Requests.CodeJam;
+using SocialCoder.Web.Shared.ViewModels.CodeJam;
 
 namespace SocialCoder.Web.Server.GraphQL;
 
 public partial class GraphQLMutations
 {
+    [UseMutationConvention, Authorize]
+    public async Task<ResultOf<CodeJamViewModel>> Register(CodeJamRegistrationRequest request, string userId,
+        [Service] ICodeJamService cj, CancellationToken cancellationToken)
+        => await cj.Register(request, userId, cancellationToken);
+    
+    [UseMutationConvention, Authorize]
+    public async Task<ResultOf<CodeJamViewModel>> Abandon(CodeJamAbandonRequest request, string userId,
+        [Service] ICodeJamService cj, CancellationToken cancellationToken)
+        => await cj.Abandon(request, userId, cancellationToken);
+
     [UseMutationConvention, Authorize(Roles = new []{ Roles.Administrator, Roles.Owner})]
     public async Task<ResultOf<CodeJamTopic>> UpdateTopic(UpdateCodeJamTopicRequest request,
         [Service] ApplicationDbContext context,

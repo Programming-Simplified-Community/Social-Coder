@@ -94,6 +94,14 @@ type GraphQLQueries {
 }
 
 type GraphQLMutations {
+  register(
+    request: CodeJamRegistrationRequestInput!
+    userId: String!
+  ): ResultOfOfCodeJamViewModel!
+  abandon(
+    request: CodeJamAbandonRequestInput!
+    userId: String!
+  ): ResultOfOfCodeJamViewModel!
   updateTopic(request: UpdateCodeJamTopicRequestInput!): ResultOfOfCodeJamTopic!
   deleteTopic(topicId: Int!): ResultOf!
   createTopic(request: CreateCodeJamTopicRequestInput!): ResultOfOfCodeJamTopic!
@@ -287,7 +295,29 @@ input CodeJamRegistrationFilterInput {
   codeJamTopic: CodeJamTopicFilterInput
 }
 
-type ResultOf {
+input CodeJamAbandonRequestInput {
+  topicId: Int!
+}
+
+input CodeJamRegistrationRequestInput {
+  topicId: Int!
+  preferTeam: Boolean!
+}
+
+type ResultOfOfCodeJamViewModel {
+  data: CodeJamViewModel
+  message: String
+  success: Boolean!
+}
+
+type AuthorizeDirective {
+  policy: String
+  roles: [String!]
+  apply: ApplyPolicy!
+}
+
+type ResultOfOfCodeJamTopic {
+  data: CodeJamTopic
   message: String
   success: Boolean!
 }
@@ -303,16 +333,9 @@ input UpdateCodeJamTopicRequestInput {
   jamRegistrationStart: DateTime!
 }
 
-type ResultOfOfCodeJamTopic {
-  data: CodeJamTopic
+type ResultOf {
   message: String
   success: Boolean!
-}
-
-type AuthorizeDirective {
-  policy: String
-  roles: [String!]
-  apply: ApplyPolicy!
 }
 
 input CreateCodeJamTopicRequestInput {
@@ -337,4 +360,14 @@ type CodeJamRegistration {
 enum ApplyPolicy {
   BEFORE_RESOLVER
   AFTER_RESOLVER
+}
+
+type CodeJamViewModel {
+  topic: CodeJamTopic!
+  isRegistered: Boolean!
+  registerUrl: String!
+  abandonUrl: String!
+  totalTeamApplicants: Int!
+  totalSoloApplicants: Int!
+  totalApplicants: Int!
 }

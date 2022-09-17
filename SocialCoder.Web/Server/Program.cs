@@ -8,7 +8,6 @@ using SocialCoder.Web.Server.Models;
 using SocialCoder.Web.Server.Services.Contracts;
 using SocialCoder.Web.Server.Services.Implementations;
 using SocialCoder.Web.Shared.Extensions;
-using SocialCoder.Web.Shared.Services;
 using GraphQLQueries = SocialCoder.Web.Server.GraphQL.GraphQLQueries;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -1,6 +1,6 @@
 ﻿schema {
   query: GraphQLQueries
-  mutation: GraphQLMutations
+  mutation: GraphQlMutations
 }
 
 """
@@ -65,6 +65,7 @@ type GraphQLQueries {
     where: CodeJamTopicFilterInput
     order: [CodeJamTopicSortInput!]
   ): TopicsCollectionSegment
+  roles: [BasicRoleInfo!]!
   users(
     skip: Int
     take: Int
@@ -93,7 +94,7 @@ type GraphQLQueries {
   ): UsersCollectionSegment
 }
 
-type GraphQLMutations {
+type GraphQlMutations {
   register(
     request: CodeJamRegistrationRequestInput!
     userId: String!
@@ -105,6 +106,15 @@ type GraphQLMutations {
   updateTopic(request: UpdateCodeJamTopicRequestInput!): ResultOfOfCodeJamTopic!
   deleteTopic(topicId: Int!): ResultOf!
   createTopic(request: CreateCodeJamTopicRequestInput!): ResultOfOfCodeJamTopic!
+  addRoleToUser(
+    request: AddRoleToUserRequestInput!
+    callingUser: String!
+  ): ResultOf!
+  removeRoleFromUser(
+    request: RemoveRoleFromUserRequestInput!
+    callingUser: String!
+  ): ResultOf!
+  banUser(request: BanUserRequestInput!, callingUser: String!): ResultOf!
 }
 
 input CodeJamTopicFilterInput {
@@ -295,10 +305,6 @@ input CodeJamRegistrationFilterInput {
   codeJamTopic: CodeJamTopicFilterInput
 }
 
-input CodeJamAbandonRequestInput {
-  topicId: Int!
-}
-
 input CodeJamRegistrationRequestInput {
   topicId: Int!
   preferTeam: Boolean!
@@ -310,10 +316,19 @@ type ResultOfOfCodeJamViewModel {
   success: Boolean!
 }
 
+type BasicRoleInfo {
+  roleId: String!
+  name: String!
+}
+
 type AuthorizeDirective {
   policy: String
   roles: [String!]
   apply: ApplyPolicy!
+}
+
+input CodeJamAbandonRequestInput {
+  topicId: Int!
 }
 
 type ResultOfOfCodeJamTopic {
@@ -345,6 +360,22 @@ input CreateCodeJamTopicRequestInput {
   jamStartDate: DateTime!
   jamEndDate: DateTime!
   jamRegistrationStart: DateTime!
+}
+
+input AddRoleToUserRequestInput {
+  userId: String!
+  roleName: String!
+}
+
+input RemoveRoleFromUserRequestInput {
+  userId: String!
+  roleName: String!
+  reason: String
+}
+
+input BanUserRequestInput {
+  userId: String!
+  reason: String!
 }
 
 type CodeJamRegistration {

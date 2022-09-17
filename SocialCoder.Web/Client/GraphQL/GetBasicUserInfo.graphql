@@ -1,4 +1,8 @@
 ﻿query GetBasicUserAccounts($take: Int, $skip: Int) {
+    roles {
+        roleId,
+        name
+    },
     users(take: $take, skip: $skip) {
         totalCount,
         pageInfo {

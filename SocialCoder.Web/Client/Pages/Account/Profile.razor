@@ -1,0 +1,73 @@
+﻿@page "/Account/Profile"
+@layout AccountLayout
+
+<MudContainer Class="mt-3">
+    <PageHeader Type="PageType.AccountHub" 
+                Title="Account Hub" 
+                Subtitle="Profile Info, messages, settings, and much more!"/>
+    
+    <MudGrid Justify="Justify.Center" Spacing="3" Class="mt-3">
+        
+        <MudItem md="6" sm="12">
+            <MudGrid>
+                <MudItem md="12">
+                    <MudPaper Elevation="3" Style="padding: 1rem;">
+                        <MudText Typo="Typo.h6">Personal Info</MudText>
+                        <MudTextField T="string" Label="Display Name"/>
+                        <MudTextField T="string" Label="Username" Required/>
+                        <MudTextField T="string" Label="Email" ReadOnly/>
+                        <MudTextField T="string" Label="Country"/>
+                        <MudTextField T="string" Label="Language"/>
+                    </MudPaper>
+                </MudItem>
+                <MudItem md="12">
+                    <MudPaper Elevation="3" Style="padding: 1rem;">
+                        <MudText Typo="Typo.h6">Privacy Notice</MudText>
+        
+                        <MudText Typo="Typo.body1">
+                            This application only consumes data you provide. Keep in mind this is an application tailored towards
+                            developers!
+                        </MudText>
+        
+                        <MudText Typo="Typo.body1" Class="mt-3">
+                            With that being said, here's a list of information we use and why
+                        </MudText>
+        
+                        <MudList>
+                            <MudListItem>
+                                <strong>Email</strong>: used to uniquely identify your account in our system. We do not share this info, nor send you emails.
+                                ... we already get too many emails this day in age.
+                            </MudListItem>
+                            <MudListItem>
+                                <strong>Github</strong>: as the appname should indicate... we're tailored towards developers! Therefore we only request access
+                                to your publicly available information from Github. Repos, commits, etc. All in hopes of making it easier for devs to discover
+                                projects, groups, in addition to tying into our challenge service!
+                            </MudListItem>
+                            <MudListItem>
+                                <strong>Login</strong>: We want nothing to do with your login credentials. This is why we strictly use OAuth from large companies such as
+                                Google, Github, and Discord who have dedicated resources.
+                            </MudListItem>
+                        </MudList>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+        
+        <MudItem md="6" sm="12">
+            <MudGrid>
+                <MudItem md="12">
+                    <MudCard Elevation="3">
+                        <MudCardHeader><MudText Typo="Typo.h6">Programming Experience</MudText></MudCardHeader>
+                        <MudCardContent>
+                            <MudTextField T="string" Label=""/>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+            </MudGrid>            
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    
+}

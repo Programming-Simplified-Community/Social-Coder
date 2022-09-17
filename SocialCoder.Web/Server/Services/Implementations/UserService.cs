@@ -258,11 +258,11 @@ public class UserService : IUserService
         List<Claim> claimsToAdd = new();
         
         // Do we have a github url?
-        if (HasClaim(ref claims, ClaimConstants.GITHUB_URL, out var githubUrl))
+        if (HasClaim(ref claims, ClaimConstants.GithubUrl, out var githubUrl))
             claimsToAdd.Add(githubUrl!);
         
         // Do we have a github name?
-        if(HasClaim(ref claims, ClaimConstants.GITHUB_NAME, out var githubUsername))
+        if(HasClaim(ref claims, ClaimConstants.GithubName, out var githubUsername))
             claimsToAdd.Add(githubUsername!);
 
         if (claimsToAdd.Any())

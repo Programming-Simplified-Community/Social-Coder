@@ -1,4 +1,4 @@
-﻿@inject ICodeJamService _cj
+﻿@inject ICodeJamService Cj
 
 <MudDialog>
     <DialogContent>
@@ -105,9 +105,9 @@
         _topic.RegistrationStartDate = _registrationDate ?? now;
 
         if (_topic.Id > 0) // already exists in the database
-            response = await _cj.AdminUpdateTopic(_topic);
+            response = await Cj.AdminUpdateTopic(_topic);
         else
-            response = await _cj.AdminCreateTopic(_topic);
+            response = await Cj.AdminCreateTopic(_topic);
 
         if (!response.Success)
         {

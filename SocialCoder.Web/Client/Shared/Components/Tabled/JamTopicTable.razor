@@ -122,7 +122,7 @@
 
     private async Task<QueryResponse<IGetTopicsWithUserInfo_Topics_Items>> FetchData(PageInfo info)
     {
-        var response = await GraphQLClient.GetTopicsWithUserInfo.ExecuteAsync(info.Take, info.Skip, UserId);
+        var response = await GraphQlClient.GetTopicsWithUserInfo.ExecuteAsync(info.Take, info.Skip, UserId);
         
         return new QueryResponse<IGetTopicsWithUserInfo_Topics_Items>
         {

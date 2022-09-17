@@ -9,7 +9,7 @@ using SocialCoder.Web.Shared.ViewModels.CodeJam;
 
 namespace SocialCoder.Web.Server.GraphQL;
 
-public partial class GraphQLMutations
+public partial class GraphQlMutations
 {
     [UseMutationConvention, Authorize]
     public async Task<ResultOf<CodeJamViewModel>> Register(CodeJamRegistrationRequest request, string userId,

@@ -100,7 +100,7 @@ builder.Services.AddGraphQLServer()
     .AddQueryType<GraphQLQueries>()
     .AddTypeExtension<CodeJamTopicQueryExtensions>()
     .AddTypeExtension<UserManagementExtensions>()
-    .AddMutationType<GraphQLMutations>()
+    .AddMutationType<GraphQlMutations>()
     .AddProjections()
     .AddFiltering()
     .AddSorting();

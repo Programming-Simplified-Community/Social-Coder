@@ -7,6 +7,6 @@ namespace SocialCoder.Web.Client.Components;
 /// </summary>
 public abstract class QueryComponent : ComponentBase
 {
-    [Inject] protected SocialCoderGraphQLClient GraphQLClient { get; set; }
+    [Inject] protected SocialCoderGraphQLClient GraphQlClient { get; set; }
     [Inject] protected ILogger<QueryComponent> Logger { get; set; }
 }

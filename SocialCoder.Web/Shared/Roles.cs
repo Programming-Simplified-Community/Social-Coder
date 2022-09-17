@@ -21,5 +21,5 @@ public static class Roles
     /// <summary>
     /// Comma separated string containing roles that are considered elevated
     /// </summary>
-    public const string ELEVATED_ROLES = $"{Owner},{Administrator}";
+    public const string ElevatedRoles = $"{Owner},{Administrator}";
 }

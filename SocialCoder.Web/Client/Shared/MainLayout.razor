@@ -2,7 +2,7 @@
 @using Blazored.LocalStorage
 @inherits LayoutComponentBase
 
-@inject ILocalStorageService _storage
+@inject ILocalStorageService Storage
 
 <MudThemeProvider Theme="_theme" IsDarkMode="true" />
 <MudDialogProvider />
@@ -51,7 +51,7 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        _userId = await _storage.GetItemAsStringAsync(Constants.UserId);
+        _userId = await Storage.GetItemAsStringAsync(Constants.UserId);
     }
 
     void DrawerToggle()

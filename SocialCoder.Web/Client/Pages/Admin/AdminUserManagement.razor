@@ -2,7 +2,7 @@
 @inherits QueryComponent
 @using Microsoft.AspNetCore.Authorization
 @using SocialCoder.Web.Client.Models
-@attribute [Authorize(Roles = Roles.ELEVATED_ROLES)]
+@attribute [Authorize(Roles = Roles.ElevatedRoles)]
 <MudContainer>
     <PaginatedTable TItem="IGetBasicUserAccounts_Users_Items"
                     FetchDataFunc="FetchData">
@@ -63,7 +63,7 @@
 
     private async Task<QueryResponse<IGetBasicUserAccounts_Users_Items>>  FetchData(PageInfo info)
     {
-        var response = await GraphQLClient.GetBasicUserAccounts.ExecuteAsync(info.Take, info.Skip);
+        var response = await GraphQlClient.GetBasicUserAccounts.ExecuteAsync(info.Take, info.Skip);
 
         return new QueryResponse<IGetBasicUserAccounts_Users_Items>
         {

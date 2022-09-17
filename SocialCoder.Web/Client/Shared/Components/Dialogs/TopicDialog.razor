@@ -59,7 +59,7 @@
     [CascadingParameter]
     private MudDialogInstance Dialog { get; set; }
 
-    private CodeJamTopic _topic = new();
+    private readonly CodeJamTopic _topic = new();
     DateRange? _activeRange;
     DateTime? _registrationDate = DateTime.Now;
 

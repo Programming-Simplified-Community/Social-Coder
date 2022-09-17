@@ -6,7 +6,7 @@ namespace SocialCoder.Web.Shared.Extensions;
 
 public static class ImageEnumExtensions
 {
-    private static Dictionary<PageType, string> _pathTypeCache = new();
+    private static readonly Dictionary<PageType, string> _pathTypeCache = new();
 
     public static string? GetImagePath(this PageType imageType)
     {

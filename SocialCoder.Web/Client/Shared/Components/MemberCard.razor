@@ -84,8 +84,8 @@
     string Username => Model?.Username ?? string.Empty;
     string AlternativeName => Model?.AlternateName ?? string.Empty;
     int _count = 0;
-    
-    MudTheme _theme = new();
+
+    readonly MudTheme _theme = new();
 
     string[] _colors = Array.Empty<string>();
     

@@ -19,23 +19,4 @@ public partial class CodeJamController
      HttpDelete]
     public async Task<ResultOf> DeleteTopic([FromRoute] int topicId, CancellationToken cancellationToken)
         => await _cj.Delete(topicId, cancellationToken);
-
-    [Authorize(Roles = Roles.ELEVATED_ROLES),
-     HttpPut,
-     Route("/api/[controller]/admin/topics/{topicId:int}")]
-    public async Task<ResultOf<CodeJamTopic>> AdminUpdateTopic([FromRoute] int topicId, [FromBody] CodeJamTopic topic,
-        CancellationToken cancellationToken = default)
-    {
-        if (topicId != topic.Id) 
-            return ResultOf<CodeJamTopic>.Fail("Invalid Request");
-        
-        return await _cj.AdminUpdateTopic(topic, cancellationToken);
-    }
-
-    [Authorize(Roles = Roles.ELEVATED_ROLES),
-     HttpPost,
-     Route("/api/[controller]/admin/topics/create")]
-    public async Task<ResultOf<CodeJamTopic>> AdminCreateTopic([FromBody] CodeJamTopic topic,
-        CancellationToken cancellationToken = default)
-        => await _cj.AdminCreateTopic(topic, cancellationToken);
 }

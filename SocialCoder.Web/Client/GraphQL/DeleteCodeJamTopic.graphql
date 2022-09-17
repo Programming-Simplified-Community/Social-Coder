@@ -1,0 +1,6 @@
+﻿mutation DeleteCodeJamTopic($topicId: Int!) {
+    deleteTopic(topicId: $topicId) {
+        success,
+        message
+    }
+}

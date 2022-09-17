@@ -1,0 +1,31 @@
+﻿mutation CreateCodeJamTopic(
+    $title: String!, 
+    $description: String!,
+    $backgroundImage: String!, 
+    $jamStartDate: DateTime!, 
+    $jamEndDate: DateTime!, 
+    $registrationStart: DateTime!) 
+{
+    createTopic(request: 
+    {
+        title: $title, 
+        description: $description, 
+        backgroundImageUrl: $backgroundImage, 
+        jamStartDate: $jamStartDate, 
+        jamEndDate: $jamEndDate, 
+        jamRegistrationStart: $registrationStart
+    }) 
+    {
+        data {
+            title,
+            description,
+            jamStartDate,
+            jamEndDate,
+            registrationStartDate,
+            backgroundImageUrl,
+            topicId
+        },
+        message,
+        success
+    }
+}

@@ -1,5 +1,6 @@
 ﻿schema {
   query: GraphQLQueries
+  mutation: GraphQLMutations
 }
 
 """
@@ -90,6 +91,12 @@ type GraphQLQueries {
     where: BasicUserAccountInfoFilterInput
     order: [BasicUserAccountInfoSortInput!]
   ): UsersCollectionSegment
+}
+
+type GraphQLMutations {
+  updateTopic(request: UpdateCodeJamTopicRequestInput!): ResultOfOfCodeJamTopic!
+  deleteTopic(topicId: Int!): ResultOf!
+  createTopic(request: CreateCodeJamTopicRequestInput!): ResultOfOfCodeJamTopic!
 }
 
 input CodeJamTopicFilterInput {
@@ -280,6 +287,43 @@ input CodeJamRegistrationFilterInput {
   codeJamTopic: CodeJamTopicFilterInput
 }
 
+type ResultOf {
+  message: String
+  success: Boolean!
+}
+
+input UpdateCodeJamTopicRequestInput {
+  topicId: Int!
+  isActive: Boolean!
+  title: String!
+  description: String!
+  backgroundImageUrl: String!
+  jamStartDate: DateTime!
+  jamEndDate: DateTime!
+  jamRegistrationStart: DateTime!
+}
+
+type ResultOfOfCodeJamTopic {
+  data: CodeJamTopic
+  message: String
+  success: Boolean!
+}
+
+type AuthorizeDirective {
+  policy: String
+  roles: [String!]
+  apply: ApplyPolicy!
+}
+
+input CreateCodeJamTopicRequestInput {
+  title: String!
+  description: String!
+  backgroundImageUrl: String!
+  jamStartDate: DateTime!
+  jamEndDate: DateTime!
+  jamRegistrationStart: DateTime!
+}
+
 type CodeJamRegistration {
   id: ID
   userId: String!
@@ -288,12 +332,6 @@ type CodeJamRegistration {
   abandonedOn: DateTime
   preferTeam: Boolean!
   codeJamTopic: CodeJamTopic!
-}
-
-type AuthorizeDirective {
-  policy: String
-  roles: [String!]
-  apply: ApplyPolicy!
 }
 
 enum ApplyPolicy {

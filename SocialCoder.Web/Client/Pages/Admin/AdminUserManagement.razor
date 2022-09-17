@@ -33,7 +33,18 @@
             <MudTd>@context.Username</MudTd>
             <MudTd>@context.Email</MudTd>
             <MudTd>
-                
+                @foreach (var role in context.UserRoles)
+                {
+                    var (icon, color) = role switch {
+                        Roles.Administrator => (Icons.Filled.AdminPanelSettings, Color.Info),
+                        Roles.Owner => (Icons.Filled.Bolt, Color.Success),
+                        _ => (Icons.Filled.PersonOff, Color.Surface)
+                    };
+                    
+                    <MudTooltip Text="@role">
+                        <MudIcon Icon="@icon" Color="@color"/>
+                    </MudTooltip>
+                }
             </MudTd>
             <MudTd>
                 <MudButton StartIcon="@Icons.Filled.TimeToLeave"

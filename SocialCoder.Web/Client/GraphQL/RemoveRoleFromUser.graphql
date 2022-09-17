@@ -1,0 +1,6 @@
+﻿mutation RemoveRoleFromUser($userId: String!, $adminId: String!, $role: String!) {
+    removeRoleFromUser(request: {userId: $userId, roleName: $role}, callingUser: $adminId) {
+        success,
+        message
+    }
+}

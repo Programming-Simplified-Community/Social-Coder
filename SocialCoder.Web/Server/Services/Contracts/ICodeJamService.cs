@@ -1,9 +1,9 @@
-﻿using SocialCoder.Web.Shared.Models.CodeJam;
-using SocialCoder.Web.Shared.Requests;
+﻿using SocialCoder.Web.Shared;
+using SocialCoder.Web.Shared.Models.CodeJam;
 using SocialCoder.Web.Shared.Requests.CodeJam;
 using SocialCoder.Web.Shared.ViewModels.CodeJam;
 
-namespace SocialCoder.Web.Shared.Services;
+namespace SocialCoder.Web.Server.Services.Contracts;
 
 public interface ICodeJamService
 {

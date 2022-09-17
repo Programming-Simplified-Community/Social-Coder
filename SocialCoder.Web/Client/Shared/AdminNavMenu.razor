@@ -1,0 +1,34 @@
+﻿<MudNavMenu>
+    @foreach (var data in items)
+    {
+        if (!DrawerOpen)
+        {
+            <MudTooltip Text="@data.Text" Placement="Placement.Right">
+                <MudNavLink href="@data.Href" Match="NavLinkMatch.All" Icon="@data.Icon">@data.Text</MudNavLink>
+            </MudTooltip>        
+        }
+        else
+        {
+            <MudNavLink href="@data.Href" Match="NavLinkMatch.All" Icon="@data.Icon">@data.Text</MudNavLink>
+        }
+    }
+</MudNavMenu>
+
+@code{
+    [CascadingParameter(Name = "DrawerOpen")]
+    public bool DrawerOpen { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        StateHasChanged();
+    }
+
+    List<(string Text, string Href, string Icon)> items = new()
+    {
+        new("Home", "/", Icons.Filled.Newspaper),
+        new("Code Jams", "/Admin/Dashboard", Icons.Filled.Event),
+        new("Users", "/Admin/UserManagement", Icons.Filled.People)
+    };
+
+}

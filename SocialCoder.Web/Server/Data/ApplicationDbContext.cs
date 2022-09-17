@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using SocialCoder.Web.Server.Models;
 using SocialCoder.Web.Shared.Models;
 using SocialCoder.Web.Shared.Models.CodeJam;
+using SocialCoder.Web.Shared.Models.Management;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 #pragma warning disable CS8618
@@ -35,6 +36,7 @@ namespace SocialCoder.Web.Server.Data
                 .OnDelete(DeleteBehavior.Cascade);
         }
 
+        public DbSet<PlatformUserBan> PlatformBans { get; set; }
         public DbSet<Badge> Badges { get; set; }
         public DbSet<BadgeProgress> BadgeProgress { get; set; }
         public DbSet<BadgeRequirement> BadgeRequirements { get; set; }

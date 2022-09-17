@@ -46,6 +46,19 @@ Otherwise, this script will do the trick... hopefully
 ./create-https-certs.ps1
 ```
 
+## Services
+
+After some research we have determined that we needed something a bit better than standard REST endpoints between our **client** and **server**. 
+Though we're noobs to implement GraphQL, it looks like an excellent long-term solution for loading an entire pages worth of data in one go... compared to
+calling `N` amount of endpoints for `N` components on screen.
+
+```mermaid
+graph TD
+    Client[Client] --- GraphQL[GraphQL]
+    GraphQL --- Server
+    Server --- Postgres[Postgres DB]
+```
+
 ## Login
 There are no default credentials. Must utilize OAuth.
 

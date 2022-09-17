@@ -17,7 +17,7 @@ public class AuthenticatedComponent : ComponentBase
 
         var auth = await AuthProvider.GetAuthenticationStateAsync();
 
-        User = auth.User ?? new();
-        Name = auth.User?.Identity?.Name ?? string.Empty;
+        User = auth.User;
+        Name = auth.User.Identity?.Name ?? string.Empty;
     }
 }

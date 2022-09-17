@@ -1,5 +1,4 @@
-﻿@using HotChocolate.Types
-@inject ICodeJamService _cj
+﻿@inject ICodeJamService Cj
 
 <MudDialog>
     <DialogContent>
@@ -60,7 +59,7 @@
     [CascadingParameter]
     private MudDialogInstance Dialog { get; set; }
 
-    private CodeJamTopic _topic = new();
+    private readonly CodeJamTopic _topic = new();
     DateRange? _activeRange;
     DateTime? _registrationDate = DateTime.Now;
 
@@ -106,9 +105,9 @@
         _topic.RegistrationStartDate = _registrationDate ?? now;
 
         if (_topic.Id > 0) // already exists in the database
-            response = await _cj.AdminUpdateTopic(_topic);
+            response = await Cj.AdminUpdateTopic(_topic);
         else
-            response = await _cj.AdminCreateTopic(_topic);
+            response = await Cj.AdminCreateTopic(_topic);
 
         if (!response.Success)
         {

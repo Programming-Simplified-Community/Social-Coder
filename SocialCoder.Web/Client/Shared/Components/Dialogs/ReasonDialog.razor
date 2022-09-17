@@ -1,0 +1,43 @@
+﻿@inject ISnackbar Snack
+
+<MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value="@_reason"
+                      Lines="5"
+                      AdornmentIcon="@Icons.Filled.Description"
+                      Required
+                      Label="Reason"
+        />
+    </DialogContent>
+    <DialogActions>
+        <MudButton StartIcon="@Icons.Filled.Save" IconColor="Color.Info" OnClick="Submit">
+            Save
+        </MudButton>
+        <MudButton StartIcon="@Icons.Filled.Cancel" IconColor="@Color.Secondary" OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    string _reason = string.Empty;
+
+    [CascadingParameter]
+    public MudDialogInstance Dialog { get; set; }
+
+    void Submit()
+    {
+        if (string.IsNullOrEmpty(_reason))
+        {
+            Snack.Add("Must provide a reason", Severity.Warning);
+            return;
+        }
+
+        if (_reason.Length <= 10)
+        {
+            Snack.Add("Reasoning must be at least 10 characters long", Severity.Warning);
+            return;
+        }
+        
+        Dialog.Close(DialogResult.Ok(_reason));   
+    }
+    void Cancel() => Dialog.Cancel();
+}

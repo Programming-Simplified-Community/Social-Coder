@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialCoder.Web.Server.Data;
 using SocialCoder.Web.Shared.Models.CodeJam;
+
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedMember.Global
 
-namespace SocialCoder.Web.Server.GraphQL.CodeJamTopics;
+namespace SocialCoder.Web.Server.GraphQL;
 
 [ExtendObjectType(typeof(CodeJamTopic))]
 public sealed class CodeJamTopicQueryExtensions

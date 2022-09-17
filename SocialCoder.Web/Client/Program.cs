@@ -6,7 +6,6 @@ using MudBlazor.Services;
 using SocialCoder.Web.Client;
 using SocialCoder.Web.Client.Services.Contracts;
 using SocialCoder.Web.Client.Services.Implementations;
-using SocialCoder.Web.Shared.Services;
 using System.Globalization;
 using Microsoft.JSInterop;
 

@@ -5,11 +5,12 @@ using SocialCoder.Web.Shared.Models.CodeJam;
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedMember.Global
 
-namespace SocialCoder.Web.Server.GraphQL.CodeJamTopics;
+namespace SocialCoder.Web.Server.GraphQL;
 
-public class CodeJamTopicQueries
+// ReSharper disable once InconsistentNaming
+public partial class GraphQLQueries
 {
-    [UsePaging, UseOffsetPaging(IncludeTotalCount = true), UseProjection, UseFiltering, UseSorting]
+    [UsePaging, UseOffsetPaging(IncludeTotalCount = true), UseProjection, UseFiltering, UseSorting, Authorize]
     public IOrderedQueryable<CodeJamTopic> GetTopics([Service] ApplicationDbContext context)
         => context.CodeJamTopics.OrderBy(x=>x.JamStartDate);
 }

@@ -1,5 +1,6 @@
 ﻿schema {
-  query: CodeJamTopicQueries
+  query: GraphQLQueries
+  mutation: GraphQlMutations
 }
 
 """
@@ -37,7 +38,7 @@ directive @stream(
   if: Boolean
 ) on FIELD
 
-type CodeJamTopicQueries {
+type GraphQLQueries {
   topics(
     skip: Int
     take: Int
@@ -64,6 +65,56 @@ type CodeJamTopicQueries {
     where: CodeJamTopicFilterInput
     order: [CodeJamTopicSortInput!]
   ): TopicsCollectionSegment
+  roles: [BasicRoleInfo!]!
+  users(
+    skip: Int
+    take: Int
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    where: BasicUserAccountInfoFilterInput
+    order: [BasicUserAccountInfoSortInput!]
+  ): UsersCollectionSegment
+}
+
+type GraphQlMutations {
+  register(
+    request: CodeJamRegistrationRequestInput!
+    userId: String!
+  ): ResultOfOfCodeJamViewModel!
+  abandon(
+    request: CodeJamAbandonRequestInput!
+    userId: String!
+  ): ResultOfOfCodeJamViewModel!
+  updateTopic(request: UpdateCodeJamTopicRequestInput!): ResultOfOfCodeJamTopic!
+  deleteTopic(topicId: Int!): ResultOf!
+  createTopic(request: CreateCodeJamTopicRequestInput!): ResultOfOfCodeJamTopic!
+  addRoleToUser(
+    request: AddRoleToUserRequestInput!
+    callingUser: String!
+  ): ResultOf!
+  removeRoleFromUser(
+    request: RemoveRoleFromUserRequestInput!
+    callingUser: String!
+  ): ResultOf!
+  banUser(request: BanUserRequestInput!, callingUser: String!): ResultOf!
 }
 
 input CodeJamTopicFilterInput {
@@ -91,6 +142,20 @@ input CodeJamTopicSortInput {
   registrationStartDate: SortEnumType
 }
 
+input BasicUserAccountInfoFilterInput {
+  and: [BasicUserAccountInfoFilterInput!]
+  or: [BasicUserAccountInfoFilterInput!]
+  userId: StringOperationFilterInput
+  username: StringOperationFilterInput
+  email: StringOperationFilterInput
+}
+
+input BasicUserAccountInfoSortInput {
+  userId: SortEnumType
+  username: SortEnumType
+  email: SortEnumType
+}
+
 """
 A segment of a collection.
 """
@@ -104,6 +169,22 @@ type TopicsCollectionSegment {
   A flattened list of the items.
   """
   items: [CodeJamTopic!]
+  totalCount: Int!
+}
+
+"""
+A segment of a collection.
+"""
+type UsersCollectionSegment {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+
+  """
+  A flattened list of the items.
+  """
+  items: [BasicUserAccountInfo!]
   totalCount: Int!
 }
 
@@ -200,6 +281,13 @@ type CodeJamTopic {
   soloApplicants: Int!
 }
 
+type BasicUserAccountInfo {
+  userId: String!
+  username: String!
+  email: String!
+  userRoles: [String!]!
+}
+
 """
 The `DateTime` scalar represents an ISO-8601 compliant date time type.
 """
@@ -214,6 +302,80 @@ input CodeJamRegistrationFilterInput {
   registeredOn: DateTimeOperationFilterInput
   abandonedOn: DateTimeOperationFilterInput
   preferTeam: BooleanOperationFilterInput
+  codeJamTopic: CodeJamTopicFilterInput
+}
+
+input CodeJamRegistrationRequestInput {
+  topicId: Int!
+  preferTeam: Boolean!
+}
+
+type ResultOfOfCodeJamViewModel {
+  data: CodeJamViewModel
+  message: String
+  success: Boolean!
+}
+
+type BasicRoleInfo {
+  roleId: String!
+  name: String!
+}
+
+type AuthorizeDirective {
+  policy: String
+  roles: [String!]
+  apply: ApplyPolicy!
+}
+
+input CodeJamAbandonRequestInput {
+  topicId: Int!
+}
+
+type ResultOfOfCodeJamTopic {
+  data: CodeJamTopic
+  message: String
+  success: Boolean!
+}
+
+input UpdateCodeJamTopicRequestInput {
+  topicId: Int!
+  isActive: Boolean!
+  title: String!
+  description: String!
+  backgroundImageUrl: String!
+  jamStartDate: DateTime!
+  jamEndDate: DateTime!
+  jamRegistrationStart: DateTime!
+}
+
+type ResultOf {
+  message: String
+  success: Boolean!
+}
+
+input CreateCodeJamTopicRequestInput {
+  title: String!
+  description: String!
+  backgroundImageUrl: String!
+  jamStartDate: DateTime!
+  jamEndDate: DateTime!
+  jamRegistrationStart: DateTime!
+}
+
+input AddRoleToUserRequestInput {
+  userId: String!
+  roleName: String!
+}
+
+input RemoveRoleFromUserRequestInput {
+  userId: String!
+  roleName: String!
+  reason: String
+}
+
+input BanUserRequestInput {
+  userId: String!
+  reason: String!
 }
 
 type CodeJamRegistration {
@@ -223,4 +385,20 @@ type CodeJamRegistration {
   registeredOn: DateTime!
   abandonedOn: DateTime
   preferTeam: Boolean!
+  codeJamTopic: CodeJamTopic!
+}
+
+enum ApplyPolicy {
+  BEFORE_RESOLVER
+  AFTER_RESOLVER
+}
+
+type CodeJamViewModel {
+  topic: CodeJamTopic!
+  isRegistered: Boolean!
+  registerUrl: String!
+  abandonUrl: String!
+  totalTeamApplicants: Int!
+  totalSoloApplicants: Int!
+  totalApplicants: Int!
 }

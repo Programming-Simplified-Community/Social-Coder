@@ -1,0 +1,6 @@
+﻿mutation AddRoleToUser($userId: String!, $adminId: String!, $role: String!) {
+    addRoleToUser(request: {userId: $userId, roleName: $role}, callingUser: $adminId) {
+        success,
+        message
+    }
+}

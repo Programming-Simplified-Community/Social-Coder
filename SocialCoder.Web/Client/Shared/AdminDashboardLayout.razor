@@ -8,25 +8,27 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<MudLayout>
-    <MudAppBar>
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        <h1 class="header-brand-text">
-            Social Coder
-        </h1>
-        <MudSpacer/>
-        <LoginDisplay/>
-        <CultureSelect/>
-    </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Docked" Fixed="true" Elevation="1" Variant="@DrawerVariant.Mini" OpenMiniOnHover="false">
-        <NavMenu/>
-    </MudDrawer>
-    <MudMainContent>
-        <CascadingValue Name="UserId" TValue="string" Value="_userId">
-            @Body
-        </CascadingValue>
-    </MudMainContent>
-</MudLayout>
+<CascadingValue TValue="bool" Value="_drawerOpen" Name="DrawerOpen">
+    <MudLayout>
+        <MudAppBar>
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+            <h1 class="header-brand-text">
+                Social Coder
+            </h1>
+            <MudSpacer/>
+            <LoginDisplay/>
+            <CultureSelect/>
+        </MudAppBar>
+        <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Docked" Fixed="true" Elevation="1" Variant="@DrawerVariant.Mini" OpenMiniOnHover="false">
+            <AdminNavMenu/>
+        </MudDrawer>
+        <MudMainContent>
+            <CascadingValue Name="UserId" TValue="string" Value="_userId">
+                @Body
+            </CascadingValue>
+        </MudMainContent>
+    </MudLayout>
+</CascadingValue>
 
 @code {
     bool _drawerOpen;

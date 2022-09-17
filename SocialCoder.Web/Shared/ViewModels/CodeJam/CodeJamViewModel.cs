@@ -17,8 +17,8 @@ public class CodeJamViewModel
     /// </summary>
     public bool IsRegistered { get; set; }
 
-    public string RegisterUrl => string.Format(Endpoints.CODE_JAM_POST_TOPIC_REGISTER, Topic.Id);
-    public string AbandonUrl => string.Format(Endpoints.CODE_JAM_POST_TOPIC_WITHDRAW, Topic.Id);
+    public string RegisterUrl => string.Format(Endpoints.CodeJamPostTopicRegister, Topic.Id);
+    public string AbandonUrl => string.Format(Endpoints.CodeJamPostTopicWithdraw, Topic.Id);
     
     /// <summary>
     /// # of applicants wanting a team

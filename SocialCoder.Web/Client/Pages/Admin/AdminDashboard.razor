@@ -1,8 +1,9 @@
 ﻿@page "/Admin/Dashboard"
+@layout AdminDashboardLayout
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Roles = Roles.ElevatedRoles)]
 
-<MudContainer>
+<MudContainer Class="mt-3">
     <JamTopicTable/>
 </MudContainer>
 

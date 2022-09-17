@@ -1,9 +1,11 @@
 ﻿@page "/Admin/UserManagement"
 @inherits QueryComponent
+@layout AdminDashboardLayout
 @using Microsoft.AspNetCore.Authorization
 @using SocialCoder.Web.Client.Models
 @attribute [Authorize(Roles = Roles.ElevatedRoles)]
-<MudContainer>
+
+<MudContainer Class="mt-3">
     <PaginatedTable TItem="IGetBasicUserAccounts_Users_Items"
                     FetchDataFunc="FetchData">
         <ErrorContent>

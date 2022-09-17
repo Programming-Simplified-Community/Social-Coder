@@ -6,12 +6,12 @@ namespace SocialCoder.Web.Shared.Extensions;
 
 public static class ImageEnumExtensions
 {
-    private static readonly Dictionary<PageType, string> _pathTypeCache = new();
+    private static readonly Dictionary<PageType, string> PathTypeCache = new();
 
     public static string? GetImagePath(this PageType imageType)
     {
-        if (_pathTypeCache.ContainsKey(imageType))
-            return _pathTypeCache[imageType];
+        if (PathTypeCache.ContainsKey(imageType))
+            return PathTypeCache[imageType];
 
         var type = imageType.GetType();
         var memberInfo = type.GetMember(imageType.ToString());
@@ -20,7 +20,7 @@ public static class ImageEnumExtensions
         if (!attributes.Any()) return null;
         
         var path = attributes[0].Path;
-        _pathTypeCache.Add(imageType, path);
+        PathTypeCache.Add(imageType, path);
         return path;
     }
 }

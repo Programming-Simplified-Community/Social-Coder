@@ -1,0 +1,54 @@
+﻿[
+    {
+        "Name": "C#",
+        "ImageUrl": "img/experiences/dotnet.png"
+    },
+    {
+        "Name": "Python",
+        "ImageUrl": "img/experiences/python.png"
+    },
+    {
+        "Name": "TypeScript",
+        "ImageUrl": "img/experiences/typescript.png"
+    },
+    {
+        "Name": "JavaScript",
+        "ImageUrl": "img/experiences/javascript.png"
+    },
+    {
+        "Name": "Java",
+        "ImageUrl": "img/experiences/java.png"
+    },
+    {
+        "Name": "SQL",
+        "ImageUrl": "img/experiences/sql.png"
+    },
+    {
+        "Name": "Postgres",
+        "ImageUrl": "img/experiences/sql.png"
+    },
+    {
+        "Name": "MongoDb",
+        "ImageUrl": "img/experiences/sql.png"
+    },
+    {
+        "Name": "Rust",
+        "ImageUrl": "img/experiences/rust.png"
+    },
+    {
+        "Name": "NodeJs",
+        "ImageUrl": "img/experiences/nodejs.png"
+    },
+    {
+        "Name": "MySQL",
+        "ImageUrl": "img/experiences/mysql.png"
+    },
+    {
+        "Name": "Project Management",
+        "ImageUrl": "img/experiences/projectmanagement.png"
+    },
+    {
+        "Name": "Git",
+        "ImageUrl": "img/experiences/github.png"
+    }
+]

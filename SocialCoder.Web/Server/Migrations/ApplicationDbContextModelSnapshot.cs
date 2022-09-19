@@ -307,6 +307,12 @@ namespace SocialCoder.Web.Server.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
+                    b.Property<string>("Country")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("text");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -316,6 +322,9 @@ namespace SocialCoder.Web.Server.Migrations
 
                     b.Property<int>("Experience")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Language")
+                        .HasColumnType("text");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");

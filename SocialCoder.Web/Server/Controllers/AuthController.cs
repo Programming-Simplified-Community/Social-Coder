@@ -52,6 +52,9 @@ public class AuthController : ControllerBase
 
     [Route("/signin-google")]
     public Task<IActionResult> SignInGoogle() => Task.FromResult<IActionResult>(Ok());
+
+    [Route("/signin-github")]
+    public Task<IActionResult> SignInGithub() => Task.FromResult<IActionResult>(Ok());
     #endregion
 
     /// <summary>

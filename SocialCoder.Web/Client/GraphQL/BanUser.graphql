@@ -1,0 +1,6 @@
+﻿mutation BanUser($userId: String!, $adminId: String!, $reason: String!){
+    banUser(request: {userId: $userId, reason: $reason}, callingUser: $adminId){
+        success,
+        message
+    }
+}

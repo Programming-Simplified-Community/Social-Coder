@@ -6,6 +6,11 @@
 
 This project is geared towards building a social-media like experience for programmers!
 
+Clearly, this is a work in progress app but here's a sneak peak on current progress!
+![WIP Code Jam Topics](imgs/code-jam-topics.png)
+1. OAuth login via Google or Discord (will add more)
+2. Ability to view code jams
+3. Ability to register/withdraw from code jams
 
 If you're interested in contributing here's [Environment](Environment.md) setup instructions/suggestions.
 
@@ -39,6 +44,19 @@ Otherwise, this script will do the trick... hopefully
 
 ```bash
 ./create-https-certs.ps1
+```
+
+## Services
+
+After some research we have determined that we needed something a bit better than standard REST endpoints between our **client** and **server**. 
+Though we're noobs to implement GraphQL, it looks like an excellent long-term solution for loading an entire pages worth of data in one go... compared to
+calling `N` amount of endpoints for `N` components on screen.
+
+```mermaid
+graph TD
+    Client[Client] --- GraphQL[GraphQL]
+    GraphQL --- Server
+    Server --- Postgres[Postgres DB]
 ```
 
 ## Login
@@ -81,3 +99,14 @@ the following services:
     - Add Authorized `JavaScript origins`: `https://localhost:7159`
     - Authorized Redirect URIs: `https://localhost:7159/signin-google`
     - Save and grab the `Client ID` and `Client Secret`. Shove this into `Google`. Should be self explanatory that the pattern here is `ProviderName` equals the Service name we're using for OAuth.
+
+#### Github
+
+[Register Github App](https://github.com/settings/applications/new)
+
+- Application name can be whatever you want for testing purposes.
+- Homepage URL
+  - https://github.com/Programming-Simplified-Community/Social-Coder
+- Authorization callback URL
+  - https://localhost:7159/signin-github
+- Grab the ClientID, and ClientSecret and put them in the `appsettings.development.json` file under `Github`

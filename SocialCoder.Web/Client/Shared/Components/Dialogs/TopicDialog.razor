@@ -1,0 +1,124 @@
+﻿@inject ICodeJamService Cj
+
+<MudDialog>
+    <DialogContent>
+        @if (!string.IsNullOrEmpty(_errors))
+        {
+            <MudText Typo="Typo.subtitle1" Color="Color.Error" Style="font-size: 0.60rem">
+                @_errors
+            </MudText>
+        }
+        
+        <MudTextField @bind-Value="@_topic.Title" 
+                      Required 
+                      Label="Title"
+                      AdornmentIcon="@Icons.Filled.Title"
+                      AdornmentColor="@Color.Info"/>
+
+        <MudTextField @bind-Value="@_topic.Description"
+                      Lines="3"
+                      Required
+                      Placeholder="Topic Description"
+                      AdornmentIcon="@Icons.Filled.Description"
+                      AdornmentColor="@Color.Info"/>
+
+        <MudDatePicker @bind-Date="_registrationDate"
+                       AdornmentIcon="@Icons.Filled.PersonAdd"
+                       AdornmentColor="Color.Success"/>
+
+        <MudDateRangePicker
+            @bind-DateRange="_activeRange"
+            AdornmentIcon="@Icons.Filled.Event"
+            AdornmentColor="@Color.Tertiary"
+            Elevation="3"
+            Rounded
+            Label="Jam Active Period"/>
+
+        <MudTextField @bind-Value="@_topic.BackgroundImageUrl" Label="Background Image URL"/>
+
+    </DialogContent>
+    <DialogActions>
+        <MudButton StartIcon="@Icons.Filled.Save" IconColor="Color.Info"
+                   OnClick="Submit">
+            Save
+        </MudButton>
+        
+        <MudButton StartIcon="@Icons.Filled.Cancel" IconColor="@Color.Secondary"
+                   OnClick="Cancel">
+            Cancel
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private string _errors = string.Empty;
+    
+    [Parameter]
+    public IGetTopicsWithUserInfo_Topics_Items? Incoming { get; set; }
+
+    [CascadingParameter]
+    private MudDialogInstance Dialog { get; set; }
+
+    private readonly CodeJamTopic _topic = new();
+    DateRange? _activeRange;
+    DateTime? _registrationDate = DateTime.Now;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        if (Incoming is not null)
+        {
+            _topic.Title = Incoming.Title;
+            _topic.Description = Incoming.Description;
+            _topic.IsActive = Incoming.IsActive;
+            _topic.BackgroundImageUrl = Incoming.BackgroundImageUrl;
+            _topic.JamStartDate = Incoming.JamStartDate.DateTime;
+            _topic.JamEndDate = Incoming.JamEndDate.DateTime;
+            _topic.RegistrationStartDate = Incoming.RegistrationStartDate.DateTime;
+            _topic.Id = Incoming.TopicId;    
+
+            // Need to convert the date times into the user's local time
+            // That way when the user modifies it - they are configuring it as if it was their time zone
+            // We need to then ensure we're sending converted date/time upstream though.
+            _registrationDate = Incoming.RegistrationStartDate.ToRealLocalTime().DateTime;
+            _activeRange = new DateRange(
+                Incoming.JamStartDate.ToRealLocalTime().DateTime,
+                Incoming.JamEndDate.ToRealLocalTime().DateTime
+            );
+        }
+        else
+        {
+            var now = DateTime.Today;
+            _registrationDate = now;
+            _activeRange = new DateRange(now.AddDays(7), now.AddMonths(1).AddDays(7));
+        }
+    }
+
+    async Task Submit()
+    {
+        ResultOf<CodeJamTopic> response;
+        var now = DateTime.Today;
+        
+        _topic.JamStartDate = _activeRange?.Start ?? now.AddDays(7);
+        _topic.JamEndDate = _activeRange?.End ?? now.AddMonths(1).AddDays(7);
+        _topic.RegistrationStartDate = _registrationDate ?? now;
+
+        if (_topic.Id > 0) // already exists in the database
+            response = await Cj.AdminUpdateTopic(_topic);
+        else
+            response = await Cj.AdminCreateTopic(_topic);
+
+        if (!response.Success)
+        {
+            _errors = response.Message ?? "Something went wrong";
+            StateHasChanged();
+        }
+        Dialog.Close(DialogResult.Ok(response.Data));
+    }
+
+    void Cancel()
+    {
+        Dialog.Cancel();
+    }
+}

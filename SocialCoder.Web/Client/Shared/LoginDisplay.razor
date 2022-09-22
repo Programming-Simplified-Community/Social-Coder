@@ -1,17 +1,40 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Security.Claims
+@using SocialCoder.Web.Shared
 
 @inject NavigationManager Navigation
 @inject IdentityAuthenticationStateProvider AuthStateProvider
 
 <AuthorizeView>
     <Authorized>
-        <MudButton>
-            <MudIcon Color="Color.Inherit"
-                     Icon="@Icons.Filled.ManageAccounts"/>
-            &nbsp;@(context.User.Identity?.Name)
-        </MudButton>
-        <MudButton OnClick="BeginSignOut">
+        @{
+            var isAdmin = context.User.Claims.Any(x => x.Type == ClaimTypes.Role && x.Value is Roles.Administrator or Roles.Owner);
+            var iconColor = isAdmin ? Color.Tertiary : Color.Inherit;
+            var iconClass = isAdmin ? Icons.Filled.AdminPanelSettings : Icons.Filled.ManageAccounts;
+        }
+        <MudMenu TransformOrigin="Origin.BottomCenter" AnchorOrigin="Origin.BottomCenter">
+            <ActivatorContent>
+                <MudButton>
+                    <MudIcon Icon="@iconClass" Color="@iconColor"/>
+                    @(context.User.Identity?.Name)
+                </MudButton>
+            </ActivatorContent>
+            <ChildContent>
+                <MudMenuItem OnClick="@(()=>Navigation.NavigateTo("/Account/Manage"))">
+                    <MudIcon Color="Color.Primary" Icon="@Icons.Filled.ManageAccounts" Style="position: relative; top: 6px;"/>
+                    Account
+                </MudMenuItem>
+                @if (isAdmin)
+                {
+                    <MudMenuItem OnClick="@(()=>Navigation.NavigateTo("/Admin/Dashboard"))">
+                        <MudIcon Color="Color.Info" Icon="@Icons.Filled.AdminPanelSettings"  Style="position: relative; top: 6px;"/>
+                        Admin Portal
+                    </MudMenuItem>
+                }
+            </ChildContent>
+        </MudMenu>
+        <MudButton OnClick="BeginSignOut" Style="margin-right: 1.25rem;">
             <MudIcon Icon="@Icons.Filled.Logout"/>
             Logout
         </MudButton>

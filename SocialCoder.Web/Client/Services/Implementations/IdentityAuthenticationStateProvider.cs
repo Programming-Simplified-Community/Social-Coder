@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using SocialCoder.Web.Client.Services.Contracts;
 using SocialCoder.Web.Shared.ViewModels;
@@ -9,10 +10,12 @@ public class IdentityAuthenticationStateProvider : AuthenticationStateProvider
 {
     private UserInfo? _userInfoCache;
     private readonly IAuthorizeApi _authorizeApi;
+    private readonly ILocalStorageService _storage;
 
-    public IdentityAuthenticationStateProvider(IAuthorizeApi authorizeApi)
+    public IdentityAuthenticationStateProvider(IAuthorizeApi authorizeApi, ILocalStorageService storage)
     {
         _authorizeApi = authorizeApi;
+        _storage = storage;
     }
 
     public async Task Logout()
@@ -41,8 +44,13 @@ public class IdentityAuthenticationStateProvider : AuthenticationStateProvider
             {
                 var claims =
                     new[] { new Claim(ClaimTypes.Name, userInfo.UserName) }.Concat(
-                        userInfo.Claims.Select(x => new Claim(x.Key, x.Value)));
+                        userInfo.Claims.Select(x => new Claim(x.Key, x.Value)))
+                        .ToArray();
+                
                 identity = new ClaimsIdentity(claims, "Server authentication");
+
+                await _storage.SetItemAsStringAsync(Constants.UserId,
+                    claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value ?? string.Empty);
             }
         }
         catch(HttpRequestException ex)

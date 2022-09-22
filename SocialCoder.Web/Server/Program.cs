@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SocialCoder.Web.Server;
 using SocialCoder.Web.Server.Data;
+using SocialCoder.Web.Server.GraphQL;
 using SocialCoder.Web.Server.Models;
 using SocialCoder.Web.Server.Services.Contracts;
 using SocialCoder.Web.Server.Services.Implementations;
 using SocialCoder.Web.Shared.Extensions;
+using GraphQLQueries = SocialCoder.Web.Server.GraphQL.GraphQLQueries;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +17,18 @@ builder.Configuration.AddJsonConfigurationFiles();
 
 // Add services to the container.
 var connectionString = builder.Configuration["DefaultConnection"];
+
+/*
+ *  Having the database as transient prevents multiple queries happening on the
+ *  same DbContext -- which throws an exception.
+ *
+ *  Especially when using GraphQL pulling from multiple endpoints.
+ */
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-});
+    options.UseNpgsql(connectionString);
+}, ServiceLifetime.Transient);
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -63,6 +73,20 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Scope.Add("identify");
         options.Scope.Add("email");
     })
+    .AddGitHub(options =>
+    {
+        options.SignInScheme = IdentityConstants.ExternalScheme;
+        options.ClientId = builder.Configuration["Authentication:Github:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:Github:ClientSecret"];
+
+        options.Scope.Add("public_repo");
+        options.Scope.Add("read:org");
+        options.Scope.Add("gist");
+        options.Scope.Add("read:user");
+        options.Scope.Add("user:email");
+        options.Scope.Add("user:follow");
+        options.Scope.Add("read:project");
+    })
     .AddCookie();
 
 
@@ -70,6 +94,16 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICodeJamService, CodeJamService>();
+
+builder.Services.AddGraphQLServer()
+    .AddQueryType<GraphQLQueries>()
+    .AddTypeExtension<CodeJamTopicQueryExtensions>()
+    .AddTypeExtension<UserManagementExtensions>()
+    .AddMutationType<GraphQlMutations>()
+    .AddProjections()
+    .AddFiltering()
+    .AddSorting();
 
 var app = builder.Build();
 
@@ -96,6 +130,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapGraphQL();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");

@@ -1,0 +1,35 @@
+﻿mutation UpdateCodeJamTopic(
+    $topicId: Int!, 
+    $title: String!, 
+    $description: String!, 
+    $backgroundImage: String!, 
+    $jamStartDate: DateTime!, 
+    $jamEndDate: DateTime!, 
+    $registrationStart: DateTime!, 
+    $isActive: Boolean!) 
+{
+    updateTopic(request:
+    {
+        topicId: $topicId,
+        title: $title,
+        description: $description,
+        backgroundImageUrl: $backgroundImage,
+        jamStartDate: $jamStartDate,
+        jamEndDate: $jamEndDate,
+        jamRegistrationStart: $registrationStart,
+        isActive: $isActive
+    })
+    {
+        data {
+            title,
+            description,
+            jamStartDate,
+            jamEndDate,
+            registrationStartDate,
+            backgroundImageUrl,
+            topicId
+        },
+        message,
+        success
+    }
+}

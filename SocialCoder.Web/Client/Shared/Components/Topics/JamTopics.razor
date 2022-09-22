@@ -1,0 +1,70 @@
+﻿@inherits QueryComponent
+
+<MudGrid Spacing="3" Justify="Justify.Center" Class="mt-3">
+    <UseGetTopicsWithUserInfo Take="10" Skip="0" UserId="@UserId" Strategy="ExecutionStrategy.CacheAndNetwork">
+        <ErrorContent>
+            <MudAlert Icon="@Icons.Filled.Error" Severity="Severity.Error" Style="width: 100%">
+                Oops! Double check the GraphQL Schema! They could be out-of-sync.
+            </MudAlert>
+            <MudList>
+                @foreach (var error in context)
+                {
+                    <MudListItem>
+                        <MudText Typo="Typo.body1">
+                            @error.Message
+                        </MudText>
+                        <MudText Typo="Typo.body1">
+                            @error.Code
+                        </MudText>
+                        @if (error.Exception is not null)
+                        {
+                            <MudText Typo="Typo.subtitle1" Color="Color.Error">
+                                @error.Exception.ToString()
+                            </MudText>
+                        }
+                        @if (error.Path is not null)
+                        {
+                            @foreach (var path in error.Path)
+                            {
+                                <MudText Typo="Typo.subtitle2">@path.ToString()</MudText>
+                            }
+                        }
+                        @if (error.Locations is not null)
+                        {
+                            <MudText Typo="Typo.subtitle1">
+                                @string.Join("<br>", error.Locations)
+                            </MudText>    
+                        }
+                    </MudListItem>
+                }
+            </MudList>
+        </ErrorContent>
+        <ChildContent>
+            @if (context.Topics?.Items is not null)
+            {
+                foreach (var topic in context.Topics.Items)
+                {
+                    <JamTopic Model="topic"/>
+                }
+            }
+            else
+            {
+                <MudPaper Elevation="3" MinWidth="300px">
+                    <MudText Align="Align.Center">
+                        No records.
+                    </MudText>
+                </MudPaper>
+            }
+        </ChildContent>
+        <LoadingContent>
+            <MudProgressCircular Indeterminate="true"
+                                 Color="Color.Info"
+                                 Size="Size.Large"/>
+        </LoadingContent>
+    </UseGetTopicsWithUserInfo>
+</MudGrid>
+
+@code{
+    [CascadingParameter(Name = "UserId")]
+    public string UserId { get; set; }
+}

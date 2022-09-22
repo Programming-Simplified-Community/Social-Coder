@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Json;
-using SocialCoder.Web.Client.Services.Contracts;
+﻿using SocialCoder.Web.Client.Services.Contracts;
 using SocialCoder.Web.Shared.ViewModels;
 namespace SocialCoder.Web.Client.Services.Implementations;
 

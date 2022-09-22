@@ -39,4 +39,24 @@
     <TypeScriptCompile Include="Typescript\Hexagon.ts" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Shared\Badges\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Shared\Badges\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Shared\Badges\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Shared\Badges\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Shared\Badges\Bronze.razor" />
+  </ItemGroup>
+
 </Project>

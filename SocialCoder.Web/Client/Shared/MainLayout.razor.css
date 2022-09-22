@@ -79,3 +79,12 @@ main {
         padding-right: 1.5rem !important;
     }
 }
+
+.headerDivider {
+    border-left:1px solid #38546d;
+    border-right:1px solid #16222c;
+    height:80px;
+    position:absolute;
+    right:249px;
+    top:10px;
+}

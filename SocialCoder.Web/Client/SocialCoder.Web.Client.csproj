@@ -40,10 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Auth" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="Shared\Badges\**" />
   </ItemGroup>
 

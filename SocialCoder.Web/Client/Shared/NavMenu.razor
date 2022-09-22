@@ -1,8 +1,6 @@
 ﻿@using MudBlazor.Utilities
 @inherits LayoutComponentBase
 
-<MudThemeProvider Theme="_theme" IsDarkMode="true"></MudThemeProvider>
-
 <MudLayout >
     <MudAppBar Elevation="1" Dense="false">
         <MudAvatar Color="Color.Warning" e Variant="Variant.Filled">
@@ -31,9 +29,8 @@
             <MudBadge Content="100" Color="Color.Primary" Overlap="true" Class="mx-6 my-4">
                 <MudIcon Icon="@Icons.Material.Filled.Notifications" Color="Color.Default"/>
             </MudBadge>
-
         </div>
-
+        <LoginDisplay/>
     </MudAppBar>
     <MudDrawer @bind-Open="@_openLeft" Anchor="Anchor.Left" ClipMode="_clipMode" Breakpoint="Breakpoint.Lg" PreserveOpenState="true" Elevation="1" Variant="@DrawerVariant.Mini">
         <MudNavMenu >
@@ -50,8 +47,6 @@
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Settings">Marketplace</MudNavLink>
             <MudSpacer/>
             <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.ChevronRight" OnClick="@ToggleLeftDrawer"></MudNavLink>
-
-
         </MudNavMenu>
     </MudDrawer >
 
@@ -133,24 +128,4 @@
     End progress bar  
 
     */
-
-
-    readonly MudTheme _theme = new()
-    {
-        PaletteDark = new()
-        {
-            Primary = new MudColor("7750f8"),
-            Secondary = new MudColor("40d04f"),
-            Background = new MudColor("161b28"),
-            AppbarBackground = new MudColor("7750f8"),
-            TextPrimary = new MudColor("FFF"),
-            TextSecondary = new MudColor("9aa4bf"),
-            DrawerBackground = new MudColor("1d2333"),
-            DrawerText = new MudColor("FFF"),
-            Surface = new MudColor("1d2333")
-        }
-    };
-
-
-
 }

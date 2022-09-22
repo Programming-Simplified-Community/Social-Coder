@@ -9,18 +9,7 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudAppBar>
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        <h1 class="header-brand-text">
-            Social Coder
-        </h1>
-        <MudSpacer/>
-        <LoginDisplay/>
-        <CultureSelect/>
-    </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Docked" Fixed="true" Elevation="1" Variant="@DrawerVariant.Mini" OpenMiniOnHover="false">
-        <NavMenu/>
-    </MudDrawer>
+    <NavMenu/>
     <MudMainContent>
         <CascadingValue Name="UserId" TValue="string" Value="_userId">
             @Body
@@ -29,7 +18,6 @@
 </MudLayout>
 
 @code {
-    bool _drawerOpen;
     string _userId;
 
     readonly MudTheme _theme = new()
@@ -52,10 +40,5 @@
     {
         await base.OnInitializedAsync();
         _userId = await Storage.GetItemAsStringAsync(Constants.UserId);
-    }
-
-    void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
     }
 }

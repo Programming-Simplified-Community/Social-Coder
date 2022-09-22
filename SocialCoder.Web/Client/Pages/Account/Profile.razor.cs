@@ -1,7 +1,6 @@
 ﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using SocialCoder.Web.Client.Components;
 using SocialCoder.Web.Shared.Models;
 using SocialCoder.Web.Shared.Models.Account;
 using SocialCoder.Web.Shared.ViewModels;
@@ -15,13 +14,13 @@ public partial class Profile : ComponentBase
     [Inject] protected ISnackbar Snack { get; set; }
     [Inject] protected ILogger<Profile> Logger { get; set; }
     [Inject] protected ILocalStorageService Storage { get; set; }
-    protected string UserId { get; private set; }
+    private string UserId { get; set; }
 
-    protected MyProfileInfo ProfileInfo { get; private set; }
-    protected List<UserExperienceViewModel> UserExperiences { get; set; } = new();
-    protected List<ExperiencePool> ExperiencePool { get; set; } = new();
-    protected List<UserGoal> Goals { get; set; } = new();
-    protected readonly MudTheme Theme = new();
+    private MyProfileInfo ProfileInfo { get; set; }
+    private List<UserExperienceViewModel> UserExperiences { get; set; } = new();
+    private List<ExperiencePool> ExperiencePool { get; set; } = new();
+    private List<UserGoal> Goals { get; set; } = new();
+    private readonly MudTheme Theme = new();
 
     private ExperiencePool? _selectedExperiencePoolItem;
     private Web.Shared.Enums.ExperienceLevel _selectedExperienceLevel = Web.Shared.Enums.ExperienceLevel.White;
@@ -31,6 +30,29 @@ public partial class Profile : ComponentBase
         if (_selectedExperiencePoolItem is null)
         {
             Snack.Add("Please select an experience item.", Severity.Warning);
+            return;
+        }
+        //
+        // var level = _selectedExperienceLevel switch
+        // {
+        //     case Web.Shared.Enums.ExperienceLevel.White => ExperienceLevel.White,
+        //         _ => ExperienceLevel.White
+        // };
+        
+        var response = await Graph.AddUserExperience
+            .ExecuteAsync(_selectedExperiencePoolItem.Id, (ExperienceLevel)(int)_selectedExperienceLevel, UserId);
+
+        if (response.IsErrorResult() || response.Data is null)
+        {
+            var errors = string.Join("\n", response.Errors.Select(x => x.Message));
+            Logger.LogError("An error occurred with GraphQL while adding user experience: {Error}", errors);
+            Snack.Add("An error occurred", Severity.Error);
+            return;
+        }
+
+        if (!response.Data.AddUserExperience.Success)
+        {
+            Snack.Add(response.Data.AddUserExperience.Message, Severity.Error);
             return;
         }
         
@@ -85,7 +107,8 @@ public partial class Profile : ComponentBase
         ExperiencePool.AddRange(response.Data.ExperiencePool.Select(x=>new ExperiencePool()
         {
             Name = x.Name,
-            ImageUrl = x.ImageUrl
+            ImageUrl = x.ImageUrl,
+            Id = x.Id
         }));
         
         Goals.AddRange(response.Data.Goals.Select(x=>new UserGoal

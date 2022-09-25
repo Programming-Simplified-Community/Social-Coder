@@ -1,6 +1,6 @@
 ﻿using SocialCoder.Web.Shared.Attributes;
 
-namespace SocialCoder.Web.Shared.Models;
+namespace SocialCoder.Web.Shared.Enums;
 
 public enum PageType
 {
@@ -29,5 +29,8 @@ public enum PageType
     Quests,
     
     [Image("../img/banner/streams-icon.png")]
-    Streams
+    Streams,
+    
+    [Image("../img/banner/accounthub-icon.png")]
+    AccountHub
 }

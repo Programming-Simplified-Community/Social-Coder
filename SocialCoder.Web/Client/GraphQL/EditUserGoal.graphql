@@ -1,0 +1,22 @@
+﻿mutation EditUserGoal(
+    $goalId: Int!
+    $title: String,
+    $description: String,
+    $goalType: GoalType,
+    $targetDate: DateTime
+    $userId: String!,
+    $completedOn: DateTime
+) {
+    editUserGoal(request: {
+        goalType: $goalType,
+        title: $title,
+        description: $description,
+        userId: $userId,
+        targetDate: $targetDate,
+        completedOn: $completedOn,
+        goalId: $goalId
+    }) {
+        success,
+        message
+    }
+}

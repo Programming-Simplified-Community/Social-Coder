@@ -1,0 +1,9 @@
+﻿mutation DeleteUserGoal($goalId: Int!, $userId: String!) {
+    deleteUserGoal(request: {
+        userId: $userId,
+        goalId: $goalId
+    }) {
+        message,
+        success
+    }
+}

@@ -1,0 +1,10 @@
+﻿mutation EditUserExperience($experienceId: Int!, $level: ExperienceLevel!, $userId: String!) {
+    editUserExperience(request: {
+        level: $level,
+        experiencePoolId: $experienceId,
+        userId: $userId
+    }){
+        message,
+        success
+    }
+}

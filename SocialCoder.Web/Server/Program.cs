@@ -95,6 +95,7 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICodeJamService, CodeJamService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
 
 builder.Services.AddGraphQLServer()
     .AddQueryType<GraphQLQueries>()

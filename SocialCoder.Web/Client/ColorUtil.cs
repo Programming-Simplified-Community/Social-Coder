@@ -4,6 +4,16 @@ namespace SocialCoder.Web.Client;
 
 public static class ColorUtil
 {
+    public static string GetSigmaColor(this MudTheme theme, Web.Shared.Enums.ExperienceLevel level)
+        => level switch
+        {
+            Web.Shared.Enums.ExperienceLevel.Black => "black",
+            Web.Shared.Enums.ExperienceLevel.Red => "red",
+            Web.Shared.Enums.ExperienceLevel.Green => theme.PaletteDark.SuccessLighten,
+            Web.Shared.Enums.ExperienceLevel.Blue => "cyan",
+            Web.Shared.Enums.ExperienceLevel.Yellow => "yellow",
+            _ => "white"
+        };
     public static string GetCssValue(MudTheme theme, Color color)
     {
         return color switch

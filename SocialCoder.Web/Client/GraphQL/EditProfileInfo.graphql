@@ -1,0 +1,6 @@
+﻿mutation EditProfileInfo($userId: String!, $country: String, $language: String, $displayName: String) {
+    editProfileInfo(request: { userId: $userId, language: $language, displayName: $displayName, country: $country}) {
+        message,
+        success
+    }
+}

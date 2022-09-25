@@ -1,12 +1,16 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
 using SocialCoder.Web.Server.Data;
 using SocialCoder.Web.Shared;
 using SocialCoder.Web.Shared.Models;
+using Path = System.IO.Path;
 
 namespace SocialCoder.Web.Server;
 
 public static class SeedDb
 {
+    record ExperienceItem(string Name, string ImageUrl);
+    
     /// <summary>
     /// Inject test data into our database!
     /// </summary>
@@ -15,7 +19,28 @@ public static class SeedDb
     {
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
-        
+
+        var experiencePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "experiences.json");
+        if (File.Exists(experiencePath))
+        {
+            var experiences = JsonConvert.DeserializeObject<ExperienceItem[]>(await File.ReadAllTextAsync(experiencePath));
+            var currentExperiences = context.ExperiencePools.Select(x => x.Name).Distinct().ToHashSet();
+
+            foreach (var item in experiences ?? Array.Empty<ExperienceItem>())
+            {
+                if (currentExperiences.Contains(item.Name))
+                    continue;
+
+                context.ExperiencePools.Add(new()
+                {
+                    Name = item.Name,
+                    ImageUrl = item.ImageUrl
+                });
+            }
+
+            await context.SaveChangesAsync();
+        }
+
         // CREATE ROLES that our application requires to operate (at least base ones)
         if (!context.Roles.Any())
         {

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SocialCoder.Web.Server.Models;
 using SocialCoder.Web.Shared.Models;
+using SocialCoder.Web.Shared.Models.Account;
 using SocialCoder.Web.Shared.Models.CodeJam;
 using SocialCoder.Web.Shared.Models.Management;
 
@@ -40,6 +41,14 @@ namespace SocialCoder.Web.Server.Data
         public DbSet<Badge> Badges { get; set; }
         public DbSet<BadgeProgress> BadgeProgress { get; set; }
         public DbSet<BadgeRequirement> BadgeRequirements { get; set; }
+        
+        #region User Experience
+
+        public DbSet<ExperiencePool> ExperiencePools { get; set; }
+        public DbSet<UserExperience> UserExperiences { get; set; }
+        public DbSet<UserGoal> UserGoals { get; set; }
+
+        #endregion
         
         #region Code Jam
 

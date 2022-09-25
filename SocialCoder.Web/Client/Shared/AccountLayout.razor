@@ -1,0 +1,65 @@
+﻿@using MudBlazor.Utilities
+@using Blazored.LocalStorage
+@using Microsoft.AspNetCore.Authorization
+@inherits LayoutComponentBase
+@attribute [Authorize]
+
+@inject ILocalStorageService Storage
+
+<MudThemeProvider Theme="_theme" IsDarkMode="true" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<CascadingValue TValue="bool" Value="_drawerOpen" Name="DrawerOpen">
+    <MudLayout>
+        <MudAppBar>
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+            <h1 class="header-brand-text">
+                Social Coder
+            </h1>
+            <MudSpacer/>
+            <LoginDisplay/>
+            <CultureSelect/>
+        </MudAppBar>
+        <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Docked" Fixed="true" Elevation="1" Variant="@DrawerVariant.Mini" OpenMiniOnHover="false">
+            <AccountNavMenu/>
+        </MudDrawer>
+        <MudMainContent>
+            <CascadingValue Name="UserId" TValue="string" Value="_userId">
+                @Body
+            </CascadingValue>
+        </MudMainContent>
+    </MudLayout>
+</CascadingValue>
+
+@code {
+    bool _drawerOpen;
+    string _userId;
+
+    readonly MudTheme _theme = new()
+    {
+        PaletteDark = new()
+        {
+            Primary = new MudColor("7750f8"),
+            Secondary = new MudColor("40d04f"),
+            Background = new MudColor("161b28"),
+            AppbarBackground = new MudColor("7750f8"),
+            TextPrimary = new MudColor("FFF"),
+            TextSecondary = new MudColor("9aa4bf"),
+            DrawerBackground = new MudColor("1d2333"),
+            DrawerText = new MudColor("FFF"),
+            Surface = new MudColor("1d2333")
+        }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _userId = await Storage.GetItemAsStringAsync(Constants.UserId);
+    }
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}

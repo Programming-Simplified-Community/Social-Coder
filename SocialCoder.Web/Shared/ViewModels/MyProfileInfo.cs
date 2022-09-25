@@ -6,4 +6,5 @@ public class MyProfileInfo
     public string? DisplayName { get; set; }
     public string? Country { get; set; }
     public string? Language { get; set; }
+    public string Email { get; set; }
 }

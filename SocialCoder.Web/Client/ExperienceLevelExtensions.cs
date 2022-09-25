@@ -1,4 +1,6 @@
-﻿namespace SocialCoder.Web.Client;
+﻿using System.Diagnostics;
+
+namespace SocialCoder.Web.Client;
 using Level = Web.Shared.Enums.ExperienceLevel;
 
 public static class ExperienceLevelExtensions
@@ -19,6 +21,28 @@ public static class ExperienceLevelExtensions
             _ => "0-1 years"
         };
 
+    public static ExperienceLevel Translate(this Level level)
+        => level switch
+        {
+            Level.Black => ExperienceLevel.Black,
+            Level.Blue => ExperienceLevel.Blue,
+            Level.Green => ExperienceLevel.Green,
+            Level.Red => ExperienceLevel.Red,
+            Level.Yellow => ExperienceLevel.Yellow,
+            _ => ExperienceLevel.White
+        };
+
+    public static Level Translate(this ExperienceLevel level)
+        => level switch
+        {
+            ExperienceLevel.Black => Level.Black,
+            ExperienceLevel.Blue => Level.Blue,
+            ExperienceLevel.Green => Level.Green,
+            ExperienceLevel.Red => Level.Red,
+            ExperienceLevel.Yellow => Level.Yellow,
+            _ => Level.White
+        };
+    
     public static string Display(this Level level)
         => $"{level.ToString()} Belt ({level.GetSigmaYears()})";
 }

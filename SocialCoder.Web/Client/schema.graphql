@@ -127,6 +127,7 @@ type GraphQlMutations {
   addUserGoal(request: AddUserGoalRequestInput!): ResultOfOfUserGoal!
   editUserGoal(request: EditUserGoalRequestInput!): ResultOf!
   deleteUserGoal(request: DeleteUserGoalRequestInput!): ResultOf!
+  editProfileInfo(request: EditProfileInfoRequestInput!): ResultOf!
 }
 
 input CodeJamTopicFilterInput {
@@ -353,6 +354,7 @@ type MyProfileInfo {
   displayName: String
   country: String
   language: String
+  email: String!
 }
 
 type BasicRoleInfo {
@@ -466,6 +468,13 @@ input EditUserGoalRequestInput {
 input DeleteUserGoalRequestInput {
   goalId: Int!
   userId: String!
+}
+
+input EditProfileInfoRequestInput {
+  userId: String!
+  displayName: String
+  language: String
+  country: String
 }
 
 type CodeJamRegistration {

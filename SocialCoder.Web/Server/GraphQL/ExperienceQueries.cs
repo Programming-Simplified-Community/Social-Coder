@@ -42,6 +42,7 @@ public partial class GraphQLQueries
                 Country = x.Country,
                 Language = x.Language,
                 DisplayName = x.DisplayName,
-                Username = x.UserName
+                Username = x.UserName,
+                Email = x.Email
             }).FirstOrDefaultAsync(cancellationToken);
 }

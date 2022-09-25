@@ -145,4 +145,37 @@ public class ProfileService : IProfileService
         
         return ResultOf.Pass();
     }
+
+    public async Task<ResultOf> EditProfileInfo(EditProfileInfoRequest request, CancellationToken cancellationToken = default)
+    {
+        var existing = await _context.Users.FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
+
+        if (existing is null)
+            return ResultOf.Fail("Not Found");
+
+        var changed = false;
+
+        if (!string.IsNullOrWhiteSpace(request.Country))
+        {
+            existing.Country = request.Country;
+            changed = true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.Language))
+        {
+            existing.Language = request.Language;
+            changed = true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.DisplayName))
+        {
+            changed = true;
+            existing.DisplayName = request.DisplayName;
+        }
+
+        if (changed)
+            await _context.SaveChangesAsync(cancellationToken);
+
+        return ResultOf.Pass();
+    }
 }

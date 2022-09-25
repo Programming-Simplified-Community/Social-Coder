@@ -16,7 +16,7 @@ public partial class Profile : ComponentBase
     [Inject] protected ILocalStorageService Storage { get; set; }
     private string UserId { get; set; }
 
-    private MyProfileInfo ProfileInfo { get; set; }
+    private MyProfileInfo ProfileInfo { get; set; } = new();
     private List<UserExperienceViewModel> UserExperiences { get; set; } = new();
     private List<ExperiencePool> ExperiencePool { get; set; } = new();
     private List<UserGoal> Goals { get; set; } = new();
@@ -25,6 +25,27 @@ public partial class Profile : ComponentBase
     private ExperiencePool? _selectedExperiencePoolItem;
     private Web.Shared.Enums.ExperienceLevel _selectedExperienceLevel = Web.Shared.Enums.ExperienceLevel.White;
 
+    async Task SaveProfileInfo()
+    {
+        var response = await Graph.EditProfileInfo.ExecuteAsync(UserId, ProfileInfo.Country, ProfileInfo.Language, ProfileInfo.DisplayName);
+
+        if (response.IsErrorResult() || response.Data is null)
+        {
+            var errors = string.Join("\n", response.Errors.Select(x => x.Message));
+            Logger.LogError("An error occurred with GraphQL white editing user profile: {Error}", errors);
+            Snack.Add("An error occurred", Severity.Error);
+            return;
+        }
+
+        if (!response.Data.EditProfileInfo.Success)
+        {
+            Snack.Add(response.Data.EditProfileInfo.Message, Severity.Error);
+            return;
+        }
+
+        Snack.Add("Profile info updated", Severity.Success);
+    }
+    
     async Task AddExperiencePool()
     {
         if (_selectedExperiencePoolItem is null)
@@ -32,15 +53,32 @@ public partial class Profile : ComponentBase
             Snack.Add("Please select an experience item.", Severity.Warning);
             return;
         }
-        //
-        // var level = _selectedExperienceLevel switch
-        // {
-        //     case Web.Shared.Enums.ExperienceLevel.White => ExperienceLevel.White,
-        //         _ => ExperienceLevel.White
-        // };
+
+        ExperienceLevel level;
+        switch(_selectedExperienceLevel)
+        {
+            case Web.Shared.Enums.ExperienceLevel.Black:
+                level = ExperienceLevel.Black;
+                break;
+            case Web.Shared.Enums.ExperienceLevel.Blue:
+                level = ExperienceLevel.Blue;
+                break;
+            case Web.Shared.Enums.ExperienceLevel.Green:
+                level = ExperienceLevel.Green;
+                break;
+            case Web.Shared.Enums.ExperienceLevel.Red:
+                level = ExperienceLevel.Red;
+                break;
+            case Web.Shared.Enums.ExperienceLevel.Yellow:
+                level = ExperienceLevel.Yellow;
+                break;
+            default:
+                level = ExperienceLevel.White;
+                break;
+        }
         
         var response = await Graph.AddUserExperience
-            .ExecuteAsync(_selectedExperiencePoolItem.Id, (ExperienceLevel)(int)_selectedExperienceLevel, UserId);
+            .ExecuteAsync(_selectedExperiencePoolItem.Id, level, UserId);
 
         if (response.IsErrorResult() || response.Data is null)
         {
@@ -93,13 +131,14 @@ public partial class Profile : ComponentBase
             Country = response.Data.MyInfo!.Country,
             Username = response.Data.MyInfo.Username,
             DisplayName = response.Data.MyInfo.DisplayName,
-            Language = response.Data.MyInfo.Language
+            Language = response.Data.MyInfo.Language,
+            Email = response.Data.MyInfo.Email
         };
         
         UserExperiences.AddRange(response.Data.UserExperience.Select(x=>new UserExperienceViewModel
         {
             Name = x.Name,
-            Experience = (Web.Shared.Enums.ExperienceLevel)x.Experience,
+            Experience = x.Experience.Translate(),
             ImageUrl = x.ImageUrl,
             ExperiencePoolId = x.ExperiencePoolId
         }));

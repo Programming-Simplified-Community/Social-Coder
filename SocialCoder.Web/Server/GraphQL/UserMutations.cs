@@ -53,4 +53,9 @@ public partial class GraphQlMutations
     public async Task<ResultOf> DeleteUserGoal(DeleteUserGoalRequest request, [Service] IProfileService serivce,
         CancellationToken cancellationToken)
         => await serivce.DeleteUserGoal(request, cancellationToken);
+
+    [UseMutationConvention, Authorize]
+    public async Task<ResultOf> EditProfileInfo(EditProfileInfoRequest request, [Service] IProfileService service,
+        CancellationToken cancellationToken)
+        => await service.EditProfileInfo(request, cancellationToken);
 }

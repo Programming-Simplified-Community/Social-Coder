@@ -16,7 +16,8 @@
         displayName,
         username,
         country,
-        language
+        language,
+        email
     },
     
     goals(userId: $userId) {

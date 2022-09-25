@@ -54,4 +54,12 @@ public interface IProfileService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<ResultOf> DeleteUserGoal(DeleteUserGoalRequest request, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Edit profile info
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<ResultOf> EditProfileInfo(EditProfileInfoRequest request, CancellationToken cancellationToken = default);
 }

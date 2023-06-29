@@ -29,12 +29,12 @@ services:
     environment:
       - ASPNETCORE_URLS="https://+;http://+"
       - ASPNETCORE_HTTPS_PORT=443
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=password
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_CA_AUTH_PASS}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/${CERT_CA_AUTH_NAME}.crt
     ports:
       - "7159:443"
     volumes:
-      - $USERPROFILE\.aspnet\https:/https/
+      - ${PROJECT_PATH}\SSL:/https
     depends_on:
       - social-coder-api-db
     

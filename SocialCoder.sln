@@ -17,10 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{99BA
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
 		create-https-certs.ps1 = create-https-certs.ps1
-		start-db.ps1 = start-db.ps1
-		create-env.ps1 = create-env.ps1
-		reset-db.ps1 = reset-db.ps1
-		.defaults = .defaults
 		start-server.ps1 = start-server.ps1
 	EndProjectSection
 EndProject
@@ -30,6 +26,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{0B1747EF-1
 		Database.md = Database.md
 		Readme.md = Readme.md
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "util", "util", "{74CADFE2-3F7B-4E97-8AA8-140DEA930FD4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialCoder.CLI", "SocialCoder.CLI\SocialCoder.CLI.csproj", "{4D1F917D-4125-4619-B5E8-2E96EE0280CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +49,10 @@ Global
 		{40520FE4-D8C6-4251-AA46-103CC96DFC6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40520FE4-D8C6-4251-AA46-103CC96DFC6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40520FE4-D8C6-4251-AA46-103CC96DFC6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D1F917D-4125-4619-B5E8-2E96EE0280CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D1F917D-4125-4619-B5E8-2E96EE0280CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D1F917D-4125-4619-B5E8-2E96EE0280CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D1F917D-4125-4619-B5E8-2E96EE0280CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,5 +65,7 @@ Global
 		{F68E1DB6-52B4-479E-BAF7-37A6FAB19EE6} = {F10099E1-F9AA-4D68-BB12-653CA6E43256}
 		{55CC9CD2-E708-4CED-B920-6D5E0567B9FF} = {F10099E1-F9AA-4D68-BB12-653CA6E43256}
 		{40520FE4-D8C6-4251-AA46-103CC96DFC6A} = {F10099E1-F9AA-4D68-BB12-653CA6E43256}
+		{74CADFE2-3F7B-4E97-8AA8-140DEA930FD4} = {6ED18575-31A4-468B-8C76-1353FB9F57DB}
+		{4D1F917D-4125-4619-B5E8-2E96EE0280CD} = {74CADFE2-3F7B-4E97-8AA8-140DEA930FD4}
 	EndGlobalSection
 EndGlobal

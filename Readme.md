@@ -2,6 +2,7 @@
 [![CodeQL](https://github.com/Programming-Simplified-Community/Social-Coder/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Programming-Simplified-Community/Social-Coder/actions/workflows/codeql-analysis.yml)
 [![MegaLinter](https://github.com/programming-simplified-community/social-coder/workflows/MegaLinter/badge.svg?branch=main)](https://github.com/programming-simplified-community/social-coder/actions?query=workflow%3AMegaLinter+branch%3Amain)
 
+
 # Social Coder
 
 This project is geared towards building a social-media like experience for programmers!
@@ -16,35 +17,43 @@ If you're interested in contributing here's [Environment](Environment.md) setup 
 
 Of course, no app is complete without a [Database](Database.md)!
 
-## Scripts
+# Development Tool
 
-Before starting the database via docker-compose we need to setup some environment variables.
+We recognized the fact developers may want to develop from their favorite operating system. Windows, Linux, or Mac. Issue is having utility scripts
+that work across different platforms! Python? - well now everyone needs to install Python. PowerShell? Everyone needs PowerShell now. Instead, we made our own
+CLI tool using C#! Sure, it's a `dotnet tool` which requires install but... it works across different platforms **and** is included in the repo!
+More importantly, since this is a C# project you'll have `dotnet` on your devbox!
 
-There are a few parameters you can specify if you want... running it with no parameters will
-use default values for our connection string! Which is fine...
+### Install dev tool
 
-[View Script](create-env.ps1)
-
-Please note this will override previously set values if you don't respecify them!
-Additionally, this script will automatically update your connection string.
-
+Assumes you're running this from project root directory
 ```bash
-./create-env.ps1
-
-./create-env.ps1 -databasePath Path\To\Where\You\Want\To\Store\Db
+dotnet tool install -g programming-simplified-community-dev-tool --add-source ./SocialCoder.CLI/nupkg
 ```
 
-Start database from [docker-compose](docker-compose.yml)
+### Uninstall dev tool
+
+Doesn't matter where you execute this from
 ```bash
-./start-db.ps1
+dotnet tool uninstall -g programming-simplified-community-dev-tool
 ```
 
-Create https-certs. Depending on your environment your IDE might have already set this up for you.
-Otherwise, this script will do the trick... hopefully
+### Getting started
 
+You'll want to get your project settings rolling in order to successfully bring up the application!
+
+`ProjectPath` is the most important one.
+
+This gives you a wizard like experience where you provide values, or use defaults
 ```bash
-./create-https-certs.ps1
+social-dev init
 ```
+
+If you need to update a specific value.
+```bash
+social-dev settings
+```
+
 
 ## Services
 

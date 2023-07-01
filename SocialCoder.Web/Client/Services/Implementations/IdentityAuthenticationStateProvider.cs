@@ -42,11 +42,22 @@ public class IdentityAuthenticationStateProvider : AuthenticationStateProvider
 
             if (userInfo.IsAuthenticated)
             {
-                var claims =
-                    new[] { new Claim(ClaimTypes.Name, userInfo.UserName) }.Concat(
-                        userInfo.Claims.Select(x => new Claim(x.Key, x.Value)))
-                        .ToArray();
-                
+                var claims = new List<Claim>()
+                {
+                    new(ClaimTypes.Name, userInfo.UserName)
+                };
+
+                foreach (var claim in userInfo.Claims)
+                {
+                    if (claim.Key == ClaimTypes.Role)
+                    {
+                        var roles = claim.Value.Split(',');
+                        claims.AddRange(roles.Select(x => new Claim(ClaimTypes.Role, x)));
+                    }
+                    else
+                        claims.Add(new(claim.Key, claim.Value));
+                }
+
                 identity = new ClaimsIdentity(claims, "Server authentication");
 
                 await _storage.SetItemAsStringAsync(Constants.UserId,

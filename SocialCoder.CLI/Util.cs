@@ -77,11 +77,11 @@ public static class Util
 
         if (string.IsNullOrWhiteSpace(path))
             return;
-        
+
         var fileInfo = new FileInfo(path);
         var connectionPath = Path.Join(fileInfo.DirectoryName, ".connections");
-
-        var connection = $"Server={settings.Host};port=5432;User Id={settings.User};Password={settings.Password};Database={settings.Name}";
+        
+        var connection = $"DefaultConnection=Server={settings.Host};port=5432;User Id={settings.User};Password={settings.Password};Database={settings.Name}";
         File.WriteAllText(connectionPath, connection);
     }
     
@@ -139,8 +139,12 @@ public static class Util
     /// </summary>
     /// <returns>Path to Social Coder on filesystem (if provided)</returns>
     public static string? GetProjectPath()
+    #if DEBUG
+        => @"D:\Github\Social-Coder";
+    #else
         => GetConfiguration().GetValue<string>("ProjectPath");
-
+    #endif
+    
     /// <summary>
     /// Path to store environment file
     /// </summary>
@@ -171,10 +175,18 @@ public static class Util
         
         info.UseShellExecute = false;
         info.RedirectStandardOutput = true;
-
+        info.RedirectStandardError = true;
+        
         var process = new Process();
         process.StartInfo = info;
         process.Start();
+
+        while (!process.StandardOutput.EndOfStream)
+            Console.WriteLine(process.StandardOutput.ReadLine());
+
+        while (!process.StandardError.EndOfStream)
+            Console.WriteLine(process.StandardError.ReadLine());
+        
         process.WaitForExit();
     }
 
@@ -185,7 +197,7 @@ public static class Util
 
     private static void RunDockerComposeCommand(string arguments)
     {
-        RunSystemCommand("docker compose", arguments);
+        RunSystemCommand("docker", "compose " + arguments);
     }
 
     /// <summary>

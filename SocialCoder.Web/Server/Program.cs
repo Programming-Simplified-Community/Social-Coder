@@ -12,8 +12,8 @@ using GraphQLQueries = SocialCoder.Web.Server.GraphQL.GraphQLQueries;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddConnections();
 builder.Configuration.AddJsonConfigurationFiles();
+builder.Configuration.AddConnections();
 
 // Add services to the container.
 var connectionString = builder.Configuration["DefaultConnection"];

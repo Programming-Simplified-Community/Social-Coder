@@ -139,11 +139,7 @@ public static class Util
     /// </summary>
     /// <returns>Path to Social Coder on filesystem (if provided)</returns>
     public static string? GetProjectPath()
-    #if DEBUG
-        => @"D:\Github\Social-Coder";
-    #else
         => GetConfiguration().GetValue<string>("ProjectPath");
-    #endif
     
     /// <summary>
     /// Path to store environment file

@@ -40,6 +40,12 @@ dotnet tool uninstall -g programming-simplified-community-dev-tool
 
 ### Getting started
 
+Please make sure you have the following `dotnet tool` installed as it's a dependency to apply db migrations. The following command installs the tool at a global level 
+(can use it in multiple projects)
+```bash
+dotnet tool install --global dotnet-ef
+```
+
 You'll want to get your project settings rolling in order to successfully bring up the application!
 
 `ProjectPath` is the most important one.
@@ -54,6 +60,14 @@ If you need to update a specific value.
 social-dev settings
 ```
 
+Once you have at least ran through the `init` wizard you can then start up the database via `start-db`. It spools up a docker container,
+waits for it to come online, then applies database migrations! 
+
+```bash
+social-dev start-db
+```
+
+At this point the only outstanding piece to get the app running is the OAuth portion. Technically you can run the app but you won't be able to login.
 
 ## Services
 
@@ -69,7 +83,8 @@ graph TD
 ```
 
 ## Login
-There are no default credentials. Must utilize OAuth.
+There are no default credentials. Must utilize OAuth! Please note: when the application first starts up (with a clean DB), the first user to login gets designated as the `owner` who has the highest privileges.
+Idea being you deploy the application and are 99% most likely to be the same one who logs in to test/verify things are running.
 
 ## OAuth Setup
 
@@ -85,9 +100,6 @@ Will require adding a `appsettings.development.json` to your Server project [Soc
   }
 }
 ```
-
-Right now we have Discord and Google setup for our application. A requirement to set this up will be to register with 
-the following services:
 
 #### Discord
 

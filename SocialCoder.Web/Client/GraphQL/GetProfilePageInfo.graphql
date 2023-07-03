@@ -1,0 +1,31 @@
+﻿query GetProfilePageInfo($userId: String!) {
+    userExperience(userId: $userId) {
+        experience,
+        imageUrl,
+        name,
+        experiencePoolId
+    },
+    
+    experiencePool {
+        name,
+        imageUrl,
+        id
+    },
+    
+    myInfo(userId: $userId){
+        displayName,
+        username,
+        country,
+        language,
+        email
+    },
+    
+    goals(userId: $userId) {
+        id,
+        title,
+        description,
+        targetDate,
+        completedOn,
+        goalType
+    }
+}

@@ -1,0 +1,21 @@
+﻿mutation CreateUserGoal(
+    $title: String!,
+    $description: String!,
+    $goalType: GoalType!,
+    $targetDate: DateTime!,
+    $userId: String!
+) {
+    addUserGoal(request: {
+        userId: $userId,
+        description: $description,
+        targetDate: $targetDate,
+        title: $title,
+        goalType: $goalType
+    }) {
+        message,
+        success,
+        data {
+            id
+        }
+    }
+}

@@ -1,0 +1,9 @@
+﻿mutation DeleteUserExperience($experienceId: Int!, $userId: String!) {
+    removeUserExperience(request: {
+        userId: $userId,
+        experiencePoolId: $experienceId
+    }) {
+        success,
+        message
+    }
+}

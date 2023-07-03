@@ -39,6 +39,10 @@ directive @stream(
 ) on FIELD
 
 type GraphQLQueries {
+  experiencePool: [ExperiencePool!]!
+  userExperience(userId: String!): [UserExperienceViewModel!]!
+  goals(userId: String!): [UserGoal!]!
+  myInfo(userId: String!): MyProfileInfo
   topics(
     skip: Int
     take: Int
@@ -115,6 +119,15 @@ type GraphQlMutations {
     callingUser: String!
   ): ResultOf!
   banUser(request: BanUserRequestInput!, callingUser: String!): ResultOf!
+  addUserExperience(
+    request: AddUserExperienceRequestInput!
+  ): ResultOfOfUserExperience!
+  editUserExperience(request: AddUserExperienceRequestInput!): ResultOf!
+  removeUserExperience(request: RemoveUserExperienceRequestInput!): ResultOf!
+  addUserGoal(request: AddUserGoalRequestInput!): ResultOfOfUserGoal!
+  editUserGoal(request: EditUserGoalRequestInput!): ResultOf!
+  deleteUserGoal(request: DeleteUserGoalRequestInput!): ResultOf!
+  editProfileInfo(request: EditProfileInfoRequestInput!): ResultOf!
 }
 
 input CodeJamTopicFilterInput {
@@ -305,9 +318,48 @@ input CodeJamRegistrationFilterInput {
   codeJamTopic: CodeJamTopicFilterInput
 }
 
-input CodeJamRegistrationRequestInput {
-  topicId: Int!
-  preferTeam: Boolean!
+type UserGoal {
+  id: Int!
+  userId: String!
+  title: String!
+  description: String!
+  goalType: GoalType!
+  createdOn: DateTime!
+  targetDate: DateTime!
+  completedOn: DateTime
+}
+
+type UserExperienceViewModel {
+  userId: String!
+  experiencePoolId: Int!
+  name: String!
+  imageUrl: String!
+  experience: ExperienceLevel!
+}
+
+type AuthorizeDirective {
+  policy: String
+  roles: [String!]
+  apply: ApplyPolicy!
+}
+
+type ExperiencePool {
+  id: Int!
+  name: String!
+  imageUrl: String!
+}
+
+type MyProfileInfo {
+  username: String!
+  displayName: String
+  country: String
+  language: String
+  email: String!
+}
+
+type BasicRoleInfo {
+  roleId: String!
+  name: String!
 }
 
 type ResultOfOfCodeJamViewModel {
@@ -316,15 +368,9 @@ type ResultOfOfCodeJamViewModel {
   success: Boolean!
 }
 
-type BasicRoleInfo {
-  roleId: String!
-  name: String!
-}
-
-type AuthorizeDirective {
-  policy: String
-  roles: [String!]
-  apply: ApplyPolicy!
+input CodeJamRegistrationRequestInput {
+  topicId: Int!
+  preferTeam: Boolean!
 }
 
 input CodeJamAbandonRequestInput {
@@ -378,6 +424,59 @@ input BanUserRequestInput {
   reason: String!
 }
 
+type ResultOfOfUserExperience {
+  data: UserExperience
+  message: String
+  success: Boolean!
+}
+
+input AddUserExperienceRequestInput {
+  experiencePoolId: Int!
+  level: ExperienceLevel!
+  userId: String!
+}
+
+input RemoveUserExperienceRequestInput {
+  experiencePoolId: Int!
+  userId: String!
+}
+
+type ResultOfOfUserGoal {
+  data: UserGoal
+  message: String
+  success: Boolean!
+}
+
+input AddUserGoalRequestInput {
+  title: String!
+  description: String!
+  goalType: GoalType!
+  targetDate: DateTime!
+  userId: String!
+}
+
+input EditUserGoalRequestInput {
+  goalId: Int!
+  title: String
+  description: String
+  goalType: GoalType
+  targetDate: DateTime
+  completedOn: DateTime
+  userId: String!
+}
+
+input DeleteUserGoalRequestInput {
+  goalId: Int!
+  userId: String!
+}
+
+input EditProfileInfoRequestInput {
+  userId: String!
+  displayName: String
+  language: String
+  country: String
+}
+
 type CodeJamRegistration {
   id: ID
   userId: String!
@@ -388,9 +487,28 @@ type CodeJamRegistration {
   codeJamTopic: CodeJamTopic!
 }
 
-enum ApplyPolicy {
-  BEFORE_RESOLVER
-  AFTER_RESOLVER
+enum GoalType {
+  ACADEMIC
+  WORK
+  PROJECT
+  SHORT_TERM
+  LONG_TERM
+}
+
+enum ExperienceLevel {
+  WHITE
+  YELLOW
+  GREEN
+  BLUE
+  RED
+  BLACK
+}
+
+type UserExperience {
+  id: Int!
+  userId: String!
+  experiencePoolId: Int!
+  level: ExperienceLevel!
 }
 
 type CodeJamViewModel {
@@ -401,4 +519,9 @@ type CodeJamViewModel {
   totalTeamApplicants: Int!
   totalSoloApplicants: Int!
   totalApplicants: Int!
+}
+
+enum ApplyPolicy {
+  BEFORE_RESOLVER
+  AFTER_RESOLVER
 }

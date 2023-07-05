@@ -2,6 +2,7 @@
 [![CodeQL](https://github.com/Programming-Simplified-Community/Social-Coder/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Programming-Simplified-Community/Social-Coder/actions/workflows/codeql-analysis.yml)
 [![MegaLinter](https://github.com/programming-simplified-community/social-coder/workflows/MegaLinter/badge.svg?branch=main)](https://github.com/programming-simplified-community/social-coder/actions?query=workflow%3AMegaLinter+branch%3Amain)
 
+
 # Social Coder
 
 This project is geared towards building a social-media like experience for programmers!
@@ -16,35 +17,57 @@ If you're interested in contributing here's [Environment](Environment.md) setup 
 
 Of course, no app is complete without a [Database](Database.md)!
 
-## Scripts
+# Development Tool
 
-Before starting the database via docker-compose we need to setup some environment variables.
+We recognized the fact developers may want to develop from their favorite operating system. Windows, Linux, or Mac. Issue is having utility scripts
+that work across different platforms! Python? - well now everyone needs to install Python. PowerShell? Everyone needs PowerShell now. Instead, we made our own
+CLI tool using C#! Sure, it's a `dotnet tool` which requires install but... it works across different platforms **and** is included in the repo!
+More importantly, since this is a C# project you'll have `dotnet` on your devbox!
 
-There are a few parameters you can specify if you want... running it with no parameters will
-use default values for our connection string! Which is fine...
+### Install dev tool
 
-[View Script](create-env.ps1)
-
-Please note this will override previously set values if you don't respecify them!
-Additionally, this script will automatically update your connection string.
-
+Assumes you're running this from project root directory
 ```bash
-./create-env.ps1
-
-./create-env.ps1 -databasePath Path\To\Where\You\Want\To\Store\Db
+dotnet tool install -g programming-simplified-community-dev-tool --add-source ./SocialCoder.CLI/nupkg
 ```
 
-Start database from [docker-compose](docker-compose.yml)
+### Uninstall dev tool
+
+Doesn't matter where you execute this from
 ```bash
-./start-db.ps1
+dotnet tool uninstall -g programming-simplified-community-dev-tool
 ```
 
-Create https-certs. Depending on your environment your IDE might have already set this up for you.
-Otherwise, this script will do the trick... hopefully
+### Getting started
+
+Please make sure you have the following `dotnet tool` installed as it's a dependency to apply db migrations. The following command installs the tool at a global level 
+(can use it in multiple projects)
+```bash
+dotnet tool install --global dotnet-ef
+```
+
+You'll want to get your project settings rolling in order to successfully bring up the application!
+
+`ProjectPath` is the most important one.
+
+This gives you a wizard like experience where you provide values, or use defaults
+```bash
+social-dev init
+```
+
+If you need to update a specific value.
+```bash
+social-dev settings
+```
+
+Once you have at least ran through the `init` wizard you can then start up the database via `start-db`. It spools up a docker container,
+waits for it to come online, then applies database migrations! 
 
 ```bash
-./create-https-certs.ps1
+social-dev start-db
 ```
+
+At this point the only outstanding piece to get the app running is the OAuth portion. Technically you can run the app but you won't be able to login.
 
 ## Services
 
@@ -60,7 +83,8 @@ graph TD
 ```
 
 ## Login
-There are no default credentials. Must utilize OAuth.
+There are no default credentials. Must utilize OAuth! Please note: when the application first starts up (with a clean DB), the first user to login gets designated as the `owner` who has the highest privileges.
+Idea being you deploy the application and are 99% most likely to be the same one who logs in to test/verify things are running.
 
 ## OAuth Setup
 
@@ -76,9 +100,6 @@ Will require adding a `appsettings.development.json` to your Server project [Soc
   }
 }
 ```
-
-Right now we have Discord and Google setup for our application. A requirement to set this up will be to register with 
-the following services:
 
 #### Discord
 

@@ -1,0 +1,8 @@
+﻿FROM python:latest
+
+WORKDIR /app
+COPY gen.py gen.py
+
+WORKDIR /certs
+
+ENTRYPOINT [ "python", "/app/gen.py" ]

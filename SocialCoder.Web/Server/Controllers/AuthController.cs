@@ -67,7 +67,9 @@ public class AuthController : ControllerBase
         {
             IsAuthenticated = User.Identity?.IsAuthenticated ?? false,
             UserName = User.Identity?.Name ?? string.Empty,
-            Claims = User.Claims.ToDictionary(x => x.Type, x => x.Value)
+            Claims = User.Claims
+                .GroupBy(x=>x.Type)
+                .ToDictionary(x=>x.Key, x=>string.Join(",", x.Select(y=>y.Value)))
         };
     
     public async Task<IActionResult> ExternalCallback()

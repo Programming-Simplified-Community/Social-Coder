@@ -10,3 +10,4 @@ Database/
 .connections
 dist/
 appsettings.[dD]evelopment.json
+SSL

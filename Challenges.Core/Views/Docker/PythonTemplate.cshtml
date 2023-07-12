@@ -1,0 +1,14 @@
+﻿@model Challenges.Core.DockerBuilds.DockerBuildPython
+
+FROM python:@(Model.LanguageVersion ?? "latest")
+
+WORKDIR /usr/src/app
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+@Model.GetDockerfileSymbolicReportLink()
+
+ENTRYPOINT [ "python", "./@Model.MainFile" ]

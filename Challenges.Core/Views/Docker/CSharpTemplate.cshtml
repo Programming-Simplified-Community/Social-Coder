@@ -1,0 +1,25 @@
+﻿@model Challenges.Core.DockerBuilds.DockerBuildCSharp
+
+FROM mcr.microsoft.com/dotnet/aspnet:@Model.LanguageVersion as base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:@Model.LanguageVersion as build
+WORKDIR /src
+
+# Need to figure out better solution for C# projects when we start fully supporting C#
+
+COPY src/*.csproj ./
+RUN dotnet restore "@Model.CSProjectFilePath"
+WORKDIR "/src/@Model.CSProjectDirectoryName"
+RUN dotnet build "@Model.CSProjectFile" -c Release -o /app/build
+
+FROM build as publish
+RUN dotnet publish "@Model.CSProjectFile" -c Release -o /app/publish /p:UseAppHost=false
+
+FROM base as final
+@Model.GetDockerfileSymbolicReportLink()
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT [ "dotnet", "@Model.ProjectDLLName" ]

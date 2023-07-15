@@ -16,12 +16,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{99BAC35B-5B5D-4532-A49A-BBDE913E380F}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
-		create-https-certs.ps1 = create-https-certs.ps1
-		start-db.ps1 = start-db.ps1
-		create-env.ps1 = create-env.ps1
-		reset-db.ps1 = reset-db.ps1
 		.defaults = .defaults
-		start-server.ps1 = start-server.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{0B1747EF-1BEE-4EED-A989-A1BB11A59B8B}"
@@ -38,6 +33,20 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Challenges.Common", "Challenges.Common\Challenges.Common.csproj", "{6BEE1FC8-8448-448F-A2E3-87C98B5C9E90}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Challenges.Core", "Challenges.Core\Challenges.Core.csproj", "{B9F889E3-87E4-4982-82B8-8E16D065F694}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "windows", "windows", "{35771245-9E68-4022-A80E-02708C7FC735}"
+	ProjectSection(SolutionItems) = preProject
+		create-https-certs.ps1 = create-https-certs.ps1
+		create-env.ps1 = create-env.ps1
+		reset-db.ps1 = reset-db.ps1
+		start-db.ps1 = start-db.ps1
+		start-server.ps1 = start-server.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "linux", "linux", "{D7BB4BFB-38B6-453C-AD34-24A466EDA24A}"
+	ProjectSection(SolutionItems) = preProject
+		init-env.sh = init-env.sh
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,5 +94,7 @@ Global
 		{EE12F17D-8A40-4D5F-8D18-22E65F6B359C} = {36C95AA3-F30F-4550-B9DB-8323111C3602}
 		{6BEE1FC8-8448-448F-A2E3-87C98B5C9E90} = {36C95AA3-F30F-4550-B9DB-8323111C3602}
 		{B9F889E3-87E4-4982-82B8-8E16D065F694} = {36C95AA3-F30F-4550-B9DB-8323111C3602}
+		{35771245-9E68-4022-A80E-02708C7FC735} = {99BAC35B-5B5D-4532-A49A-BBDE913E380F}
+		{D7BB4BFB-38B6-453C-AD34-24A466EDA24A} = {99BAC35B-5B5D-4532-A49A-BBDE913E380F}
 	EndGlobalSection
 EndGlobal

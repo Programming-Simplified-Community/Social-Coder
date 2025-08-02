@@ -26,7 +26,7 @@ public static class SeedDb
             var experiences = JsonConvert.DeserializeObject<ExperienceItem[]>(await File.ReadAllTextAsync(experiencePath));
             var currentExperiences = context.ExperiencePools.Select(x => x.Name).Distinct().ToHashSet();
 
-            foreach (var item in experiences ?? Array.Empty<ExperienceItem>())
+            foreach (var item in experiences ?? [])
             {
                 if (currentExperiences.Contains(item.Name))
                     continue;
@@ -51,7 +51,7 @@ public static class SeedDb
                 Roles.EventCoordinator
             };
 
-            List<string> errors = new();
+            List<string> errors = [];
 
             foreach (var roleName in roles)
             {

@@ -255,7 +255,7 @@ public class UserService : IUserService
 
         #region Claims we want to capture from an OAuth Provider
         
-        List<Claim> claimsToAdd = new();
+        List<Claim> claimsToAdd = [];
         
         // Do we have a github url?
         if (HasClaim(ref claims, ClaimConstants.GithubUrl, out var githubUrl))

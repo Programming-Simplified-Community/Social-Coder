@@ -1,5 +1,4 @@
-﻿using HotChocolate.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using HotChocolate.Authorization;
 using SocialCoder.Web.Server.Data;
 using SocialCoder.Web.Shared;
 
@@ -25,7 +24,7 @@ public class BasicRoleInfo
 // ReSharper disable once InconsistentNaming
 public partial class GraphQLQueries
 {
-    [UseProjection, Authorize(Roles=new[]{Roles.Owner, Roles.Administrator})]
+    [UseProjection, Authorize(Roles= [Roles.Owner, Roles.Administrator])]
     public IOrderedQueryable<BasicRoleInfo> GetRoles([Service] ApplicationDbContext context)
         => context.Roles.Select(x => new BasicRoleInfo
             {
@@ -34,7 +33,7 @@ public partial class GraphQLQueries
             })
             .OrderBy(x => x.Name);
     
-    [UsePaging, UseOffsetPaging(IncludeTotalCount = true), UseProjection, UseFiltering, UseSorting, Authorize(Roles = new[]{Roles.Owner, Roles.Administrator})]
+    [UsePaging, UseProjection, UseFiltering, UseSorting, Authorize(Roles = [Roles.Owner, Roles.Administrator])]
     public IOrderedQueryable<BasicUserAccountInfo> GetUsers([Service] ApplicationDbContext context)
         => context.Users
             .Select(x => new BasicUserAccountInfo

@@ -1,4 +1,4 @@
-﻿using HotChocolate.AspNetCore.Authorization;
+﻿using HotChocolate.Authorization;
 using Microsoft.EntityFrameworkCore;
 using SocialCoder.Web.Server.Data;
 using SocialCoder.Web.Server.Services.Contracts;
@@ -21,7 +21,7 @@ public partial class GraphQlMutations
         [Service] ICodeJamService cj, CancellationToken cancellationToken)
         => await cj.Abandon(request, userId, cancellationToken);
 
-    [UseMutationConvention, Authorize(Roles = new []{ Roles.Administrator, Roles.Owner})]
+    [UseMutationConvention, Authorize(Roles = [Roles.Administrator, Roles.Owner])]
     public async Task<ResultOf<CodeJamTopic>> UpdateTopic(UpdateCodeJamTopicRequest request,
         [Service] ApplicationDbContext context,
         CancellationToken cancellationToken)
@@ -45,7 +45,7 @@ public partial class GraphQlMutations
         return ResultOf<CodeJamTopic>.Pass(existing);
     }
     
-    [UseMutationConvention, Authorize(Roles = new []{ Roles.Administrator, Roles.Owner})]
+    [UseMutationConvention, Authorize(Roles = [Roles.Administrator, Roles.Owner])]
     public async Task<ResultOf> DeleteTopic(int topicId,
         [Service] ApplicationDbContext context,
         CancellationToken cancellationToken)
@@ -61,7 +61,7 @@ public partial class GraphQlMutations
         return ResultOf.Pass();
     }
 
-    [UseMutationConvention, Authorize(Roles = new []{ Roles.Administrator, Roles.Owner})]
+    [UseMutationConvention, Authorize(Roles = [Roles.Administrator, Roles.Owner])]
     public async Task<ResultOf<CodeJamTopic>> CreateTopic(CreateCodeJamTopicRequest request,
         [Service] ApplicationDbContext context,
         CancellationToken cancellationToken)

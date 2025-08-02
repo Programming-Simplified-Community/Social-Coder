@@ -50,7 +50,7 @@
         </MudGrid>
         
         <MudGrid Justify="Justify.Center" Style="margin-top: 6px;">
-            @foreach (var social in Model?.Socials ?? new List<UserSocialMediaItem>())
+            @foreach (var social in Model?.Socials ?? [])
             {
                 var icon = GetSocialInfo(social.Type);
                 var color = $"color: {_colors[_count % _colors.Length]}";
@@ -87,7 +87,7 @@
 
     readonly MudTheme _theme = new();
 
-    string[] _colors = Array.Empty<string>();
+    string[] _colors = [];
     
     string GetSocialInfo(SocialMediaType type)
         => type switch
@@ -98,7 +98,7 @@
             SocialMediaType.GitHub => Icons.Custom.Brands.GitHub,
             SocialMediaType.Twitter => Icons.Custom.Brands.Twitter,
             SocialMediaType.Google => Icons.Custom.Brands.Google,
-            _ =>  Icons.Filled.QuestionMark
+            _ =>  Icons.Material.Filled.QuestionMark
         };
     
     [Parameter]
@@ -108,14 +108,14 @@
     {
         base.OnInitialized();
 
-        _colors = new[]
-        {
+        _colors =
+        [
             _theme.PaletteDark.PrimaryLighten,
             _theme.PaletteDark.SecondaryLighten,
             _theme.PaletteDark.TertiaryLighten,
             _theme.PaletteDark.SuccessLighten,
             _theme.PaletteDark.InfoLighten
-        };
+        ];
     }
 
 }

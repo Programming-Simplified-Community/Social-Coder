@@ -4,16 +4,16 @@
     <DialogContent>
         <MudTextField @bind-Value="@_reason"
                       Lines="5"
-                      AdornmentIcon="@Icons.Filled.Description"
+                      AdornmentIcon="@Icons.Material.Filled.Description"
                       Required
                       Label="Reason"
         />
     </DialogContent>
     <DialogActions>
-        <MudButton StartIcon="@Icons.Filled.Save" IconColor="Color.Info" OnClick="Submit">
+        <MudButton StartIcon="@Icons.Material.Filled.Save" IconColor="Color.Info" OnClick="Submit">
             Save
         </MudButton>
-        <MudButton StartIcon="@Icons.Filled.Cancel" IconColor="@Color.Secondary" OnClick="Cancel">Cancel</MudButton>
+        <MudButton StartIcon="@Icons.Material.Filled.Cancel" IconColor="@Color.Secondary" OnClick="Cancel">Cancel</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -21,7 +21,7 @@
     string _reason = string.Empty;
 
     [CascadingParameter]
-    public MudDialogInstance Dialog { get; set; }
+    public IMudDialogInstance Dialog { get; set; }
 
     void Submit()
     {

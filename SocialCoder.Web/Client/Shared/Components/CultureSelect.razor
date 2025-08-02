@@ -6,7 +6,7 @@
     <MudSelect @bind-Value="Culture"
                Style="max-width: 75px; top: -11px;"
                DisableUnderLine="true"
-               AdornmentIcon="@Icons.Filled.Language"
+               AdornmentIcon="@Icons.Material.Filled.Language"
                AdornmentColor="Color.Surface">
         @foreach (var item in _supportedCultures)
         {
@@ -17,9 +17,10 @@
 
 @code {
 
-    private CultureInfo[] _supportedCultures = {
+    private CultureInfo[] _supportedCultures =
+    [
         new("en-US")
-    };
+    ];
 
     private CultureInfo Culture
     {

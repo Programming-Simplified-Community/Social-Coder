@@ -44,8 +44,8 @@ else
         </RowTemplate>
         <PagerContent>
             <MudToolBar Style="display: flex; justify-content: center;">
-                <MudIconButton Icon="@Icons.Filled.FirstPage" Color="Color.Secondary" OnClick="ToFirstPage" Disabled="@(!HasPrevious)"/>
-                <MudIconButton Icon="@Icons.Filled.NavigateBefore" Color="Color.Tertiary" OnClick="PreviousPage" Disabled="@(!HasPrevious)"/>
+                <MudIconButton Icon="@Icons.Material.Filled.FirstPage" Color="Color.Secondary" OnClick="ToFirstPage" Disabled="@(!HasPrevious)"/>
+                <MudIconButton Icon="@Icons.Material.Filled.NavigateBefore" Color="Color.Tertiary" OnClick="PreviousPage" Disabled="@(!HasPrevious)"/>
                 <MudMenu>
                     <ActivatorContent>
                         <MudText Typo="Typo.h6">@PageNumber of @TotalPages</MudText>
@@ -62,8 +62,8 @@ else
                         }
                     </ChildContent>
                 </MudMenu>
-                <MudIconButton Icon="@Icons.Filled.NavigateNext" Color="Color.Tertiary" OnClick="NextPage" Disabled="@(!HasNext)"/>
-                <MudIconButton Icon="@Icons.Filled.LastPage" Color="Color.Secondary" OnClick="ToLastPage" Disabled="@(!HasNext)"/>
+                <MudIconButton Icon="@Icons.Material.Filled.NavigateNext" Color="Color.Tertiary" OnClick="NextPage" Disabled="@(!HasNext)"/>
+                <MudIconButton Icon="@Icons.Material.Filled.LastPage" Color="Color.Secondary" OnClick="ToLastPage" Disabled="@(!HasNext)"/>
             </MudToolBar>
         </PagerContent>
     </MudTable>

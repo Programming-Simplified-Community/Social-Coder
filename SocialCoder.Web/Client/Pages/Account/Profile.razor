@@ -18,7 +18,7 @@
                                 <MudText Typo="Typo.h6">Personal Info</MudText>
                             </MudItem>
                             <MudItem md="2">
-                                <MudIconButton Icon="@Icons.Filled.Save" Color="Color.Info" OnClick="SaveProfileInfo"/>
+                                <MudIconButton Icon="@Icons.Material.Filled.Save" Color="Color.Info" OnClick="SaveProfileInfo"/>
                             </MudItem>
                         </MudGrid>
                         <MudTextField T="string" Label="Display Name" @bind-Value="ProfileInfo.DisplayName"/>
@@ -41,7 +41,7 @@
                             With that being said, here's a list of information we use and why
                         </MudText>
         
-                        <MudList>
+                        <MudList T="string">
                             <MudListItem>
                                 <strong>Email</strong>: used to uniquely identify your account in our system. We do not share this info, nor send you emails.
                                 ... we already get too many emails this day in age.
@@ -79,7 +79,7 @@
                                 {
                                     var iconStyle = $"margin-right: 6px; color: {Theme.GetSigmaColor(current.Experience)}; background-color:{Theme.PaletteDark.PrimaryLighten}; border-radius: 50%; width: 32px;";
                                     <MudItem md="4" Style="display: flex;">
-                                        <MudIcon Icon="@Icons.Filled.School" Style="@iconStyle"/>
+                                        <MudIcon Icon="@Icons.Material.Filled.School" Style="@iconStyle"/>
                                         <p style="display: inline;">
                                             @current.Name <br/>
                                             @current.Experience.GetSigmaYears()    
@@ -105,7 +105,7 @@
                                     </MudItem>
                                     <MudItem md="5">
                                         <MudSelect T="ExperienceLevel"
-                                                   AdornmentIcon="@Icons.Filled.School"
+                                                   AdornmentIcon="@Icons.Material.Filled.School"
                                                    @bind-Value="_selectedExperienceLevel">
                                             @foreach (var item in Enum.GetValues<ExperienceLevel>())
                                             {
@@ -114,7 +114,7 @@
                                         </MudSelect>
                                     </MudItem>
                                     <MudItem md="1">
-                                        <MudIconButton Icon="@Icons.Filled.Add"
+                                        <MudIconButton Icon="@Icons.Material.Filled.Add"
                                                        OnClick="AddExperiencePool"
                                                        Color="Color.Info" 
                                                        Style="position: relative; top: 6px; left: 8px;"/>

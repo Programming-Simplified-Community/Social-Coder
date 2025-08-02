@@ -47,5 +47,5 @@ public class Badge
     /// <summary>
     /// Navigational property in EF that will create a "shadow" table creating this relationship
     /// </summary>
-    public List<BadgeRequirement> Requirements = new();
+    public List<BadgeRequirement> Requirements = [];
 }

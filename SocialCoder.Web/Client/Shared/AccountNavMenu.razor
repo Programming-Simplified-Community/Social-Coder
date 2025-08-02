@@ -24,12 +24,12 @@
         StateHasChanged();
     }
 
-    List<(string Text, string Href, string Icon)> items = new()
-    {
-        new("Home", "/", Icons.Filled.Newspaper),
-        new("My Profile", "/Account/Profile", Icons.Filled.AccountCircle),
-        new("Settings", "/Account/Settings", Icons.Filled.Settings),
-        new("Groups", "/Account/Groups", Icons.Filled.Groups)
-    };
+    List<(string Text, string Href, string Icon)> items =
+    [
+        new("Home", "/", Icons.Material.Filled.Newspaper),
+        new("My Profile", "/Account/Profile", Icons.Material.Filled.AccountCircle),
+        new("Settings", "/Account/Settings", Icons.Material.Filled.Settings),
+        new("Groups", "/Account/Groups", Icons.Material.Filled.Groups)
+    ];
 
 }

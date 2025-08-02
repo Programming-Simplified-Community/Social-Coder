@@ -15,13 +15,13 @@
         <ToolBarContent>
             <MudText Typo="Typo.h6">Code Jam Topics</MudText>
             <MudSpacer/>
-            <MudButton StartIcon="@Icons.Filled.Create" IconColor="Color.Info" OnClick="@(async ()=> await ShowDialog(null))">
+            <MudButton StartIcon="@Icons.Material.Filled.Create" IconColor="Color.Info" OnClick="@(async ()=> await ShowDialog(null))">
                 New Topic
             </MudButton>
         </ToolBarContent>
         <ErrorContent>
             <MudPaper Elevation="3">
-                <MudAlert Severity="Severity.Error" Icon="@Icons.Filled.Error">
+                <MudAlert Severity="Severity.Error" Icon="@Icons.Material.Filled.Error">
                     <MudText Typo="Typo.h6">@context.Message</MudText>
                 </MudAlert>
 
@@ -50,12 +50,12 @@
             <MudTd>@context.Title</MudTd>
             <MudTd>
                 @context.RegistrationStartDate.ToString("d")
-                <MudIcon Icon="@Icons.Filled.ArrowRight" Style="position: relative; top: 7px"/>
+                <MudIcon Icon="@Icons.Material.Filled.ArrowRight" Style="position: relative; top: 7px"/>
                 @context.JamStartDate.ToString("d")
             </MudTd>
             <MudTd>
                 @context.JamStartDate.ToString("d")
-                <MudIcon Icon="@Icons.Filled.ArrowRight" Style="position: relative; top: 7px"/>
+                <MudIcon Icon="@Icons.Material.Filled.ArrowRight" Style="position: relative; top: 7px"/>
                 @context.JamEndDate.ToString("d")
             </MudTd>
             <MudTd>
@@ -74,10 +74,10 @@
             <MudTd>@context.SoloApplicants</MudTd>
             <MudTd>
                 <MudButton Color="Color.Error" OnClick="@(async () => await DeleteCodeJam(context))">
-                    <MudIcon Icon="@Icons.Filled.Delete"/>
+                    <MudIcon Icon="@Icons.Material.Filled.Delete"/>
                 </MudButton>
 
-                <MudButton StartIcon="@Icons.Filled.Edit" IconColor="Color.Info" OnClick="@(async () => await ShowDialog(context))">
+                <MudButton StartIcon="@Icons.Material.Filled.Edit" IconColor="Color.Info" OnClick="@(async () => await ShowDialog(context))">
 
                 </MudButton>
             </MudTd>
@@ -96,14 +96,14 @@
         var now = DateTime.UtcNow;
 
         if (now >= topic.RegistrationStartDate && now <= topic.JamStartDate)
-            return ("Accepting Applicants", Icons.Filled.AppRegistration);
+            return ("Accepting Applicants", Icons.Material.Filled.AppRegistration);
         
         if (now >= topic.JamStartDate && now <= topic.JamEndDate)
-            return ("Active", Icons.Filled.Campaign);
+            return ("Active", Icons.Material.Filled.Campaign);
 
         return now >= topic.JamEndDate 
-            ? ("Completed", Icons.Filled.Done) 
-            : (string.Empty, Icons.Filled.AccessTime);
+            ? ("Completed", Icons.Material.Filled.Done) 
+            : (string.Empty, Icons.Material.Filled.AccessTime);
     }
 
     private async Task DeleteCodeJam(IGetTopicsWithUserInfo_Topics_Items topic)
@@ -127,7 +127,7 @@
         return new QueryResponse<IGetTopicsWithUserInfo_Topics_Items>
         {
             Errors = response.Errors,
-            Items = response.Data?.Topics?.Items?.ToList() ?? new List<IGetTopicsWithUserInfo_Topics_Items>(),
+            Items = response.Data?.Topics?.Items?.ToList() ?? [],
             TotalDbCount = response.Data?.Topics?.TotalCount ?? 0
         };
     }
@@ -147,7 +147,7 @@
         var dialog = DialogService.Show<TopicDialog>("Topic Dialog", parameters, _options);
         var result = await dialog.Result;
 
-        if (result.Cancelled || result.Data is null)
+        if (result.Canceled || result.Data is null)
             return;
 
         var data = (CodeJamTopic) result.Data;

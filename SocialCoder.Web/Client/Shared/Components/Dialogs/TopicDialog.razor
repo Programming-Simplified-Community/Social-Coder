@@ -12,23 +12,23 @@
         <MudTextField @bind-Value="@_topic.Title" 
                       Required 
                       Label="Title"
-                      AdornmentIcon="@Icons.Filled.Title"
+                      AdornmentIcon="@Icons.Material.Filled.Title"
                       AdornmentColor="@Color.Info"/>
 
         <MudTextField @bind-Value="@_topic.Description"
                       Lines="3"
                       Required
                       Placeholder="Topic Description"
-                      AdornmentIcon="@Icons.Filled.Description"
+                      AdornmentIcon="@Icons.Material.Filled.Description"
                       AdornmentColor="@Color.Info"/>
 
         <MudDatePicker @bind-Date="_registrationDate"
-                       AdornmentIcon="@Icons.Filled.PersonAdd"
+                       AdornmentIcon="@Icons.Material.Filled.PersonAdd"
                        AdornmentColor="Color.Success"/>
 
         <MudDateRangePicker
             @bind-DateRange="_activeRange"
-            AdornmentIcon="@Icons.Filled.Event"
+            AdornmentIcon="@Icons.Material.Filled.Event"
             AdornmentColor="@Color.Tertiary"
             Elevation="3"
             Rounded
@@ -38,12 +38,12 @@
 
     </DialogContent>
     <DialogActions>
-        <MudButton StartIcon="@Icons.Filled.Save" IconColor="Color.Info"
+        <MudButton StartIcon="@Icons.Material.Filled.Save" IconColor="Color.Info"
                    OnClick="Submit">
             Save
         </MudButton>
         
-        <MudButton StartIcon="@Icons.Filled.Cancel" IconColor="@Color.Secondary"
+        <MudButton StartIcon="@Icons.Material.Filled.Cancel" IconColor="@Color.Secondary"
                    OnClick="Cancel">
             Cancel
         </MudButton>
@@ -57,7 +57,7 @@
     public IGetTopicsWithUserInfo_Topics_Items? Incoming { get; set; }
 
     [CascadingParameter]
-    private MudDialogInstance Dialog { get; set; }
+    private IMudDialogInstance Dialog { get; set; }
 
     private readonly CodeJamTopic _topic = new();
     DateRange? _activeRange;

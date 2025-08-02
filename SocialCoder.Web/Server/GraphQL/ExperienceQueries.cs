@@ -1,4 +1,4 @@
-﻿using HotChocolate.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using SocialCoder.Web.Server.Data;
 using SocialCoder.Web.Shared.Models;

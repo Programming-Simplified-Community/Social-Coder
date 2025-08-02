@@ -42,10 +42,10 @@ public class MemberInfoViewModel
     /// <summary>
     /// Any social media links this user may have on their profile
     /// </summary>
-    public List<UserSocialMediaItem> Socials { get; set; } = new();
+    public List<UserSocialMediaItem> Socials { get; set; } = [];
     
     /// <summary>
     /// Any badges this user has
     /// </summary>
-    public List<BasicBadgeViewModel> Badges { get; set; } = new();
+    public List<BasicBadgeViewModel> Badges { get; set; } = [];
 }

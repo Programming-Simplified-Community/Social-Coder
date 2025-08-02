@@ -11,7 +11,7 @@
         @{
             var isAdmin = context.User.Claims.Any(x => x.Type == ClaimTypes.Role && x.Value is Roles.Administrator or Roles.Owner);
             var iconColor = isAdmin ? Color.Tertiary : Color.Inherit;
-            var iconClass = isAdmin ? Icons.Filled.AdminPanelSettings : Icons.Filled.ManageAccounts;
+            var iconClass = isAdmin ? Icons.Material.Filled.AdminPanelSettings : Icons.Material.Filled.ManageAccounts;
         }
         <MudMenu TransformOrigin="Origin.BottomCenter" AnchorOrigin="Origin.BottomCenter">
             <ActivatorContent>
@@ -22,26 +22,26 @@
             </ActivatorContent>
             <ChildContent>
                 <MudMenuItem OnClick="@(()=>Navigation.NavigateTo("/Account/Profile"))">
-                    <MudIcon Color="Color.Primary" Icon="@Icons.Filled.ManageAccounts" Style="position: relative; top: 6px;"/>
+                    <MudIcon Color="Color.Primary" Icon="@Icons.Material.Filled.ManageAccounts" Style="position: relative; top: 6px;"/>
                     Account
                 </MudMenuItem>
                 @if (isAdmin)
                 {
                     <MudMenuItem OnClick="@(()=>Navigation.NavigateTo("/Admin/Dashboard"))">
-                        <MudIcon Color="Color.Info" Icon="@Icons.Filled.AdminPanelSettings"  Style="position: relative; top: 6px;"/>
+                        <MudIcon Color="Color.Info" Icon="@Icons.Material.Filled.AdminPanelSettings"  Style="position: relative; top: 6px;"/>
                         Admin Portal
                     </MudMenuItem>
                 }
             </ChildContent>
         </MudMenu>
         <MudButton OnClick="BeginSignOut" Style="margin-right: 1.25rem;">
-            <MudIcon Icon="@Icons.Filled.Logout"/>
+            <MudIcon Icon="@Icons.Material.Filled.Logout"/>
             Logout
         </MudButton>
     </Authorized>
     <NotAuthorized>
         <MudButton OnClick="ToLogin">
-            <MudIcon Icon="@Icons.Filled.Login" Color="Color.Inherit"/>
+            <MudIcon Icon="@Icons.Material.Filled.Login" Color="Color.Inherit"/>
             &nbsp;Login
         </MudButton>
     </NotAuthorized>

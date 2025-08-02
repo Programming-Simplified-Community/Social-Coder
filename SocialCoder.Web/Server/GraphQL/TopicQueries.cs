@@ -1,4 +1,4 @@
-﻿using HotChocolate.AspNetCore.Authorization;
+﻿using HotChocolate.Authorization;
 using SocialCoder.Web.Server.Data;
 using SocialCoder.Web.Shared.Models.CodeJam;
 
@@ -10,7 +10,7 @@ namespace SocialCoder.Web.Server.GraphQL;
 // ReSharper disable once InconsistentNaming
 public partial class GraphQLQueries
 {
-    [UsePaging, UseOffsetPaging(IncludeTotalCount = true), UseProjection, UseFiltering, UseSorting, Authorize]
+    [UsePaging, UseProjection, UseFiltering, UseSorting, Authorize]
     public IOrderedQueryable<CodeJamTopic> GetTopics([Service] ApplicationDbContext context)
         => context.CodeJamTopics.OrderBy(x=>x.JamStartDate);
 }

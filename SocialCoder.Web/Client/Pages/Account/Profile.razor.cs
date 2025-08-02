@@ -17,9 +17,9 @@ public partial class Profile : ComponentBase
     private string UserId { get; set; }
 
     private MyProfileInfo ProfileInfo { get; set; } = new();
-    private List<UserExperienceViewModel> UserExperiences { get; set; } = new();
-    private List<ExperiencePool> ExperiencePool { get; set; } = new();
-    private List<UserGoal> Goals { get; set; } = new();
+    private List<UserExperienceViewModel> UserExperiences { get; set; } = [];
+    private List<ExperiencePool> ExperiencePool { get; set; } = [];
+    private List<UserGoal> Goals { get; set; } = [];
     private readonly MudTheme Theme = new();
 
     private ExperiencePool? _selectedExperiencePoolItem;

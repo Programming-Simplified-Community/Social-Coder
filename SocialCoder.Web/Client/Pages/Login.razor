@@ -23,7 +23,7 @@ else
                 
                 <MudForm>
 
-                    <MudList>
+                    <MudList T="string">
                         @foreach (var provider in _providers)
                         {
                             var icon = provider.Name.ToLower() switch
@@ -34,7 +34,7 @@ else
                                 "github" => Icons.Custom.Brands.GitHub,
                                 "twitter" => Icons.Custom.Brands.Twitter,
                                 "instagram" => Icons.Custom.Brands.Instagram,
-                                _ => Icons.Filled.QuestionMark
+                                _ => Icons.Material.Filled.QuestionMark
                             };
 
                             var challengeUrl = $"/api/auth/challenge/{provider.Name}";
@@ -49,12 +49,12 @@ else
 
 @code {
     bool _loading = true;
-    AuthProvider[] _providers = Array.Empty<AuthProvider>();
+    AuthProvider[] _providers = [];
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        _providers = await Client.GetFromJsonAsync<AuthProvider[]>("/api/Auth/Providers") ?? Array.Empty<AuthProvider>();
+        _providers = await Client.GetFromJsonAsync<AuthProvider[]>("/api/Auth/Providers") ?? [];
         _loading = false;
     }
 }

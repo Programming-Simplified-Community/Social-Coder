@@ -10,8 +10,8 @@
             <MudText Typo="Typo.h4" Class="mt-2">@Model.Title</MudText>
 
             @* Display dates for topic *@
-            <MudList>
-                <MudListItem Icon="@Icons.TwoTone.PersonAdd" IconColor="Color.Success">
+            <MudList T="string">
+                <MudListItem Icon="@Icons.Material.TwoTone.PersonAdd" IconColor="Color.Success">
                     <MudText Typo="Typo.body1">
                         @Model.RegistrationStartDate.ToRealLocalTime().ToString("dddd, MMMM dd - yyyy")
                     </MudText>
@@ -19,7 +19,7 @@
                         @Model.RegistrationStartDate.ToRealLocalTime().ToString("t")
                     </MudText>
                 </MudListItem>
-                <MudListItem Icon="@Icons.TwoTone.Event"
+                <MudListItem Icon="@Icons.Material.TwoTone.Event"
                              IconColor="Color.Tertiary">
                     <MudText Typo="Typo.body1">
                         @Model.JamStartDate.ToRealLocalTime().ToString("dddd, MMMM dd - yyyy")
@@ -54,7 +54,7 @@
             </MudGrid>
         
             @{
-                var icon = !Model.IsRegistered ? Icons.Filled.PersonAdd : Icons.Filled.ExitToApp;
+                var icon = !Model.IsRegistered ? Icons.Material.Filled.PersonAdd : Icons.Material.Filled.ExitToApp;
                 var color = !Model.IsRegistered ? Color.Tertiary : Color.Warning;
                 var text = !Model.IsRegistered ? "Register" : "Withdraw";
             }
@@ -71,11 +71,11 @@
                 <MudMenu Label="Register" Variant="Variant.Text" Color="@color">
                     <div class="d-flex align-content-center">
                         <MudTooltip Text="Solo">
-                            <MudIconButton Class="mx-2" Color="Color.Tertiary" Icon="@Icons.Filled.Person" OnClick="@(async()=>await Action(false))"/>
+                            <MudIconButton Class="mx-2" Color="Color.Tertiary" Icon="@Icons.Material.Filled.Person" OnClick="@(async()=>await Action(false))"/>
                         </MudTooltip>
                         
                         <MudTooltip Text="Team">
-                            <MudIconButton Class="mx-2" Color="Color.Info" Icon="@Icons.Filled.People" OnClick="@(async()=>await Action(true))"/>
+                            <MudIconButton Class="mx-2" Color="Color.Info" Icon="@Icons.Material.Filled.People" OnClick="@(async()=>await Action(true))"/>
                         </MudTooltip>
                     </div>
                 </MudMenu>

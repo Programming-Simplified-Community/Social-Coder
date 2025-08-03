@@ -8,15 +8,38 @@ This is ultimately developer preference. These are the suggested IDEs
 
 [Visual Studio 2022](https://visualstudio.microsoft.com/vs/)
 
-**Paid or free with student email**
+**Free for open source**
 
 [JetBrains Rider](https://www.jetbrains.com/rider/download/#section=windows)
 
 -----
 
+# Dev Container
+
+Rather than installing a bunch of stuff locally, such as the right dotnet SDK you can use a dev container!
+
+You will, however, need to have docker installed locally.
+
+## Rider
+
+Click the blue cube,
+
+![img.png](./imgs/dev-container-1.png)
+
+Then press **Create Dev Container and Mount Sources -> Rider**
+
+![img.png](./imgs/dev-container-2.png)
+
+Rider will then create the dev-container, mounting Rider's backend IDE. When
+ complete, you will be able to connect to the dev-container.
+
+![img.png](./imgs/dev-container-3.png)
+
+-----
+
 # Framework
-We're utilizing C# Net 6.0 right now
-[Net 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+We're utilizing C# Net 9.0 right now
+[Net 9.0](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
 
 We're utilizing Discord.NET as our bot library
 

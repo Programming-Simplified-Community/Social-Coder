@@ -1,5 +1,4 @@
-﻿using HotChocolate.AspNetCore.Authorization;
-using HotChocolate.Authorization;
+﻿using HotChocolate.Authorization;
 using SocialCoder.Web.Server.Services.Contracts;
 using SocialCoder.Web.Shared;
 using SocialCoder.Web.Shared.Models.Account;

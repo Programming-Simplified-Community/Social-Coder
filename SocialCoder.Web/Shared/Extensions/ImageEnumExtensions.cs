@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using SocialCoder.Web.Shared.Attributes;
 using SocialCoder.Web.Shared.Enums;
-using SocialCoder.Web.Shared.Models;
 
 namespace SocialCoder.Web.Shared.Extensions;
 

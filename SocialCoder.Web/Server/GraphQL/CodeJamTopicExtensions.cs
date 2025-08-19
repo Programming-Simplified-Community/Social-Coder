@@ -39,7 +39,7 @@ public sealed class CodeJamTopicQueryExtensions
             x => x.CodeJamTopicId == parent.Id && x.AbandonedOn == null & x.PreferTeam, cancellationToken);
     
     /// <summary>
-    /// In GraphQL allow us to query whether or not a specified user is registered with the code-jam
+    /// In GraphQL allow us to query whether a specified user is registered with the code-jam
     /// </summary>
     /// <param name="parent"></param>
     /// <param name="cancellationToken"></param>

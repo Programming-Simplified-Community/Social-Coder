@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using SocialCoder.Web.Client.Models;
-using SocialCoder.Web.Shared.Requests;
 using StrawberryShake;
 
 namespace SocialCoder.Web.Client.Shared.Components.Utility;

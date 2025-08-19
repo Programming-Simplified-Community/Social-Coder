@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace SocialCoder.Web.Client;
+﻿namespace SocialCoder.Web.Client;
 using Level = Web.Shared.Enums.ExperienceLevel;
 
 public static class ExperienceLevelExtensions

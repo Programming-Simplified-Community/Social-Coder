@@ -43,6 +43,26 @@
     </PackageReference>
   </ItemGroup>
   
+  <Target Name="CreateEnvFileOnBuild" BeforeTargets="PreBuildEvent">
+    <PropertyGroup>
+      <EnvTemplateFile>$(SolutionDir).env.template</EnvTemplateFile>
+      <EnvFile>$(SolutionDir).env</EnvFile>
+    </PropertyGroup>
+    
+    <!--
+      Check if the .env file exists. If it does not and the template file does, copy the template.
+      The 'Condition' attribute is the key to making this work safely
+    -->
+    <Copy SourceFiles="$(EnvTemplateFile)"
+          DestinationFiles="$(EnvFile)"
+          Condition="!Exists('$(EnvFile)') And Exists('$(EnvTemplateFile)')"/>
+    
+    <Message
+      Text="The .env file was not found. A new one was created from the .env.template template."
+      Importance="high"
+      Condition="!Exists('$(EnvFile)') And Exists('$(EnvTemplateFile)')"/>
+  </Target>
+  
   <Target Name="CopyConnectionsFile" AfterTargets="AfterBuild">
     <Copy SourceFiles="..\..\.connections" DestinationFolder="$(OutDir)" Condition="Exists('..\..\.connections')" />
   </Target>

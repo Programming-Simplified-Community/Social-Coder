@@ -52,7 +52,7 @@ public static class ConfigurationExtensions
         var connectionsPath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, connectionsFileName);
 
         if (!File.Exists(connectionsPath))
-            throw new FileNotFoundException("Was unable to locate `.connections` file");
+            return builder;
 
         Dictionary<string, string> vars = new();
         foreach (var line in File.ReadAllLines(connectionsPath))

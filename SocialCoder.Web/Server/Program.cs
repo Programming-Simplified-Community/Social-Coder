@@ -15,8 +15,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddConnections();
 builder.Configuration.AddJsonConfigurationFiles();
 
+var dbHost = builder.Configuration.GetValue<string>("DB_HOST");
+var dbPassword = builder.Configuration.GetValue<string>("DB_PASSWORD");
+var dbName = builder.Configuration.GetValue<string>("DB_NAME");
+var dbUser = builder.Configuration.GetValue<string>("DB_USER");
+
 // Add services to the container.
-var connectionString = builder.Configuration["DefaultConnection"];
+var connectionString = $"Server=${dbHost};port=5432;User Id=${dbUser};Password=${dbPassword};Database=${dbName}";
 
 /*
  *  Having the database as transient prevents multiple queries happening on the
@@ -58,22 +63,33 @@ builder.Services.ConfigureApplicationCookie(options =>
     };
 });
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddGoogle(options =>
+var authBuilder = builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme);
+
+if (builder.Configuration.GetValue<string>("Authentication:Google:ClientId") is not null)
+{
+    authBuilder.AddGoogle(options =>
     {
         options.SignInScheme = IdentityConstants.ExternalScheme;
         options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
         options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-    })
-    .AddDiscord(options =>
+    });
+}
+
+if (builder.Configuration.GetValue<string>("Authentication:Discord:ClientId") is not null)
+{
+    authBuilder.AddDiscord(options =>
     {
         options.SignInScheme = IdentityConstants.ExternalScheme;
         options.ClientId = builder.Configuration["Authentication:Discord:ClientId"];
         options.ClientSecret = builder.Configuration["Authentication:Discord:ClientSecret"];
         options.Scope.Add("identify");
         options.Scope.Add("email");
-    })
-    .AddGitHub(options =>
+    });
+}
+
+if(builder.Configuration.GetValue<string>("Authentication:Github:ClientId") is not null)
+{
+    authBuilder.AddGitHub(options =>
     {
         options.SignInScheme = IdentityConstants.ExternalScheme;
         options.ClientId = builder.Configuration["Authentication:Github:ClientId"];
@@ -86,9 +102,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Scope.Add("user:email");
         options.Scope.Add("user:follow");
         options.Scope.Add("read:project");
-    })
-    .AddCookie();
+    });
+}
 
+authBuilder.AddCookie();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();

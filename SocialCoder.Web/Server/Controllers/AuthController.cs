@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using SocialCoder.Web.Server.Attributes;
 using SocialCoder.Web.Server.Models;
 using SocialCoder.Web.Server.Services.Contracts;
 using SocialCoder.Web.Shared.ViewModels;
@@ -11,6 +12,7 @@ namespace SocialCoder.Web.Server.Controllers;
 
 [Route("api/[controller]/[action]")]
 [ApiController]
+[DisabledInSetupMode]
 public class AuthController : ControllerBase
 {
     private readonly SignInManager<ApplicationUser> _signInManager;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SocialCoder.Web.Server.Attributes;
 using SocialCoder.Web.Server.Data;
 using SocialCoder.Web.Shared.Models;
 using SocialCoder.Web.Shared.ViewModels;
@@ -7,6 +8,7 @@ using SocialCoder.Web.Shared.ViewModels;
 namespace SocialCoder.Web.Server.Controllers;
 
 [Route("[controller]")]
+[DisabledInSetupMode]
 public class GamifyController : ControllerBase
 {
     private readonly ILogger<GamifyController> _logger;

@@ -11,14 +11,19 @@ public static class ImageEnumExtensions
     public static string? GetImagePath(this PageType imageType)
     {
         if (PathTypeCache.ContainsKey(imageType))
+        {
             return PathTypeCache[imageType];
+        }
 
         var type = imageType.GetType();
         var memberInfo = type.GetMember(imageType.ToString());
         var attributes = memberInfo.First().GetCustomAttributes<ImageAttribute>(false).ToList();
 
-        if (!attributes.Any()) return null;
-        
+        if (!attributes.Any())
+        {
+            return null;
+        }
+
         var path = attributes[0].Path;
         PathTypeCache.Add(imageType, path);
         return path;

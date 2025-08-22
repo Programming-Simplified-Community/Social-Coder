@@ -12,9 +12,9 @@ public static class ServiceCollectionExtensions
 {
     public static void SetupForAdmin(this IServiceCollection services, IConfiguration configuration)
     {
-            
+
     }
-    
+
     public static void SetupForProduction(this IServiceCollection services, IConfiguration configuration)
     {
         var dbHost = configuration.GetValue<string>("DB_HOST");
@@ -96,7 +96,7 @@ public static class ServiceCollectionExtensions
         }
 
         authBuilder.AddCookie();
-        
+
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ICodeJamService, CodeJamService>();
         services.AddScoped<IProfileService, ProfileService>();

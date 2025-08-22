@@ -21,7 +21,7 @@ public interface IProfileService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<ResultOf> EditUserExperience(AddUserExperienceRequest request, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Remove experience from a user
     /// </summary>
@@ -54,7 +54,7 @@ public interface IProfileService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<ResultOf> DeleteUserGoal(DeleteUserGoalRequest request, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Edit profile info
     /// </summary>

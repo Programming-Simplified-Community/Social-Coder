@@ -10,14 +10,14 @@ public class AuthenticatedComponent : ComponentBase
 
     protected ClaimsPrincipal User { get; private set; }
     protected string Name { get; private set; }
-    
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
-        var auth = await AuthProvider.GetAuthenticationStateAsync();
+        var auth = await this.AuthProvider.GetAuthenticationStateAsync();
 
-        User = auth.User;
-        Name = auth.User.Identity?.Name ?? string.Empty;
+        this.User = auth.User;
+        this.Name = auth.User.Identity?.Name ?? string.Empty;
     }
 }

@@ -27,35 +27,35 @@ public partial class Profile : ComponentBase
 
     async Task SaveProfileInfo()
     {
-        var response = await Graph.EditProfileInfo.ExecuteAsync(UserId, ProfileInfo.Country, ProfileInfo.Language, ProfileInfo.DisplayName);
+        var response = await this.Graph.EditProfileInfo.ExecuteAsync(this.UserId, this.ProfileInfo.Country, this.ProfileInfo.Language, this.ProfileInfo.DisplayName);
 
         if (response.IsErrorResult() || response.Data is null)
         {
             var errors = string.Join("\n", response.Errors.Select(x => x.Message));
-            Logger.LogError("An error occurred with GraphQL white editing user profile: {Error}", errors);
-            Snack.Add("An error occurred", Severity.Error);
+            this.Logger.LogError("An error occurred with GraphQL white editing user profile: {Error}", errors);
+            this.Snack.Add("An error occurred", Severity.Error);
             return;
         }
 
         if (!response.Data.EditProfileInfo.Success)
         {
-            Snack.Add(response.Data.EditProfileInfo.Message, Severity.Error);
+            this.Snack.Add(response.Data.EditProfileInfo.Message, Severity.Error);
             return;
         }
 
-        Snack.Add("Profile info updated", Severity.Success);
+        this.Snack.Add("Profile info updated", Severity.Success);
     }
-    
+
     async Task AddExperiencePool()
     {
-        if (_selectedExperiencePoolItem is null)
+        if (this._selectedExperiencePoolItem is null)
         {
-            Snack.Add("Please select an experience item.", Severity.Warning);
+            this.Snack.Add("Please select an experience item.", Severity.Warning);
             return;
         }
 
         ExperienceLevel level;
-        switch(_selectedExperienceLevel)
+        switch (this._selectedExperienceLevel)
         {
             case Web.Shared.Enums.ExperienceLevel.Black:
                 level = ExperienceLevel.Black;
@@ -76,57 +76,57 @@ public partial class Profile : ComponentBase
                 level = ExperienceLevel.White;
                 break;
         }
-        
-        var response = await Graph.AddUserExperience
-            .ExecuteAsync(_selectedExperiencePoolItem.Id, level, UserId);
+
+        var response = await this.Graph.AddUserExperience
+            .ExecuteAsync(this._selectedExperiencePoolItem.Id, level, this.UserId);
 
         if (response.IsErrorResult() || response.Data is null)
         {
             var errors = string.Join("\n", response.Errors.Select(x => x.Message));
-            Logger.LogError("An error occurred with GraphQL while adding user experience: {Error}", errors);
-            Snack.Add("An error occurred", Severity.Error);
+            this.Logger.LogError("An error occurred with GraphQL while adding user experience: {Error}", errors);
+            this.Snack.Add("An error occurred", Severity.Error);
             return;
         }
 
         if (!response.Data.AddUserExperience.Success)
         {
-            Snack.Add(response.Data.AddUserExperience.Message, Severity.Error);
+            this.Snack.Add(response.Data.AddUserExperience.Message, Severity.Error);
             return;
         }
-        
-        UserExperiences.Add(new()
+
+        this.UserExperiences.Add(new()
         {
-            Experience = _selectedExperienceLevel,
-            Name = _selectedExperiencePoolItem.Name,
-            ImageUrl = _selectedExperiencePoolItem.ImageUrl,
-            ExperiencePoolId = _selectedExperiencePoolItem.Id,
-            UserId = UserId
+            Experience = this._selectedExperienceLevel,
+            Name = this._selectedExperiencePoolItem.Name,
+            ImageUrl = this._selectedExperiencePoolItem.ImageUrl,
+            ExperiencePoolId = this._selectedExperiencePoolItem.Id,
+            UserId = this.UserId
         });
 
         // Reset values
-        _selectedExperienceLevel = Web.Shared.Enums.ExperienceLevel.White;
-        _selectedExperiencePoolItem = null;
-        
-        StateHasChanged();
+        this._selectedExperienceLevel = Web.Shared.Enums.ExperienceLevel.White;
+        this._selectedExperiencePoolItem = null;
+
+        this.StateHasChanged();
     }
-    
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
-        UserId = await Storage.GetItemAsStringAsync(Constants.UserId);
-        
-        var response = await Graph.GetProfilePageInfo.ExecuteAsync(UserId);
-        
+        this.UserId = await this.Storage.GetItemAsStringAsync(Constants.UserId);
+
+        var response = await this.Graph.GetProfilePageInfo.ExecuteAsync(this.UserId);
+
         if (response.IsErrorResult() || response.Data is null)
         {
             var errors = string.Join("\n", response.Errors.Select(x => x.Message));
-            Logger.LogError("GraphQL is misbehaving, {Error}", errors);
-            Snack.Add("GraphQL Error", Severity.Error);
+            this.Logger.LogError("GraphQL is misbehaving, {Error}", errors);
+            this.Snack.Add("GraphQL Error", Severity.Error);
             return;
         }
 
-        ProfileInfo = new()
+        this.ProfileInfo = new()
         {
             Country = response.Data.MyInfo!.Country,
             Username = response.Data.MyInfo.Username,
@@ -134,23 +134,23 @@ public partial class Profile : ComponentBase
             Language = response.Data.MyInfo.Language,
             Email = response.Data.MyInfo.Email
         };
-        
-        UserExperiences.AddRange(response.Data.UserExperience.Select(x=>new UserExperienceViewModel
+
+        this.UserExperiences.AddRange(response.Data.UserExperience.Select(x => new UserExperienceViewModel
         {
             Name = x.Name,
             Experience = x.Experience.Translate(),
             ImageUrl = x.ImageUrl,
             ExperiencePoolId = x.ExperiencePoolId
         }));
-        
-        ExperiencePool.AddRange(response.Data.ExperiencePool.Select(x=>new ExperiencePool()
+
+        this.ExperiencePool.AddRange(response.Data.ExperiencePool.Select(x => new ExperiencePool()
         {
             Name = x.Name,
             ImageUrl = x.ImageUrl,
             Id = x.Id
         }));
-        
-        Goals.AddRange(response.Data.Goals.Select(x=>new UserGoal
+
+        this.Goals.AddRange(response.Data.Goals.Select(x => new UserGoal
         {
             Id = x.Id,
             Description = x.Description,

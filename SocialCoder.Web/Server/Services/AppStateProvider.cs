@@ -9,8 +9,8 @@ public class AppStateProvider
 
     public AppStateProvider(IOptionsMonitor<AppSettings> settings)
     {
-        _settings = settings;
+        this._settings = settings;
     }
-    
-    public bool IsInSetupMode => !_settings.CurrentValue.IsSetupComplete;
+
+    public bool IsInSetupMode => !this._settings.CurrentValue.IsSetupComplete;
 }

@@ -3,5 +3,5 @@
 [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
 public class DisabledInSetupModeAttribute : Attribute
 {
-    
+
 }

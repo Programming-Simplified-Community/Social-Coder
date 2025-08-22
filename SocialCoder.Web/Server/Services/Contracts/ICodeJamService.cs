@@ -32,7 +32,7 @@ public interface ICodeJamService
     /// <returns></returns>
     Task<ResultOf<CodeJamTopic>> AdminCreateTopic(CodeJamTopic topic, CancellationToken cancellationToken = default);
     #endregion
-    
+
     #region Topics
     /// <summary>
     /// Retrieve a <see cref="CodeJamTopic"/> with specified <paramref name="topicId"/>
@@ -44,7 +44,7 @@ public interface ICodeJamService
     Task<ResultOf<CodeJamViewModel>> GetTopic(int topicId, string? userId,
         CancellationToken cancellationToken = default);
     #endregion
-    
+
     #region Registration for Topic
 
     Task<ResultOf<CodeJamViewModel>> Register(CodeJamRegistrationRequest request, string? userId, CancellationToken cancellationToken = default);

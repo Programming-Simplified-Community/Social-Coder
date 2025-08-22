@@ -87,7 +87,7 @@
     [CascadingParameter(Name = "UserId")]
     public string UserId { get; set; }
 
-    DialogOptions _dialogOptions = new()
+    readonly DialogOptions _dialogOptions = new()
     {
         MaxWidth = MaxWidth.Large,
         FullWidth = true

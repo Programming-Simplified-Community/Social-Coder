@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.DataProtection;
 using SocialCoder.Web.Server;
 using SocialCoder.Web.Server.Extensions;
 using SocialCoder.Web.Server.Middleware;
@@ -11,6 +12,10 @@ builder.Configuration.AddConnections();
 builder.Configuration.AddJsonConfigurationFiles();
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 builder.Services.AddSingleton<AppStateProvider>();
+builder.Services.AddSingleton<SecureSettingsService>();
+builder.Services.AddDataProtection();
+
+builder.Configuration.AddEncryptedSettings(builder.Services);
 
 var isSetupComplete = builder.Configuration.GetValue<bool>("IsSetupComplete");
 
@@ -23,10 +28,13 @@ builder.Services.AddControllersWithViews().ConfigureApplicationPartManager(apm =
 });
 
 if (isSetupComplete)
+{
     builder.Services.SetupForProduction(builder.Configuration);
+}
 else
+{
     builder.Services.SetupForAdmin(builder.Configuration);
-
+}
 
 var app = builder.Build();
 
@@ -51,7 +59,9 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 if (isSetupComplete)
+{
     app.SetupForProduction();
+}
 
 app.UseRouting();
 

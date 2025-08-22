@@ -35,19 +35,19 @@ public partial class PaginatedTable<TItem>
 
     [Parameter] public int PageSize { get; set; }
     [Parameter] public int PageNumber { get; set; }
-    
+
     /// <summary>
     /// Invoked whenever the user changes page
     /// </summary>
-    [Parameter] 
+    [Parameter]
     public EventCallback OnPageChange { get; set; }
 
     /// <summary>
     /// Content that gets passed to <see cref="MudTable{T}"/> for row generation
     /// </summary>
-    [Parameter] 
+    [Parameter]
     public RenderFragment<TItem>? RowTemplate { get; set; }
-    
+
     /// <summary>
     /// Content that gets passed to <see cref="MudTable{T}"/> as column headers
     /// </summary>
@@ -57,9 +57,9 @@ public partial class PaginatedTable<TItem>
     /// <summary>
     /// When an error occurs when interacting with GraphQL, this fragment can be used to help display those errors.
     /// </summary>
-    [Parameter] 
+    [Parameter]
     public RenderFragment<IClientError>? ErrorContent { get; set; }
-    
+
     /// <summary>
     /// Same convention MudBlazor has, this is the toolbar that appears on the top of a mud blazor table.
     /// </summary>
@@ -81,22 +81,22 @@ public partial class PaginatedTable<TItem>
     /// <summary>
     /// Function utilized when fetching data
     /// </summary>
-    [Parameter] 
+    [Parameter]
     public Func<PageInfo, Task<QueryResponse<TItem>>> FetchDataFunc { get; set; }
 
     /// <summary>
     /// Are there any pages before the one we're on right now?
     /// </summary>
-    private bool HasPrevious => PageNumber > 1;
+    private bool HasPrevious => this.PageNumber > 1;
 
-    private int TotalPages => (int)Math.Ceiling((double)(Items?.TotalDbCount ?? 1) / PageSize);
-    
+    private int TotalPages => (int)Math.Ceiling((double)(this.Items?.TotalDbCount ?? 1) / this.PageSize);
+
     /// <summary>
     /// Are there any pages after the one we're on right now?
     /// </summary>
-    private bool HasNext => PageNumber < TotalPages;
+    private bool HasNext => this.PageNumber < this.TotalPages;
 
-    public void Refresh() => StateHasChanged();
+    public void Refresh() => this.StateHasChanged();
 
     /// <summary>
     /// Find item in our table, and replace it with <paramref name="newItem"/>
@@ -114,59 +114,71 @@ public partial class PaginatedTable<TItem>
     /// <param name="newItem"></param>
     public void ReplaceItem(Predicate<TItem> search, TItem newItem)
     {
-        if (Items?.Items is null)
+        if (this.Items?.Items is null)
+        {
             return;
+        }
 
         var index = -1;
-        for(var i = 0; i < Items.Items.Count; i++)
-            if (search(Items.Items[i]))
+        for (var i = 0; i < this.Items.Items.Count; i++)
+        {
+            if (search(this.Items.Items[i]))
             {
                 index = i;
                 break;
             }
+        }
 
         if (index < 0)
+        {
             return;
+        }
 
-        Items.Items[index] = newItem;
-        Refresh();
+        this.Items.Items[index] = newItem;
+        this.Refresh();
     }
 
     /// <summary>
     /// Remove <paramref name="item"/> from table
     /// </summary>
     /// <param name="item"></param>
-    public void RemoveItem(TItem item) => Items?.Items?.Remove(item);
-    
+    public void RemoveItem(TItem item) => this.Items?.Items?.Remove(item);
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
-        if (PageSize <= 0) // trying not to have an empty data set here
+        if (this.PageSize <= 0) // trying not to have an empty data set here
         {
-            if (await Storage.ContainKeyAsync("PageSize"))
-                PageSize = await Storage.GetItemAsync<int>("PageSize");
+            if (await this.Storage.ContainKeyAsync("PageSize"))
+            {
+                this.PageSize = await this.Storage.GetItemAsync<int>("PageSize");
+            }
             else
-                PageSize = 10;
+            {
+                this.PageSize = 10;
+            }
         }
 
-        if (PageNumber <= 0)
-            PageNumber = 1;
-        
-        await ReRender();
+        if (this.PageNumber <= 0)
+        {
+            this.PageNumber = 1;
+        }
+
+        await this.ReRender();
     }
-    
+
     /// <summary>
     /// Toggles fetching state before/after calling <see cref="FetchDataFunc"/>.
     /// Then invokes StateHasChanged to rerender changes
     /// </summary>
     private async Task ReRender()
     {
-        _isFetching = true;
-        Items = await FetchDataFunc(new(PageSize, (PageNumber-1)*PageSize));
-        _isFetching = false;
+        this._isFetching = true;
+        this.Items = await this.FetchDataFunc(new(this.PageSize, (this.PageNumber - 1) * this.PageSize));
+        this._isFetching = false;
 
-        StateHasChanged();
+        this.StateHasChanged();
     }
 
     #region Page Change
@@ -175,14 +187,18 @@ public partial class PaginatedTable<TItem>
     /// </summary>
     protected virtual async Task NextPage()
     {
-        if (PageNumber + 1 > TotalPages)
+        if (this.PageNumber + 1 > this.TotalPages)
+        {
             return;
+        }
 
-        PageNumber++;
-        await ReRender();
-        
-        if(OnPageChange.HasDelegate)
-            await OnPageChange.InvokeAsync();
+        this.PageNumber++;
+        await this.ReRender();
+
+        if (this.OnPageChange.HasDelegate)
+        {
+            await this.OnPageChange.InvokeAsync();
+        }
     }
 
     /// <summary>
@@ -190,29 +206,37 @@ public partial class PaginatedTable<TItem>
     /// </summary>
     protected virtual async Task PreviousPage()
     {
-        if (PageNumber <= 1)
+        if (this.PageNumber <= 1)
+        {
             return;
+        }
 
-        PageNumber--;
-        await ReRender();
-        
-        if(OnPageChange.HasDelegate)
-            await OnPageChange.InvokeAsync();
+        this.PageNumber--;
+        await this.ReRender();
+
+        if (this.OnPageChange.HasDelegate)
+        {
+            await this.OnPageChange.InvokeAsync();
+        }
     }
-    
+
     /// <summary>
     /// Move to the last page of the paginated series
     /// </summary>
     protected virtual async Task ToLastPage()
     {
-        if (PageNumber >= TotalPages)
+        if (this.PageNumber >= this.TotalPages)
+        {
             return;
-        
-        PageNumber = TotalPages;
-        await ReRender();
-        
-        if(OnPageChange.HasDelegate)
-            await OnPageChange.InvokeAsync();
+        }
+
+        this.PageNumber = this.TotalPages;
+        await this.ReRender();
+
+        if (this.OnPageChange.HasDelegate)
+        {
+            await this.OnPageChange.InvokeAsync();
+        }
     }
 
     /// <summary>
@@ -220,14 +244,18 @@ public partial class PaginatedTable<TItem>
     /// </summary>
     protected virtual async Task ToFirstPage()
     {
-        if (PageNumber <= 1)
+        if (this.PageNumber <= 1)
+        {
             return;
+        }
 
-        PageNumber = 1;
-        await ReRender();
+        this.PageNumber = 1;
+        await this.ReRender();
 
-        if (OnPageChange.HasDelegate)
-            await OnPageChange.InvokeAsync();
+        if (this.OnPageChange.HasDelegate)
+        {
+            await this.OnPageChange.InvokeAsync();
+        }
     }
     #endregion
 
@@ -236,10 +264,12 @@ public partial class PaginatedTable<TItem>
     /// </summary>
     protected virtual async Task OnPageSizeChanged()
     {
-        await Storage.SetItemAsync("PageSize", PageSize);
-        await ReRender();
+        await this.Storage.SetItemAsync("PageSize", this.PageSize);
+        await this.ReRender();
 
-        if (OnPageChange.HasDelegate)
-            await OnPageChange.InvokeAsync();
+        if (this.OnPageChange.HasDelegate)
+        {
+            await this.OnPageChange.InvokeAsync();
+        }
     }
 }

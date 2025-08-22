@@ -40,7 +40,7 @@ public static class ExperienceLevelExtensions
             ExperienceLevel.Yellow => Level.Yellow,
             _ => Level.White
         };
-    
+
     public static string Display(this Level level)
         => $"{level.ToString()} Belt ({level.GetSigmaYears()})";
 }

@@ -1,14 +1,14 @@
+using System.Globalization;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.JSInterop;
 using MudBlazor.Services;
 using SocialCoder.Web.Client;
+using SocialCoder.Web.Client.Services;
 using SocialCoder.Web.Client.Services.Contracts;
 using SocialCoder.Web.Client.Services.Implementations;
-using System.Globalization;
-using Microsoft.JSInterop;
-using SocialCoder.Web.Client.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -27,7 +27,7 @@ builder.Services.AddScoped<ICodeJamService, CodeJamService>();
 builder.Services.AddMudServices();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddSocialCoderGraphQLClient()
-    .ConfigureHttpClient(c=>c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress + "graphql"));
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress + "graphql"));
 
 var host = builder.Build();
 
@@ -37,7 +37,9 @@ var js = host.Services.GetRequiredService<IJSRuntime>();
 var result = await js.InvokeAsync<string>("blazorCulture.get");
 
 if (!string.IsNullOrEmpty(result))
+{
     culture = new CultureInfo(result);
+}
 else
 {
     culture = new CultureInfo("en-US");

@@ -8,7 +8,7 @@ public class BadgeProgress
 {
     [GraphQLType(typeof(IdType))]
     public int Id { get; set; }
-    
+
     /// <summary>
     /// Foreign key to <see cref="Badge"/>
     /// </summary>
@@ -28,7 +28,7 @@ public class BadgeProgress
     /// Foreign key to User
     /// </summary>
     public string UserId { get; set; }
-    
+
     /// <summary>
     /// Navigational property (in EF)
     /// </summary>

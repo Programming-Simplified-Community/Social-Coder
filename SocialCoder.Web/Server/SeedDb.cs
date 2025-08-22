@@ -10,7 +10,7 @@ namespace SocialCoder.Web.Server;
 public static class SeedDb
 {
     record ExperienceItem(string Name, string ImageUrl);
-    
+
     /// <summary>
     /// Inject test data into our database!
     /// </summary>
@@ -29,7 +29,9 @@ public static class SeedDb
             foreach (var item in experiences ?? [])
             {
                 if (currentExperiences.Contains(item.Name))
+                {
                     continue;
+                }
 
                 context.ExperiencePools.Add(new()
                 {
@@ -56,19 +58,23 @@ public static class SeedDb
             foreach (var roleName in roles)
             {
                 var result = await roleManager.CreateAsync(new IdentityRole(roleName));
-                if(!result.Succeeded)
-                    errors.Add(string.Join("\n", result.Errors.Select(x=>x.Description)));
+                if (!result.Succeeded)
+                {
+                    errors.Add(string.Join("\n", result.Errors.Select(x => x.Description)));
+                }
             }
-            
+
             if (errors.Any())
+            {
                 throw new Exception(string.Join("\n", errors));
+            }
         }
 
         // At this point, anything after is for testing. So if we're in release mode -- don't add our test material
-        #if RELEASE
+#if RELEASE
         return;
-        #endif
-        
+#endif
+
         // give us a couple starting topics to work with for testing
         if (!context.CodeJamTopics.Any())
         {
@@ -91,7 +97,7 @@ public static class SeedDb
 
             await context.SaveChangesAsync();
         }
-        
+
         // GENERATE BADGES
         if (!context.Badges.Any())
         {
@@ -139,10 +145,10 @@ public static class SeedDb
             await context.SaveChangesAsync();
 
             context.BadgeRequirements.AddRange(new BadgeRequirement
-                {
-                    BadgeId = bronze.Id,
-                    RequiredBadgeId = silver.Id
-                },
+            {
+                BadgeId = bronze.Id,
+                RequiredBadgeId = silver.Id
+            },
                 new()
                 {
                     BadgeId = gold.Id,

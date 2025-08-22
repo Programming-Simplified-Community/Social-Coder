@@ -13,7 +13,7 @@ public class BadgeRequirement
     /// Foreign key to badge we're adding requirements to
     /// </summary>
     public int BadgeId { get; set; }
-    
+
     /// <summary>
     /// Foreign key to Badge required to be completed in order for <see cref="BadgeId"/> to be unlocked
     /// </summary>

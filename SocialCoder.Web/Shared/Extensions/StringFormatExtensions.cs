@@ -20,7 +20,9 @@ public static class StringFormatExtensions
     public static string Format(this string text, params object[] variables)
     {
         for (var i = 0; i < variables.Length; i++)
+        {
             text = text.Replace($"%{i}%", variables[i]?.ToString());
+        }
 
         return text;
     }

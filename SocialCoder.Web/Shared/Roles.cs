@@ -2,12 +2,12 @@
 
 public static class Roles
 {
-    
+
     /// <summary>
     /// Highest level access + owner
     /// </summary>
     public const string Owner = "Owner";
-    
+
     /// <summary>
     /// Highest level access (outside of being an owner)
     /// </summary>

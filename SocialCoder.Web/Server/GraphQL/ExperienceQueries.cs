@@ -16,18 +16,18 @@ public partial class GraphQLQueries
     [UseProjection, Authorize]
     public IQueryable<UserExperienceViewModel> GetUserExperience(string userId, [Service] ApplicationDbContext context)
         => from experience in context.UserExperiences
-            join item in context.ExperiencePools
-                on experience.ExperiencePoolId equals item.Id
-            where experience.UserId == userId
-            orderby item.Name
-            select new UserExperienceViewModel
-            {
-                Experience = experience.Level,
-                Name = item.Name,
-                ImageUrl = item.ImageUrl,
-                UserId = userId,
-                ExperiencePoolId = item.Id
-            };
+           join item in context.ExperiencePools
+               on experience.ExperiencePoolId equals item.Id
+           where experience.UserId == userId
+           orderby item.Name
+           select new UserExperienceViewModel
+           {
+               Experience = experience.Level,
+               Name = item.Name,
+               ImageUrl = item.ImageUrl,
+               UserId = userId,
+               ExperiencePoolId = item.Id
+           };
 
     [UseProjection, Authorize]
     public async Task<List<UserGoal>> GetGoals(string userId, [Service] ApplicationDbContext context,

@@ -11,21 +11,23 @@ public class ProfileService : IProfileService
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<ProfileService> _logger;
-    
+
     public ProfileService(ApplicationDbContext context, ILogger<ProfileService> logger)
     {
-        _context = context;
-        _logger = logger;
+        this._context = context;
+        this._logger = logger;
     }
 
     public async Task<ResultOf<UserExperience>> AddUserExperience(AddUserExperienceRequest request, CancellationToken cancellationToken = default)
     {
         // does this user already have an experience item in the database of this item?
-        var existing = await _context.UserExperiences.FirstOrDefaultAsync(
+        var existing = await this._context.UserExperiences.FirstOrDefaultAsync(
             x => x.UserId == request.UserId && x.ExperiencePoolId == request.ExperiencePoolId, cancellationToken);
 
         if (existing is not null)
+        {
             return ResultOf<UserExperience>.Fail("Already have an entry for that");
+        }
 
         var entry = new UserExperience
         {
@@ -34,37 +36,41 @@ public class ProfileService : IProfileService
             ExperiencePoolId = request.ExperiencePoolId
         };
 
-        _context.UserExperiences.Add(entry);
-        await _context.SaveChangesAsync(cancellationToken);
+        this._context.UserExperiences.Add(entry);
+        await this._context.SaveChangesAsync(cancellationToken);
 
         return ResultOf<UserExperience>.Pass(entry);
     }
 
     public async Task<ResultOf> EditUserExperience(AddUserExperienceRequest request, CancellationToken cancellationToken = default)
     {
-        var existing = await _context.UserExperiences.FirstOrDefaultAsync(
+        var existing = await this._context.UserExperiences.FirstOrDefaultAsync(
             x => x.UserId == request.UserId && x.ExperiencePoolId == request.ExperiencePoolId, cancellationToken);
-        
-        if(existing is null)
+
+        if (existing is null)
+        {
             return ResultOf.Fail("Not Found");
+        }
 
         existing.Level = request.Level;
-        _context.UserExperiences.Update(existing);
-        await _context.SaveChangesAsync(cancellationToken);
-        
+        this._context.UserExperiences.Update(existing);
+        await this._context.SaveChangesAsync(cancellationToken);
+
         return ResultOf.Pass();
     }
 
     public async Task<ResultOf> RemoveUserExperience(RemoveUserExperienceRequest request, CancellationToken cancellationToken = default)
     {
-        var existing = await _context.UserExperiences.FirstOrDefaultAsync(
+        var existing = await this._context.UserExperiences.FirstOrDefaultAsync(
             x => x.UserId == request.UserId && x.ExperiencePoolId == request.ExperiencePoolId, cancellationToken);
 
         if (existing is null)
+        {
             return ResultOf.Fail("Not Found");
+        }
 
-        _context.UserExperiences.Remove(existing);
-        await _context.SaveChangesAsync(cancellationToken);
+        this._context.UserExperiences.Remove(existing);
+        await this._context.SaveChangesAsync(cancellationToken);
         return ResultOf.Pass();
     }
 
@@ -79,8 +85,8 @@ public class ProfileService : IProfileService
             TargetDate = request.TargetDate
         };
 
-        _context.UserGoals.Add(entry);
-        await _context.SaveChangesAsync(cancellationToken);
+        this._context.UserGoals.Add(entry);
+        await this._context.SaveChangesAsync(cancellationToken);
 
         return ResultOf<UserGoal>.Pass(entry);
     }
@@ -88,12 +94,14 @@ public class ProfileService : IProfileService
     public async Task<ResultOf> EditUserGoal(EditUserGoalRequest request, CancellationToken cancellationToken = default)
     {
         var existing =
-            await _context.UserGoals.FirstOrDefaultAsync(x => x.Id == request.GoalId && request.UserId == x.UserId,
+            await this._context.UserGoals.FirstOrDefaultAsync(x => x.Id == request.GoalId && request.UserId == x.UserId,
                 cancellationToken);
 
         if (existing is null)
+        {
             return ResultOf.Fail("Not Found");
-        
+        }
+
         var modified = false;
         if (!string.IsNullOrEmpty(request.Title))
         {
@@ -126,32 +134,38 @@ public class ProfileService : IProfileService
         }
 
         if (modified)
-            await _context.SaveChangesAsync(cancellationToken);
-        
+        {
+            await this._context.SaveChangesAsync(cancellationToken);
+        }
+
         return ResultOf.Pass();
     }
 
     public async Task<ResultOf> DeleteUserGoal(DeleteUserGoalRequest request, CancellationToken cancellationToken = default)
     {
         var existing =
-            await _context.UserGoals.FirstOrDefaultAsync(x => x.UserId == request.UserId && x.Id == request.GoalId,
+            await this._context.UserGoals.FirstOrDefaultAsync(x => x.UserId == request.UserId && x.Id == request.GoalId,
                 cancellationToken);
 
         if (existing is null)
+        {
             return ResultOf.Fail("Not Found");
+        }
 
-        _context.UserGoals.Remove(existing);
-        await _context.SaveChangesAsync(cancellationToken);
-        
+        this._context.UserGoals.Remove(existing);
+        await this._context.SaveChangesAsync(cancellationToken);
+
         return ResultOf.Pass();
     }
 
     public async Task<ResultOf> EditProfileInfo(EditProfileInfoRequest request, CancellationToken cancellationToken = default)
     {
-        var existing = await _context.Users.FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
+        var existing = await this._context.Users.FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);
 
         if (existing is null)
+        {
             return ResultOf.Fail("Not Found");
+        }
 
         var changed = false;
 
@@ -174,7 +188,9 @@ public class ProfileService : IProfileService
         }
 
         if (changed)
-            await _context.SaveChangesAsync(cancellationToken);
+        {
+            await this._context.SaveChangesAsync(cancellationToken);
+        }
 
         return ResultOf.Pass();
     }

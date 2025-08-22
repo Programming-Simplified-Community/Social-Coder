@@ -11,6 +11,6 @@ public class CodeJamAdminViewModel
 
     public int TotalTeamApplicants { get; set; }
     public int TotalSoloApplicants { get; set; }
-    
-    public int TotalApplicants => TotalSoloApplicants + TotalTeamApplicants;
+
+    public int TotalApplicants => this.TotalSoloApplicants + this.TotalTeamApplicants;
 }

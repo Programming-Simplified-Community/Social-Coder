@@ -19,7 +19,7 @@ public interface IAuditable
     /// Date in which this record was created
     /// </summary>
     DateTime CreatedOn { get; }
-    
+
     /// <summary>
     /// Date in which this record was last modified (excluding creation)
     /// </summary>

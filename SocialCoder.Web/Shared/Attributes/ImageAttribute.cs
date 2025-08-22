@@ -10,6 +10,6 @@ public class ImageAttribute : Attribute
 
     public ImageAttribute(string path)
     {
-        Path = path;
+        this.Path = path;
     }
 }

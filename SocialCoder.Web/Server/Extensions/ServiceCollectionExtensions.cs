@@ -131,7 +131,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICodeJamService, CodeJamService>();
         services.AddScoped<IProfileService, ProfileService>();
 
+        services.AddAuthorization();
+
         services.AddGraphQLServer()
+            .AddAuthorization()
             .AddQueryType<GraphQLQueries>()
             .AddTypeExtension<CodeJamTopicQueryExtensions>()
             .AddTypeExtension<UserManagementExtensions>()
@@ -143,8 +146,8 @@ public static class ServiceCollectionExtensions
 
     public static void SetupForProduction(this WebApplication app)
     {
-        app.UseAuthentication();
         app.UseAuthorization();
+        app.UseAuthentication();
         app.MapGraphQL();
     }
 }

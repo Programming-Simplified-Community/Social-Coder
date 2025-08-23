@@ -19,7 +19,7 @@ public class EncryptedSettingsConfigurationSource : IConfigurationSource
         var sp = this._services.BuildServiceProvider();
         var dp = sp.GetRequiredService<IDataProtectionProvider>();
         var env = sp.GetRequiredService<IWebHostEnvironment>();
-        
+
         return new EncryptedSettingsConfigurationProvider(dp, env);
     }
 }
@@ -72,9 +72,14 @@ public class EncryptedSettingsConfigurationProvider : ConfigurationProvider
             if (this.IsPrimitive(prop.PropertyType))
             {
                 var strValue = string.Empty;
+
                 if (value is null)
                 {
                     strValue = this.GetDefault(prop.PropertyType)?.ToString() ?? this.GetDefault(prop.PropertyType)?.ToString();
+                }
+                else
+                {
+                    strValue = value.ToString();
                 }
 
                 dict.Add(prop.Name, strValue);
@@ -86,15 +91,14 @@ public class EncryptedSettingsConfigurationProvider : ConfigurationProvider
                     continue;
                 }
 
-                if (prop.PropertyType.IsAssignableFrom(typeof(IDictionary<string, OAuthSetting>)))
+                if (prop.Name.Equals("OAuthSettings", StringComparison.OrdinalIgnoreCase))
                 {
-
                     var dictValue = (IDictionary<string, OAuthSetting>)value;
 
                     foreach (var (key, val) in dictValue)
                     {
-                        dict.Add($"{prop.Name}:{key}:{val.Name}:{nameof(OAuthSetting.ClientId)}", val.ClientId);
-                        dict.Add($"{prop.Name}:{key}:{val.Name}:{nameof(OAuthSetting.ClientSecret)}", val.ClientSecret);
+                        dict.Add($"{prop.Name}:{key}:{nameof(OAuthSetting.ClientId)}", val.ClientId);
+                        dict.Add($"{prop.Name}:{key}:{nameof(OAuthSetting.ClientSecret)}", val.ClientSecret);
                     }
                 }
                 else if (prop.PropertyType.IsAssignableFrom(typeof(PostgresConnection)))
@@ -112,6 +116,11 @@ public class EncryptedSettingsConfigurationProvider : ConfigurationProvider
 
     private object? GetDefault(Type type)
     {
+        if (type == typeof(bool))
+        {
+            return false;
+        }
+
         return type.IsValueType ? Activator.CreateInstance(type) : null;
     }
     private bool IsPrimitive(Type type)

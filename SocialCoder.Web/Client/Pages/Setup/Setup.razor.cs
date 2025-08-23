@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using Nextended.Core.Extensions;
 using SocialCoder.Web.Server.Models;
 using SocialCoder.Web.Shared.Models.Setup;
 
@@ -33,6 +34,18 @@ public partial class Setup : ComponentBase
             "Google" => Icons.Custom.Brands.Google,
             _ => string.Empty
         };
+    }
+
+    private bool CanFinish
+    {
+        get
+        {
+            var validProvider = this._providers.Any(x => !x.ClientId.IsNullOrWhiteSpace() && !x.ClientSecret.IsNullOrWhiteSpace());
+            var validConnection = !this._connectionRequest.Database.IsNullOrWhiteSpace() && !this._connectionRequest.Host.IsNullOrWhiteSpace() &&
+                                  !this._connectionRequest.UserId.IsNullOrWhiteSpace() && !this._connectionRequest.Password.IsNullOrWhiteSpace();
+
+            return validConnection && validProvider;
+        }
     }
 
     protected override async Task OnInitializedAsync()
@@ -95,11 +108,47 @@ public partial class Setup : ComponentBase
         }
     }
 
+    private async Task DeleteOauthProvider(string name)
+    {
+        try
+        {
+            var response = await this.Client.DeleteAsync($"api/Configuration/oauth-providers/{name}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                this.Snackbar.Add($"OAuth Provider: {name} successfully removed", Severity.Success);
+
+                var oauth = this._providers.First(x => x.Name == name);
+                oauth.ClientId = string.Empty;
+                oauth.ClientSecret = string.Empty;
+            }
+            else
+            {
+                switch (response.StatusCode)
+                {
+                    case System.Net.HttpStatusCode.NotFound:
+                        this.Snackbar.Add($"OAuth Provider: {name} not found", Severity.Error);
+                        break;
+                    case System.Net.HttpStatusCode.BadRequest:
+                        this.Snackbar.Add("Must provide a valid provider name", Severity.Error);
+                        break;
+                    default:
+                        throw new NotImplementedException($"{response.StatusCode} - Message not implemented");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            this.Snackbar.Add("An error occurred", Severity.Error);
+            this.Logger.LogError("An error occurred while deleting OAuth Provider: {Name}: {Exception}", name, ex);
+        }
+    }
+
     private async Task SaveOauthProvider(OAuthSetting setting)
     {
         try
         {
-            var response = await this.Client.PutAsJsonAsync("api/configuration/save-oauth", setting);
+            var response = await this.Client.PutAsJsonAsync("api/configuration/oauth-providers", setting);
 
             if (response.IsSuccessStatusCode)
             {
@@ -115,6 +164,28 @@ public partial class Setup : ComponentBase
         {
             this.Logger.LogError("Failed to save oauth provider: {Exception}", ex);
             this.Snackbar.Add("An error occurred", Severity.Error);
+        }
+    }
+
+    private async Task FinalizeSetup()
+    {
+        try
+        {
+            var response = await this.Client.PostAsync("api/configuration/finalize", null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                this.Snackbar.Add("Setup Complete. Server requires restart", Severity.Success);
+                return;
+            }
+
+            this.Snackbar.Add(await response.Content.ReadAsStringAsync(), Severity.Error);
+            this.Logger.LogError("Was unable to complete setup: {Response}", await response.Content.ReadAsStringAsync());
+        }
+        catch (Exception ex)
+        {
+            this.Logger.LogError("An error occurred while attempting to finalize setup: {Exception}", ex);
+            this.Snackbar.Add("An error occurred while processing request", Severity.Error);
         }
     }
 

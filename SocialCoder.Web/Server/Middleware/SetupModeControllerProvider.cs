@@ -5,6 +5,9 @@ using SocialCoder.Web.Server.Attributes;
 
 namespace SocialCoder.Web.Server.Middleware;
 
+/// <summary>
+/// This class is used to remove controllers from the application when the application is in setup mode.
+/// </summary>
 public class SetupModeControllerProvider : IApplicationFeatureProvider<ControllerFeature>
 {
     private readonly bool _isInSetupMode;
@@ -16,16 +19,15 @@ public class SetupModeControllerProvider : IApplicationFeatureProvider<Controlle
 
     public void PopulateFeature(IEnumerable<ApplicationPart> parts, ControllerFeature feature)
     {
-        if (!this._isInSetupMode)
-        {
-            return;
-        }
+        var controllerTypesToRemove = !this._isInSetupMode
+            ? feature.Controllers
+                .Where(x => x.GetCustomAttributes<OnlyInSetupModeAttribute>().Any())
+                .ToList()
+            : feature.Controllers
+                .Where(x => x.GetCustomAttributes<DisabledInSetupModeAttribute>().Any())
+                .ToList();
 
-        var controllersToMove = feature.Controllers
-            .Where(x => x.GetCustomAttributes<DisabledInSetupModeAttribute>().Any())
-            .ToList();
-
-        foreach (var controller in controllersToMove)
+        foreach (var controller in controllerTypesToRemove)
         {
             feature.Controllers.Remove(controller);
         }

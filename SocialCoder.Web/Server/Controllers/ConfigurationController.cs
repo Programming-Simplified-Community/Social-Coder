@@ -1,12 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Nextended.Core.Extensions;
 using Npgsql;
+using SocialCoder.Web.Server.Attributes;
 using SocialCoder.Web.Server.Services;
 using SocialCoder.Web.Shared.Models.Setup;
 
 namespace SocialCoder.Web.Server.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
+/// <summary>
+/// Allows the system administrator to configure the application on initial launch.
+/// Once configured and finalized, this controller will no longer be available due to it not having authentication 
+/// </summary>
+[ApiController, OnlyInSetupMode, Route("api/[controller]")]
 public class ConfigurationController : ControllerBase
 {
     private readonly AppStateProvider _appStateProvider;
@@ -20,6 +25,10 @@ public class ConfigurationController : ControllerBase
         this._application = application;
     }
 
+    /// <summary>
+    /// Allows system administrator to retrieve the current configuration
+    /// </summary>
+    /// <returns></returns>
     [HttpGet("settings")]
     public Task<IActionResult> GetSettings()
     {
@@ -27,12 +36,21 @@ public class ConfigurationController : ControllerBase
         return Task.FromResult<IActionResult>(this.Ok(currentSettings));
     }
 
+    /// <summary>
+    /// Helps determine whether the application is in setup mode or not.
+    /// </summary>
+    /// <returns></returns>
     [HttpGet("is-in-setup-mode")]
     public Task<IActionResult> IsInSetupMode()
     {
         return Task.FromResult<IActionResult>(this.Ok(this._appStateProvider.IsInSetupMode));
     }
 
+    /// <summary>
+    /// Saves postgres settings
+    /// </summary>
+    /// <param name="dbSettings"></param>
+    /// <returns></returns>
     [HttpPut("save-connection")]
     public async Task<IActionResult> SaveConnectionSettings([FromBody] PostgresConnection dbSettings)
     {
@@ -47,7 +65,37 @@ public class ConfigurationController : ControllerBase
         return this.Ok();
     }
 
-    [HttpPut("save-oauth")]
+    /// <summary>
+    /// Deletes an OAuth provider
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    [HttpDelete("oauth-providers/{name}")]
+    public async Task<IActionResult> DeleteOAuthProvider(string name)
+    {
+        if (name.IsNullOrWhiteSpace())
+        {
+            return this.BadRequest();
+        }
+
+        var currentSettings = this._settingsService.LoadSettings() ?? new();
+
+        if (!currentSettings.OAuthSettings.ContainsKey(name))
+        {
+            return this.NotFound(name);
+        }
+
+        currentSettings.OAuthSettings.Remove(name);
+        await this._settingsService.SaveSettingsAsync(currentSettings);
+        return this.Ok();
+    }
+
+    /// <summary>
+    /// Adds an OAuth provider
+    /// </summary>
+    /// <param name="oauth"></param>
+    /// <returns></returns>
+    [HttpPut("oauth-providers")]
     public async Task<IActionResult> SaveOAuth([FromBody] OAuthSetting oauth)
     {
         if (!this.ModelState.IsValid)
@@ -63,6 +111,13 @@ public class ConfigurationController : ControllerBase
         return this.Ok();
     }
 
+    /// <summary>
+    /// Will verify if the current configuration is valid, then flip setup to complete. This endpoint automatically verifies
+    /// at least 1 OAuth provider is configured, and a valid database connection is provided.
+    /// </summary>
+    /// <returns>
+    /// Bad Request if: Oauth provider is not configured, or database connection is not valid
+    /// </returns>
     [HttpPost("finalize")]
     public async Task<IActionResult> FinalizeSetup()
     {
@@ -70,7 +125,7 @@ public class ConfigurationController : ControllerBase
 
         if (currentSettings is null)
         {
-            return this.BadRequest();
+            return this.BadRequest("Must have at least 1 OAuth provider configured, and a valid database connection");
         }
 
         if (currentSettings.OAuthSettings.Count == 0)
@@ -83,6 +138,13 @@ public class ConfigurationController : ControllerBase
             return this.BadRequest("Requires a Postgres connection to be configured");
         }
 
+        var dbTest = await this.TestReachability(currentSettings.Postgres);
+
+        if (!dbTest.Success)
+        {
+            return this.BadRequest(dbTest.Message);
+        }
+
         currentSettings.IsSetupComplete = true;
         await this._settingsService.SaveSettingsAsync(currentSettings);
 
@@ -93,10 +155,20 @@ public class ConfigurationController : ControllerBase
          * Which will auto restart the application
          */
 
-        this._application.StopApplication();
+        Task.Run(async () =>
+        {
+            await Task.Delay(TimeSpan.FromSeconds(5));
+            this._application.StopApplication();
+        });
+
         return this.Ok();
     }
 
+    /// <summary>
+    /// Checks to see if a connection can be established to the Postgres server.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPost("test-reachability")]
     public async Task<IActionResult> TestPostgresReachability([FromBody] TestReachabilityRequest request)
     {
@@ -109,6 +181,13 @@ public class ConfigurationController : ControllerBase
             });
         }
 
+        var result = await this.TestReachability(request);
+
+        return result.Success ? this.Ok(result) : this.BadRequest(result);
+    }
+
+    private async Task<ConnectionResult> TestReachability(TestReachabilityRequest request)
+    {
         var connectionStringBuilder = new NpgsqlConnectionStringBuilder
         {
             Host = request.Host,
@@ -125,30 +204,35 @@ public class ConfigurationController : ControllerBase
         {
             await connection.OpenAsync();
 
-            return this.Ok(new ConnectionResult
+            return new ConnectionResult
             {
                 Success = true,
                 Message = "Database is reachable, and credentials are valid"
-            });
+            };
         }
         catch (NpgsqlException ex)
         {
-            return this.BadRequest(new ConnectionResult
+            return new ConnectionResult
             {
                 Success = false,
                 Message = $"Database error: {ex.Message}"
-            });
+            };
         }
         catch (Exception ex)
         {
-            return this.BadRequest(new ConnectionResult
+            return new ConnectionResult
             {
                 Success = false,
                 Message = $"An unexpected error occurred: {ex.Message}"
-            });
+            };
         }
     }
 
+    /// <summary>
+    /// Tests the connection to the Postgres database
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPost("test-connection")]
     public async Task<IActionResult> TestPostgresConnection([FromBody] TestConnectionRequest request)
     {

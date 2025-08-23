@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using SocialCoder.Web.Server.Data;
 using SocialCoder.Web.Server.GraphQL;
+using SocialCoder.Web.Server.Models;
 using SocialCoder.Web.Server.Services.Contracts;
 using SocialCoder.Web.Server.Services.Implementations;
 
@@ -15,21 +17,23 @@ public static class ServiceCollectionExtensions
 
     }
 
-    public static void SetupForProduction(this IServiceCollection services, IConfiguration configuration)
+    private static void SetupDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        var dbHost = configuration.GetValue<string>("DB_HOST");
-        var dbPassword = configuration.GetValue<string>("DB_PASSWORD");
-        var dbName = configuration.GetValue<string>("DB_NAME");
-        var dbUser = configuration.GetValue<string>("DB_USER");
-
-        var connectionString =
-            $"Server=${dbHost};port=5432;User Id=${dbUser};Password=${dbPassword};Database=${dbName}";
+        var connectionStringBuilder = new NpgsqlConnectionStringBuilder
+        {
+            Host = configuration.GetValue<string>("Postgres:Host"),
+            Port = configuration.GetValue<int>("Postgres:Port"),
+            Database = configuration.GetValue<string>("Postgres:Database"),
+            Username = configuration.GetValue<string>("Postgres:UserId"),
+            Password = configuration.GetValue<string>("Postgres:Password"),
+            Timeout = 15,
+            CommandTimeout = 15
+        };
 
         services.AddDbContext<ApplicationDbContext>(options =>
         {
-            options.UseNpgsql(connectionString);
+            options.UseNpgsql(connectionStringBuilder.ConnectionString);
         }, ServiceLifetime.Transient);
-
         services.AddDatabaseDeveloperPageExceptionFilter();
 
         services.Configure<IdentityOptions>(options =>
@@ -42,6 +46,15 @@ public static class ServiceCollectionExtensions
             options.User.AllowedUserNameCharacters =
                 "1234567890-_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
         });
+
+        services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
+    }
+
+    public static void SetupForProduction(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.SetupDatabase(configuration);
 
         services.ConfigureApplicationCookie(options =>
         {
@@ -57,42 +70,59 @@ public static class ServiceCollectionExtensions
 
         var authBuilder = services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme);
 
-        if (configuration.GetValue<string>("Authentication:Google:ClientId") is not null)
+        if (configuration.GetValue<string>("OAuthSettings:Google:ClientId") is not null)
         {
-            authBuilder.AddGoogle(options =>
+            var clientId = configuration.GetValue<string>("OAuthSettings:Google:ClientId");
+            var clientSecret = configuration.GetValue<string>("OAuthSettings:Google:ClientSecret");
+            if (clientId is not null && clientSecret is not null)
             {
-                options.SignInScheme = IdentityConstants.ExternalScheme;
-                options.ClientId = configuration["Authentication:Google:ClientId"];
-                options.ClientSecret = configuration["Authentication:Google:ClientSecret"];
-            });
+                authBuilder.AddGoogle(options =>
+                {
+                    options.SignInScheme = IdentityConstants.ExternalScheme;
+                    options.ClientId = clientId;
+                    options.ClientSecret = clientSecret;
+                });
+            }
         }
 
-        if (configuration.GetValue<string>("Authentication:Discord:ClientId") is not null)
+        if (configuration.GetValue<string>("OAuthSettings:Discord:ClientId") is not null)
         {
-            authBuilder.AddDiscord(options =>
+            var clientId = configuration.GetValue<string>("OAuthSettings:Discord:ClientId");
+            var clientSecret = configuration.GetValue<string>("OAuthSettings:Discord:ClientSecret");
+
+            if (clientId is not null && clientSecret is not null)
             {
-                options.SignInScheme = IdentityConstants.ExternalScheme;
-                options.ClientId = configuration["Authentication:Discord:ClientId"];
-                options.ClientSecret = configuration["Authentication:Discord:ClientSecret"];
-            });
+                authBuilder.AddDiscord(options =>
+                {
+                    options.SignInScheme = IdentityConstants.ExternalScheme;
+                    options.ClientId = clientId;
+                    options.ClientSecret = clientSecret;
+                });
+            }
         }
 
-        if (configuration.GetValue<string>("Authentication:Github:ClientId") is not null)
+        if (configuration.GetValue<string>("OAuthSettings:GitHub:ClientId") is not null)
         {
-            authBuilder.AddGitHub(options =>
-            {
-                options.SignInScheme = IdentityConstants.ExternalScheme;
-                options.ClientId = configuration["Authentication:Github:ClientId"];
-                options.ClientSecret = configuration["Authentication:Github:ClientSecret"];
+            var clientId = configuration.GetValue<string>("OAuthSettings:GitHub:ClientId");
+            var clientSecret = configuration.GetValue<string>("OAuthSettings:GitHub:ClientSecret");
 
-                options.Scope.Add("public_repo");
-                options.Scope.Add("read:org");
-                options.Scope.Add("gist");
-                options.Scope.Add("read:user");
-                options.Scope.Add("user:email");
-                options.Scope.Add("user:follow");
-                options.Scope.Add("read:project");
-            });
+            if (clientId is not null && clientSecret is not null)
+            {
+                authBuilder.AddGitHub(options =>
+                {
+                    options.SignInScheme = IdentityConstants.ExternalScheme;
+                    options.ClientId = clientId;
+                    options.ClientSecret = clientSecret;
+
+                    options.Scope.Add("public_repo");
+                    options.Scope.Add("read:org");
+                    options.Scope.Add("gist");
+                    options.Scope.Add("read:user");
+                    options.Scope.Add("user:email");
+                    options.Scope.Add("user:follow");
+                    options.Scope.Add("read:project");
+                });
+            }
         }
 
         authBuilder.AddCookie();

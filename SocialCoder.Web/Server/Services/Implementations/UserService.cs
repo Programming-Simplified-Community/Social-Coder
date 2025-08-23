@@ -24,7 +24,7 @@ public class UserService : IUserService
         this._logger = logger;
         this._context = context;
     }
-    
+
     #region Management of users
 
     public async Task<ResultOf> BanUser(BanUserRequest request, string callingUserId, CancellationToken cancellationToken = default)
@@ -35,7 +35,7 @@ public class UserService : IUserService
         }
 
         var banner = await this._userManager.FindByIdAsync(callingUserId);
-        
+
         var user = await this._userManager.FindByIdAsync(request.UserId);
 
         if (banner is null || user is null)
@@ -98,7 +98,7 @@ public class UserService : IUserService
         var callingRoles = await this._userManager.GetRolesAsync(callingUser);
 
         var isOwner = callingRoles.Any(x => x == Roles.Owner);
-        
+
         var user = await this._userManager.FindByIdAsync(request.UserId);
         var userRoles = await this._userManager.GetRolesAsync(user);
 
@@ -127,7 +127,7 @@ public class UserService : IUserService
             request.RoleName,
             user.UserName,
             callingUser.UserName,
-            string.Join("\n", result.Errors.Select(x=>x.Description)));
+            string.Join("\n", result.Errors.Select(x => x.Description)));
         return ResultOf.Fail("Error trying to add role");
     }
 
@@ -138,11 +138,11 @@ public class UserService : IUserService
         var callingRoles = await this._userManager.GetRolesAsync(callingUser);
 
         var isOwner = callingRoles.Any(x => x == Roles.Owner);
-        
+
         var user = await this._userManager.FindByIdAsync(request.UserId);
         var userRoles = await this._userManager.GetRolesAsync(user);
-        
-        if(userRoles.Any(x=>x is Roles.Administrator or Roles.Owner) && !isOwner)
+
+        if (userRoles.Any(x => x is Roles.Administrator or Roles.Owner) && !isOwner)
         {
             return ResultOf.Fail("Unable to remove roles from another admin");
         }
@@ -169,7 +169,7 @@ public class UserService : IUserService
             user.UserName,
             callingUser.UserName,
             request.Reason,
-            string.Join("\n\n", result.Errors.Select(x=>x.Description)));
+            string.Join("\n\n", result.Errors.Select(x => x.Description)));
         return ResultOf.Fail("Error trying to remove role");
     }
     #endregion
@@ -192,7 +192,7 @@ public class UserService : IUserService
         claim = claims.FirstOrDefault(x => x.Type == claimType);
         return claim is not null;
     }
-    
+
     public async Task<ResultOf<ApplicationUser>> GetUserFromOAuth(AuthenticateResult authResult)
     {
         if (!authResult.Succeeded)
@@ -205,23 +205,23 @@ public class UserService : IUserService
         var userIdClaim = claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier ||
                                                      x.Type == JwtClaimTypes.Subject);
         var authProvider = authResult.Ticket!.Properties.Items[".AuthScheme"];
-        
+
         if (userIdClaim is null)
         {
             this._logger.LogError("Unable to determine user from external login provider: {AuthScheme}", authProvider);
             return ResultOf<ApplicationUser>.Fail("Unknown User");
         }
-        
+
         var email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value ?? string.Empty;
         var name = claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value ?? email;
-        
+
         if (string.IsNullOrEmpty(email) && string.IsNullOrEmpty(name))
         {
             this._logger.LogError("Unable to determine user from external login provider: {AuthScheme}. Could not locate email or name",
                 authProvider);
             return ResultOf<ApplicationUser>.Fail("No email or name provided");
         }
-        
+
         #region Attempt To Locate User given OAuth claims
         var user = await this._userManager.FindByEmailAsync(email);
 
@@ -235,15 +235,15 @@ public class UserService : IUserService
         if (user is not null)
         {
             var existingProviders = await this._userManager.GetLoginsAsync(user);
-            
-            if(existingProviders.Any(x=>x.LoginProvider == authProvider))
+
+            if (existingProviders.Any(x => x.LoginProvider == authProvider))
             {
                 return ResultOf<ApplicationUser>.Pass(user);
             }
 
             return ResultOf<ApplicationUser>.Fail("Provider not associated with this account");
         }
-            
+
         user = new ApplicationUser
         {
             Email = email,
@@ -271,14 +271,14 @@ public class UserService : IUserService
         {
             this._logger.LogError("Was unable to add external login provider for {Scheme}\n{Error}",
                 authProvider,
-                string.Join("\n", addLoginResult.Errors.Select(x=>x.Description)));
+                string.Join("\n", addLoginResult.Errors.Select(x => x.Description)));
             return ResultOf<ApplicationUser>.Fail("Unable to add external login provided");
         }
 
         #region Claims we want to capture from an OAuth Provider
-        
+
         List<Claim> claimsToAdd = [];
-        
+
         // Do we have a github url?
         if (this.HasClaim(ref claims, ClaimConstants.GithubUrl, out var githubUrl))
         {
@@ -307,8 +307,8 @@ public class UserService : IUserService
         */
 
         var owners = await this._userManager.GetUsersInRoleAsync(Roles.Owner);
-        
-        if(owners.Count > 0)  // we need to have an owner which is most likely the first person to login
+
+        if (owners.Count > 0)  // we need to have an owner which is most likely the first person to login
         {
             return ResultOf<ApplicationUser>.Pass(user);
         }

@@ -6,6 +6,17 @@
 <MudSnackbarProvider/>
 
 <MudContainer Style="padding: 20px">
+    <MudToolBar Gutters>
+        <MudButton 
+            Variant="Variant.Filled" 
+            Color="Color.Info" 
+            StartIcon="@Icons.Material.TwoTone.Flag" 
+            Disabled="@(!CanFinish)"
+            OnClick="@(async()=>await FinalizeSetup())"
+            >
+            Finish Setup
+        </MudButton>
+    </MudToolBar>
     <MudGrid>
         <MudItem md="6">
             <EditForm Model="@_connectionRequest">
@@ -13,20 +24,20 @@
                     <MudCardHeader >Postgres Configuration</MudCardHeader>
                     <MudCardContent>
                         <DataAnnotationsValidator/>
-                            
+
                         <MudStack Spacing="2">
-                            <MudTextField T="string" Label="Host" @bind-Value="@_connectionRequest.Host" For="@(()=>_connectionRequest.Host)"/>
-                            <MudTextField T="string" Label="Database" @bind-Value="@_connectionRequest.Database" For="@(()=>_connectionRequest.Database)"/>
-                            <MudTextField T="int" Label="Port" InputMode="InputMode.numeric" @bind-Value="@_connectionRequest.Port" For="@(()=>_connectionRequest.Port)"/>
-                            <MudTextField T="string" Label="User" @bind-Value="@_connectionRequest.UserId" For="@(()=>_connectionRequest.UserId)"/>
-                            <MudTextField T="string" Label="Password" InputType="InputType.Password" @bind-Value="@_connectionRequest.Password" For="@(()=>_connectionRequest.Password)"/>
+                            <MudTextField T="string" Label="Host" @bind-Value="@_connectionRequest.Host" For="@(() => _connectionRequest.Host)"/>
+                            <MudTextField T="string" Label="Database" @bind-Value="@_connectionRequest.Database" For="@(() => _connectionRequest.Database)"/>
+                            <MudTextField T="int" Label="Port" InputMode="InputMode.numeric" @bind-Value="@_connectionRequest.Port" For="@(() => _connectionRequest.Port)"/>
+                            <MudTextField T="string" Label="User" @bind-Value="@_connectionRequest.UserId" For="@(() => _connectionRequest.UserId)"/>
+                            <MudTextField T="string" Label="Password" InputType="InputType.Password" @bind-Value="@_connectionRequest.Password" For="@(() => _connectionRequest.Password)"/>
                         </MudStack>
                     </MudCardContent>
                     <MudCardActions>
                         <MudStack Row Spacing="2">
                             <MudTooltip Text="Test if you can connect to Postgres">
                                 <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="TestReachability">Test Connection</MudButton>
-                            </MudTooltip>    
+                            </MudTooltip>
                             <MudTooltip Text="Test if you can connect to the database on Postgres">
                                 <MudButton Variant="Variant.Outlined" Color="Color.Tertiary" OnClick="TestConnection">Test Database Connection</MudButton>
                             </MudTooltip>
@@ -49,22 +60,32 @@
                         <MudCardContent>
                             <DataAnnotationsValidator/>
                             <MudStack>
-                                <MudTextField Label="Client ID" 
-                                              For="@(() => provider.ClientId)" 
-                                              @bind-Value="@provider.ClientId"
-                                />
-                                
-                                <MudTextField Label="Client Secret" 
-                                              InputType="InputType.Password" 
-                                              For="@(() => provider.ClientSecret)" 
-                                              @bind-Value="@provider.ClientSecret"
-                                />
+                                <MudTextField Label="Client ID"
+                                              For="@(() => provider.ClientId)"
+                                              @bind-Value="@provider.ClientId"/>
+
+                                <MudTextField Label="Client Secret"
+                                              InputType="InputType.Password"
+                                              For="@(() => provider.ClientSecret)"
+                                              @bind-Value="@provider.ClientSecret"/>
                             </MudStack>
                         </MudCardContent>
                         <MudCardActions>
                             <MudStack Row Spacing="2">
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(async () => await SaveOauthProvider(provider))" StartIcon="@Icons.Material.TwoTone.Save">Save</MudButton>
-                                <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.TwoTone.Delete">Delete</MudButton>
+                                <MudButton
+                                    Variant="Variant.Filled"
+                                    Color="Color.Primary"
+                                    OnClick="@(async () => await SaveOauthProvider(provider))"
+                                    StartIcon="@Icons.Material.TwoTone.Save">
+                                    Save
+                                </MudButton>
+                                <MudButton
+                                    Variant="Variant.Outlined"
+                                    Color="Color.Error"
+                                    StartIcon="@Icons.Material.TwoTone.Delete"
+                                    OnClick="@(async () => await DeleteOauthProvider(provider.Name))">
+                                    Delete
+                                </MudButton>
                             </MudStack>
                         </MudCardActions>
                     </MudCard>

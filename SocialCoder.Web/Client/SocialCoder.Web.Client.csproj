@@ -44,4 +44,8 @@
     <TypeScriptCompile Include="Typescript\Hexagon.ts" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Generated\" />
+  </ItemGroup>
+
 </Project>

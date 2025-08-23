@@ -1,16 +1,11 @@
-﻿using Microsoft.Extensions.Options;
-using SocialCoder.Web.Server.Models;
-
-namespace SocialCoder.Web.Server.Services;
+﻿namespace SocialCoder.Web.Server.Services;
 
 public class AppStateProvider
 {
-    private readonly IOptionsMonitor<AppSettings> _settings;
+    public bool IsInSetupMode { get; }
 
-    public AppStateProvider(IOptionsMonitor<AppSettings> settings)
+    public AppStateProvider(IConfiguration configuration)
     {
-        this._settings = settings;
+        this.IsInSetupMode = !configuration.GetValue("IsSetupComplete", false);
     }
-
-    public bool IsInSetupMode => !this._settings.CurrentValue.IsSetupComplete;
 }

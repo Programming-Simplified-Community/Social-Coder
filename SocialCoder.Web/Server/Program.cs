@@ -1,8 +1,6 @@
-using Microsoft.AspNetCore.DataProtection;
 using SocialCoder.Web.Server;
 using SocialCoder.Web.Server.Extensions;
 using SocialCoder.Web.Server.Middleware;
-using SocialCoder.Web.Server.Models;
 using SocialCoder.Web.Server.Services;
 using SocialCoder.Web.Shared.Extensions;
 
@@ -10,7 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddConnections();
 builder.Configuration.AddJsonConfigurationFiles();
-builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 builder.Services.AddSingleton<AppStateProvider>();
 builder.Services.AddSingleton<SecureSettingsService>();
 builder.Services.AddDataProtection();

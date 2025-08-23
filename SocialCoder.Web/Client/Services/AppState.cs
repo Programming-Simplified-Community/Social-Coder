@@ -15,7 +15,15 @@ public class AppState
 
     public async Task LoadStateAsync()
     {
-        this.IsInSetupMode = await this._client.GetFromJsonAsync<bool>("api/Configuration/is-in-setup-mode");
+        try
+        {
+            this.IsInSetupMode = await this._client.GetFromJsonAsync<bool>("api/Configuration/is-in-setup-mode");
+        }
+        catch
+        {
+            this.IsInSetupMode = false;
+        }
+
         this.IsLoaded = true;
     }
 }

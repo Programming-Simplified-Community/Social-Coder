@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.DataProtection;
+using Npgsql;
 using SocialCoder.Web.Server.Models;
 using Path = System.IO.Path;
 
@@ -9,16 +10,19 @@ public class SecureSettingsService
     private readonly ILogger<SecureSettingsService> _logger;
     private readonly IDataProtector _protector;
     private readonly string _filePath;
+    private readonly IConfiguration _configuration;
 
     /// <summary>
     /// This is used to isolate protectors. Ensures that data is protected for one purpose and cannot be used for another.
     /// </summary>
     private const string ProtectorPurpose = "ApplicationSettings.v1";
 
-    public SecureSettingsService(IDataProtectionProvider provider, IWebHostEnvironment env, ILogger<SecureSettingsService> logger)
+    public SecureSettingsService(IDataProtectionProvider provider, IConfiguration configuration, IWebHostEnvironment env, ILogger<SecureSettingsService> logger)
     {
         this._protector = provider.CreateProtector(ProtectorPurpose);
         this._logger = logger;
+        this._configuration = configuration;
+
         // Store the file in the ContentRootPath, which is the base directory of the app
         this._filePath = Path.Combine(env.ContentRootPath, "protected_settings.json");
     }
@@ -30,11 +34,34 @@ public class SecureSettingsService
         await File.WriteAllTextAsync(this._filePath, protectedJson);
     }
 
+    private AppSettings TryLoadFromConfiguration(AppSettings settings)
+    {
+        var existingConnectionString = this._configuration.GetConnectionString("socialcoder");
+
+        if (existingConnectionString is null)
+        {
+            return settings;
+        }
+
+        var builder = new NpgsqlConnectionStringBuilder(existingConnectionString);
+
+        settings.Postgres = new()
+        {
+            Database = builder.Database ?? string.Empty,
+            Host = builder.Host ?? string.Empty,
+            Password = builder.Password ?? string.Empty,
+            Port = builder.Port,
+            UserId = builder.Username ?? string.Empty
+        };
+
+        return settings;
+    }
+
     public AppSettings? LoadSettings()
     {
         if (!File.Exists(this._filePath))
         {
-            return null;
+            return this.TryLoadFromConfiguration(new());
         }
 
         var protectedJson = File.ReadAllText(this._filePath);
@@ -42,7 +69,8 @@ public class SecureSettingsService
         try
         {
             var json = this._protector.Unprotect(protectedJson);
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<AppSettings>(json);
+            var settings = Newtonsoft.Json.JsonConvert.DeserializeObject<AppSettings>(json);
+            return this.TryLoadFromConfiguration(settings ?? new());
         }
         catch (Exception ex)
         {

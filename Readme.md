@@ -4,47 +4,20 @@
 
 # Social Coder
 
-This project is geared towards building a social-media like experience for programmers!
+This project is geared towards building a social-media-like experience for programmers!
 
 Clearly, this is a work in progress app but here's a sneak peak on current progress!
 ![WIP Code Jam Topics](imgs/code-jam-topics.png)
-1. OAuth login via Google or Discord (will add more)
+1. OAuth login via Google, Discord, GitHub (will add more)
 2. Ability to view code jams
 3. Ability to register/withdraw from code jams
+
+
+## Contributing
 
 If you're interested in contributing here's [Environment](Environment.md) setup instructions/suggestions.
 
 Of course, no app is complete without a [Database](Database.md)!
-
-## Scripts
-
-Before starting the database via docker-compose we need to setup some environment variables.
-
-There are a few parameters you can specify if you want... running it with no parameters will
-use default values for our connection string! Which is fine...
-
-[View Script](create-env.ps1)
-
-Please note this will override previously set values if you don't respecify them!
-Additionally, this script will automatically update your connection string.
-
-```bash
-./create-env.ps1
-
-./create-env.ps1 -databasePath Path\To\Where\You\Want\To\Store\Db
-```
-
-Start database from [docker-compose](docker-compose.yml)
-```bash
-./start-db.ps1
-```
-
-Create https-certs. Depending on your environment your IDE might have already set this up for you.
-Otherwise, this script will do the trick... hopefully
-
-```bash
-./create-https-certs.ps1
-```
 
 ## Services
 
@@ -60,25 +33,16 @@ graph TD
 ```
 
 ## Login
-There are no default credentials. Must utilize OAuth.
+There are no default credentials. Must use OAuth.
 
 ## OAuth Setup
 
-Will require adding a `appsettings.development.json` to your Server project [SocialCoder.Web](SocialCoder.Web)
+During the first launch of the application, you will see a "setup-mode." While in this mode, the application is not 
+usable. You're required to ensure that you have at least one OAuth provider, and a valid database connection.
 
-```json
-{
-  "Authentication": {
-    "ProviderName": {
-      "ClientId": "",
-      "ClientSecret": ""
-    }
-  }
-}
-```
-
-Right now we have Discord and Google setup for our application. A requirement to set this up will be to register with 
-the following services:
+Once both requirements are satisfied, you can finalize the setup by clicking the "Finish Setup" button. Then the server
+will shut down. If not in a container, you will have to restart it by hand. Otherwise, via docker-compose, the restart policy should
+kick in and restart automatically.
 
 #### Discord
 

@@ -6,6 +6,8 @@ using SocialCoder.Web.Shared.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 builder.Configuration.AddConnections();
 builder.Configuration.AddJsonConfigurationFiles();
 builder.Services.AddSingleton<AppStateProvider>();
@@ -34,6 +36,8 @@ else
 }
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

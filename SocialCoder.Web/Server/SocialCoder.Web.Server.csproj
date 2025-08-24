@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\SocialCoder.ServiceDefaults\SocialCoder.ServiceDefaults.csproj" />
     <ProjectReference Include="..\Client\SocialCoder.Web.Client.csproj" />
     <ProjectReference Include="..\Shared\SocialCoder.Web.Shared.csproj" />
   </ItemGroup>

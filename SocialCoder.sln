@@ -38,6 +38,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dev", "dev", "{1F2555A5-F15
 		.devcontainer\.devcontainer.json = .devcontainer\.devcontainer.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialCoder.AppHost", "SocialCoder.AppHost\SocialCoder.AppHost.csproj", "{40A93E6A-0373-4099-8F69-1F00FF10147F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialCoder.ServiceDefaults", "SocialCoder.ServiceDefaults\SocialCoder.ServiceDefaults.csproj", "{214762FC-3FAA-4F68-817C-4F3040645C57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +60,14 @@ Global
 		{40520FE4-D8C6-4251-AA46-103CC96DFC6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40520FE4-D8C6-4251-AA46-103CC96DFC6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40520FE4-D8C6-4251-AA46-103CC96DFC6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40A93E6A-0373-4099-8F69-1F00FF10147F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40A93E6A-0373-4099-8F69-1F00FF10147F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40A93E6A-0373-4099-8F69-1F00FF10147F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40A93E6A-0373-4099-8F69-1F00FF10147F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{214762FC-3FAA-4F68-817C-4F3040645C57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{214762FC-3FAA-4F68-817C-4F3040645C57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{214762FC-3FAA-4F68-817C-4F3040645C57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{214762FC-3FAA-4F68-817C-4F3040645C57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

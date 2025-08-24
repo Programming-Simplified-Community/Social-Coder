@@ -19,21 +19,29 @@ public static class ServiceCollectionExtensions
 
     private static void SetupDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionStringBuilder = new NpgsqlConnectionStringBuilder
+        var connectionString = configuration.GetConnectionString("socialcoder");
+
+        if (connectionString is null)
         {
-            Host = configuration.GetValue<string>("Postgres:Host"),
-            Port = configuration.GetValue<int>("Postgres:Port"),
-            Database = configuration.GetValue<string>("Postgres:Database"),
-            Username = configuration.GetValue<string>("Postgres:UserId"),
-            Password = configuration.GetValue<string>("Postgres:Password"),
-            Timeout = 15,
-            CommandTimeout = 15
-        };
+            var connectionStringBuilder = new NpgsqlConnectionStringBuilder
+            {
+                Host = configuration.GetValue<string>("Postgres:Host"),
+                Port = configuration.GetValue<int>("Postgres:Port"),
+                Database = configuration.GetValue<string>("Postgres:Database"),
+                Username = configuration.GetValue<string>("Postgres:UserId"),
+                Password = configuration.GetValue<string>("Postgres:Password"),
+                Timeout = 15,
+                CommandTimeout = 15
+            };
+
+            connectionString = connectionStringBuilder.ConnectionString;
+        }
 
         services.AddDbContext<ApplicationDbContext>(options =>
         {
-            options.UseNpgsql(connectionStringBuilder.ConnectionString);
+            options.UseNpgsql(connectionString);
         }, ServiceLifetime.Transient);
+
         services.AddDatabaseDeveloperPageExceptionFilter();
 
         services.Configure<IdentityOptions>(options =>
@@ -149,5 +157,9 @@ public static class ServiceCollectionExtensions
         app.UseAuthorization();
         app.UseAuthentication();
         app.MapGraphQL();
+
+        using var dbScope = app.Services.CreateScope();
+        var dbContext = dbScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        dbContext.Database.Migrate();
     }
 }

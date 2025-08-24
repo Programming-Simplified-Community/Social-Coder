@@ -45,7 +45,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Generated\" />
+    <Folder Include="Shared\Components\Tabled\" />
+    <Folder Include="Shared\Components\Topics\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Shared\Components\Utility\PaginatedTable.razor" />
   </ItemGroup>
 
 </Project>

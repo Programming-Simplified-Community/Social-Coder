@@ -36,6 +36,15 @@ public partial class Setup : ComponentBase
         };
     }
 
+    private string GetLinkFor(string name) => name switch
+    {
+        "Microsoft" => "https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/RegisteredApps",
+        "Discord" => "https://discord.com/developers/applications",
+        "GitHub" => "https://github.com/settings/developers",
+        "Google" => "https://console.developers.google.com/apis/credentials",
+        _ => string.Empty
+    };
+
     private bool CanFinish
     {
         get

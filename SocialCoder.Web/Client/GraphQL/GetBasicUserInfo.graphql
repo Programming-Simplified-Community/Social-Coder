@@ -1,1 +1,27 @@
-﻿
+﻿query GetBasicUserAccounts($cursor: String, $pageSize: Int) {
+    roles {
+        roleId,
+        name
+    },
+    users(after: $cursor, first: $pageSize) {
+        edges {
+            cursor,
+            node {
+                ...BasicUserInfo,
+                userRoles
+            }
+        }
+        pageInfo {
+            hasNextPage,
+            hasPreviousPage,
+            startCursor,
+            endCursor
+        }
+    }
+}
+
+fragment BasicUserInfo on BasicUserAccountInfo {
+    userId,
+    username,
+    email
+}

@@ -2,7 +2,6 @@
 
 <PageTitle>Setup</PageTitle>
 
-<MudPopoverProvider/>
 <MudSnackbarProvider/>
 
 <MudContainer Style="padding: 20px">
@@ -53,7 +52,7 @@
     <MudGrid Spacing="2" Class="mt-2">
         @foreach (var provider in _providers)
         {
-            <MudItem sm="3">
+            <MudItem sm="6" md="4">
                 <EditForm Model="provider">
                     <MudCard>
                         <MudCardHeader><MudIcon Icon="@GetProviderIcon(provider)" Class="mr-3"/> @provider.Name </MudCardHeader>
@@ -72,6 +71,14 @@
                         </MudCardContent>
                         <MudCardActions>
                             <MudStack Row Spacing="2">
+                                <MudButton
+                                    Href="@GetLinkFor(provider.Name)"
+                                    Target="_blank"
+                                    Color="Color.Tertiary"
+                                    Variant="Variant.Filled"
+                                    StartIcon="@Icons.Material.TwoTone.Link">
+                                    More Info
+                                </MudButton>
                                 <MudButton
                                     Variant="Variant.Filled"
                                     Color="Color.Primary"

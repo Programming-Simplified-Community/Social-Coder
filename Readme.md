@@ -17,32 +17,40 @@ Clearly, this is a work in progress app but here's a sneak peak on current progr
 
 If you're interested in contributing here's [Environment](Environment.md) setup instructions/suggestions.
 
-Of course, no app is complete without a [Database](Database.md)!
+We are using dotnet Aspire to help manage dependent services such as creating a Postgres database via Docker. 
+
+### Running the project
+
+Assuming your environment is set up, run the project by running the AppHost project. This is our Aspire orchestrator that automatically manages the database
+portion of this project.
+
+If running via Rider, you can run the project by pressing the green play button - with `SocialCoder.AppHost.https` selected.
+
+Alternatively, you can run the project via the command line:
+
+```Bash
+cd SocialCoder.AppHost
+dotnet watch run
+```
 
 ## Services
 
 After some research we have determined that we needed something a bit better than standard REST endpoints between our **client** and **server**. 
-Though we're noobs to implement GraphQL, it looks like an excellent long-term solution for loading an entire pages worth of data in one go... compared to
+Despite being noobs, we're tackling GraphQL as it looks like an excellent long-term solution for loading an entire pages worth of data in one go... compared to
 calling `N` amount of endpoints for `N` components on screen.
 
-```mermaid
-graph TD
-    Client[Client] --- GraphQL[GraphQL]
-    GraphQL --- Server
-    Server --- Postgres[Postgres DB]
-```
-
 ## Login
-There are no default credentials. Must use OAuth.
+There are no default credentials. Must use OAuth. The setup page has links to each OAuth provider's documentation to help you get started.
 
 ## OAuth Setup
 
 During the first launch of the application, you will see a "setup-mode." While in this mode, the application is not 
-usable. You're required to ensure that you have at least one OAuth provider, and a valid database connection.
+usable. You're required to ensure that you have at least one OAuth provider, and a valid database connection. If using our Aspire AppHost, you should
+already have a database connection string provided for you. If not, you will need to create a database and provide the connection string.
 
 Once both requirements are satisfied, you can finalize the setup by clicking the "Finish Setup" button. Then the server
-will shut down. If not in a container, you will have to restart it by hand. Otherwise, via docker-compose, the restart policy should
-kick in and restart automatically.
+will shut down. If in a containerized environment, if the restart policy is set to 'always' or 'unless-stopped' the server will automatically restart. Otherwise,
+you will need to manually start the server. Additionally, if you're using the Aspire AppHost, you can press the "Start" button on the main dashboard to start the server.
 
 #### Discord
 

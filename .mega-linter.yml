@@ -9,7 +9,7 @@ DISABLE_LINTERS:
   - JSON_JSONLINT
   - GRAPHQL_GRAPHQL_SCHEMA_LINTER
 
-SPELL_LYCHEE_FILTER_REGEX_EXCLUDE: "^(Environment\.md|Scripts\.md|Database\.md|launchSettings\.json|Readme\.md|\.graphqlrc\.json)$"
+SPELL_LYCHEE_FILTER_REGEX_EXCLUDE: ^(Environment\.md|Scripts\.md|Database\.md|launchSettings\.json|Readme\.md|\.graphqlrc\.json)$
 REPOSITORY_CHECKOV_DISABLE_ERRORS: true
 REPOSITORY_TRIVY_DISABLE_ERRORS: true
-DOCKERFILE_HADOLINT_FILTER_REGEX_EXCLUDE: "^\.devcontainer/Dockerfile$"
+DOCKERFILE_HADOLINT_FILTER_REGEX_EXCLUDE: ^\.devcontainer/Dockerfile$

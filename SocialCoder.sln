@@ -13,17 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6ED18575-31A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "web", "web", "{F10099E1-F9AA-4D68-BB12-653CA6E43256}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{99BAC35B-5B5D-4532-A49A-BBDE913E380F}"
-	ProjectSection(SolutionItems) = preProject
-		docker-compose.yml = docker-compose.yml
-		create-https-certs.ps1 = create-https-certs.ps1
-		start-db.ps1 = start-db.ps1
-		create-env.ps1 = create-env.ps1
-		reset-db.ps1 = reset-db.ps1
-		.defaults = .defaults
-		start-server.ps1 = start-server.ps1
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{0B1747EF-1BEE-4EED-A989-A1BB11A59B8B}"
 	ProjectSection(SolutionItems) = preProject
 		Environment.md = Environment.md

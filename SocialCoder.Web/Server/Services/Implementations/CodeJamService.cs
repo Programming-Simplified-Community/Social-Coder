@@ -25,6 +25,12 @@ public class CodeJamService : ICodeJamService
 
     #region Administrative
 
+    /// <summary>
+    /// Create a new topic
+    /// </summary>
+    /// <param name="topic"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<ResultOf<CodeJamTopic>> AdminCreateTopic(CodeJamTopic topic,
         CancellationToken cancellationToken = default)
     {
@@ -42,6 +48,12 @@ public class CodeJamService : ICodeJamService
         return ResultOf<CodeJamTopic>.Pass(topic);
     }
 
+    /// <summary>
+    /// Deletes a topic by ID.
+    /// </summary>
+    /// <param name="topicId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<ResultOf> Delete(int topicId, CancellationToken cancellationToken = default)
     {
         var topic = await this._context.CodeJamTopics
@@ -58,6 +70,12 @@ public class CodeJamService : ICodeJamService
         return ResultOf.Pass();
     }
 
+    /// <summary>
+    /// Updates a topic
+    /// </summary>
+    /// <param name="topic"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<ResultOf<CodeJamTopic>> AdminUpdateTopic(CodeJamTopic topic, CancellationToken cancellationToken = default)
     {
         // Just to validate the item does actually exist
@@ -82,6 +100,13 @@ public class CodeJamService : ICodeJamService
     }
     #endregion
 
+    /// <summary>
+    /// Register a user for a code jam topic.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="userId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<ResultOf<CodeJamViewModel>> Register(CodeJamRegistrationRequest request, string? userId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(userId))
@@ -131,6 +156,13 @@ public class CodeJamService : ICodeJamService
         return await this.GetTopic(request.TopicId, userId, cancellationToken);
     }
 
+    /// <summary>
+    /// Abandon a code jam topic (withdraw from it)
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="userId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<ResultOf<CodeJamViewModel>> Abandon(CodeJamAbandonRequest request, string? userId, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(userId))
@@ -177,6 +209,13 @@ public class CodeJamService : ICodeJamService
         return await this.GetTopic(request.TopicId, userId, cancellationToken);
     }
 
+    /// <summary>
+    /// Retrieve a topic by ID, and optionally one a specific user is associated with.
+    /// </summary>
+    /// <param name="topicId"></param>
+    /// <param name="userId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<ResultOf<CodeJamViewModel>> GetTopic(int topicId, string? userId,
         CancellationToken cancellationToken = default)
     {

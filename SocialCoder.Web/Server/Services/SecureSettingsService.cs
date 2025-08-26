@@ -27,6 +27,10 @@ public class SecureSettingsService
         this._filePath = Path.Combine(env.ContentRootPath, "protected_settings.json");
     }
 
+    /// <summary>
+    /// Persist the settings in ciphertext to disk.
+    /// </summary>
+    /// <param name="settings"></param>
     public async Task SaveSettingsAsync(AppSettings settings)
     {
         var json = Newtonsoft.Json.JsonConvert.SerializeObject(settings);
@@ -34,6 +38,14 @@ public class SecureSettingsService
         await File.WriteAllTextAsync(this._filePath, protectedJson);
     }
 
+    /// <summary>
+    /// Attempt to load settings from disk
+    /// </summary>
+    /// <remarks>
+    /// If the configuration from Aspire is provided, that will be chosen over the file on disk
+    /// </remarks>
+    /// <param name="settings">Instance to hydrate connection string for</param>
+    /// <returns>Instace of <paramref name="settings"/> with connection string (if applicable)</returns>
     private AppSettings TryLoadFromConfiguration(AppSettings settings)
     {
         var existingConnectionString = this._configuration.GetConnectionString("socialcoder");
@@ -57,6 +69,10 @@ public class SecureSettingsService
         return settings;
     }
 
+    /// <summary>
+    /// Attempts to load settings from the disk (decryption included). If settings are not present, provides a default instance.
+    /// </summary>
+    /// <returns></returns>
     public AppSettings? LoadSettings()
     {
         if (!File.Exists(this._filePath))

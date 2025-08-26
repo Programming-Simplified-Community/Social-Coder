@@ -18,6 +18,12 @@ public class ProfileService : IProfileService
         this._logger = logger;
     }
 
+    /// <summary>
+    /// Adds a new user experience item to a user account
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<ResultOf<UserExperience>> AddUserExperience(AddUserExperienceRequest request, CancellationToken cancellationToken = default)
     {
         // does this user already have an experience item in the database of this item?
@@ -42,6 +48,12 @@ public class ProfileService : IProfileService
         return ResultOf<UserExperience>.Pass(entry);
     }
 
+    /// <summary>
+    /// Edits a user's experience item
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<ResultOf> EditUserExperience(AddUserExperienceRequest request, CancellationToken cancellationToken = default)
     {
         var existing = await this._context.UserExperiences.FirstOrDefaultAsync(
@@ -59,6 +71,12 @@ public class ProfileService : IProfileService
         return ResultOf.Pass();
     }
 
+    /// <summary>
+    /// Removes a user's experience item
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<ResultOf> RemoveUserExperience(RemoveUserExperienceRequest request, CancellationToken cancellationToken = default)
     {
         var existing = await this._context.UserExperiences.FirstOrDefaultAsync(
@@ -74,6 +92,12 @@ public class ProfileService : IProfileService
         return ResultOf.Pass();
     }
 
+    /// <summary>
+    /// Adds a new user goal to a user account
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<ResultOf<UserGoal>> AddUserGoal(AddUserGoalRequest request, CancellationToken cancellationToken = default)
     {
         var entry = new UserGoal
@@ -91,6 +115,12 @@ public class ProfileService : IProfileService
         return ResultOf<UserGoal>.Pass(entry);
     }
 
+    /// <summary>
+    /// Edits an existing user goal
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<ResultOf> EditUserGoal(EditUserGoalRequest request, CancellationToken cancellationToken = default)
     {
         var existing =
@@ -141,6 +171,12 @@ public class ProfileService : IProfileService
         return ResultOf.Pass();
     }
 
+    /// <summary>
+    /// Deletes a user goal
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<ResultOf> DeleteUserGoal(DeleteUserGoalRequest request, CancellationToken cancellationToken = default)
     {
         var existing =
@@ -158,6 +194,12 @@ public class ProfileService : IProfileService
         return ResultOf.Pass();
     }
 
+    /// <summary>
+    /// Edit a user's profile info
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<ResultOf> EditProfileInfo(EditProfileInfoRequest request, CancellationToken cancellationToken = default)
     {
         var existing = await this._context.Users.FirstOrDefaultAsync(x => x.Id == request.UserId, cancellationToken);

@@ -5,6 +5,9 @@ using Path = System.IO.Path;
 
 namespace SocialCoder.Web.Server.Services;
 
+/// <summary>
+/// Acts as a "source" for our encrypted settings file.
+/// </summary>
 public class EncryptedSettingsConfigurationSource : IConfigurationSource
 {
     private readonly IServiceCollection _services;
@@ -24,6 +27,9 @@ public class EncryptedSettingsConfigurationSource : IConfigurationSource
     }
 }
 
+/// <summary>
+/// Acts as our "provider" which loads the settings from our encrypted file and adds them into the configuration.
+/// </summary>
 public class EncryptedSettingsConfigurationProvider : ConfigurationProvider
 {
     private readonly IDataProtector _protector;
@@ -59,6 +65,11 @@ public class EncryptedSettingsConfigurationProvider : ConfigurationProvider
         }
     }
 
+    /// <summary>
+    /// Converts our settings into a flat dictionary where values are ":" delimited.
+    /// </summary>
+    /// <param name="settings"></param>
+    /// <returns></returns>
     private IDictionary<string, string?> Flatten(AppSettings? settings)
     {
         var dict = new Dictionary<string, string?>();

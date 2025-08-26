@@ -9,7 +9,7 @@ namespace SocialCoder.Web.Server;
 
 public static class SeedDb
 {
-    record ExperienceItem(string Name, string ImageUrl);
+    private record ExperienceItem(string Name, string ImageUrl);
 
     /// <summary>
     /// Inject test data into our database!

@@ -12,11 +12,19 @@ namespace SocialCoder.Web.Server.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void SetupForAdmin(this IServiceCollection services, IConfiguration configuration)
-    {
-
-    }
-
+    /// <summary>
+    /// Configures the database for the application
+    /// </summary>
+    /// <remarks>
+    /// Includes the following:
+    /// <list type="bullet">
+    ///    <item>Database Context</item>
+    ///    <item>Identity Context</item>
+    ///    <item>Database Developer Page Exception Filter</item> 
+    /// </list>
+    /// </remarks>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
     private static void SetupDatabase(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("socialcoder");
@@ -60,6 +68,22 @@ public static class ServiceCollectionExtensions
             .AddDefaultTokenProviders();
     }
 
+    /// <summary>
+    /// Configures the application for production
+    /// </summary>
+    /// <remarks>
+    /// Includes the following:
+    ///
+    /// <list type="bullet">
+    ///     <item><see cref="SetupDatabase"/></item>
+    ///     <item>Configures Cookie policy</item>
+    ///     <item>Configures Authentication (for providers that have credentials)</item>
+    ///     <item>Adds the various services used within the application</item>
+    ///     <item>Adds the GraphQL Server</item>
+    /// </list>
+    /// </remarks>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
     public static void SetupForProduction(this IServiceCollection services, IConfiguration configuration)
     {
         services.SetupDatabase(configuration);
@@ -156,6 +180,19 @@ public static class ServiceCollectionExtensions
             .AddSorting();
     }
 
+    /// <summary>
+    /// Sets up the application for production.
+    /// </summary>
+    /// <remarks>
+    /// Includes the following:
+    /// <list type="bullet">
+    ///     <item>Adds Authorization</item>
+    ///     <item>Adds Authentication</item>
+    ///     <item>Maps the GraphQL Endpoint(s)</item>
+    ///     <item>Migrates the Database</item>
+    /// </list>
+    /// </remarks>
+    /// <param name="app"></param>
     public static void SetupForProduction(this WebApplication app)
     {
         app.UseAuthorization();

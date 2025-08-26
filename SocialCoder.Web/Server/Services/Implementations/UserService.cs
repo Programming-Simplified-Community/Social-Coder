@@ -27,6 +27,13 @@ public class UserService : IUserService
 
     #region Management of users
 
+    /// <summary>
+    /// Bans a user from the platform. Capturing the ID of the user who made the request for auditing purposes
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="callingUserId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<ResultOf> BanUser(BanUserRequest request, string callingUserId, CancellationToken cancellationToken = default)
     {
         if (request.Reason.Length < 10)
@@ -45,7 +52,8 @@ public class UserService : IUserService
 
         var userRoles = await this._userManager.GetRolesAsync(user);
 
-        if (userRoles is not null && userRoles.Any(x => x is Roles.Administrator or Roles.Owner))
+        // Cannot ban an admin or owner of server
+        if (userRoles.Any(x => x is Roles.Administrator or Roles.Owner))
         {
             return ResultOf.Fail("Cannot ban an admin or owner");
         }
@@ -91,25 +99,32 @@ public class UserService : IUserService
         }
     }
 
+    /// <summary>
+    /// Adds a role to a user, capturing the ID of the user who made the request for auditing purposes.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="callingUserId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<ResultOf> AddRoleToUser(AddRoleToUserRequest request, string callingUserId,
         CancellationToken cancellationToken = default)
     {
         var callingUser = await this._userManager.FindByIdAsync(callingUserId);
-        var callingRoles = await this._userManager.GetRolesAsync(callingUser);
+        var user = await this._userManager.FindByIdAsync(request.UserId);
 
+        if (user is null || callingUser is null)
+        {
+            return ResultOf.Fail("Invalid Request");
+        }
+
+        var callingRoles = await this._userManager.GetRolesAsync(callingUser);
         var isOwner = callingRoles.Any(x => x == Roles.Owner);
 
-        var user = await this._userManager.FindByIdAsync(request.UserId);
         var userRoles = await this._userManager.GetRolesAsync(user);
 
         if (userRoles.Any(x => x == Roles.Administrator) && !isOwner)
         {
             return ResultOf.Fail("Unable to add role");
-        }
-
-        if (user is null || callingUser is null)
-        {
-            return ResultOf.Fail("Invalid Request");
         }
 
         var result = await this._userManager.AddToRoleAsync(user, request.RoleName);
@@ -131,25 +146,32 @@ public class UserService : IUserService
         return ResultOf.Fail("Error trying to add role");
     }
 
+    /// <summary>
+    /// Removes a role from user, capturing the ID of the user who made the request for auditing purposes.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="callingUserId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<ResultOf> RemoveRoleFromUser(RemoveRoleFromUserRequest request, string callingUserId,
         CancellationToken cancellationToken = default)
     {
         var callingUser = await this._userManager.FindByIdAsync(callingUserId);
-        var callingRoles = await this._userManager.GetRolesAsync(callingUser);
-
-        var isOwner = callingRoles.Any(x => x == Roles.Owner);
-
         var user = await this._userManager.FindByIdAsync(request.UserId);
-        var userRoles = await this._userManager.GetRolesAsync(user);
-
-        if (userRoles.Any(x => x is Roles.Administrator or Roles.Owner) && !isOwner)
-        {
-            return ResultOf.Fail("Unable to remove roles from another admin");
-        }
 
         if (callingUser is null || user is null)
         {
             return ResultOf.Fail("Invalid Request");
+        }
+
+        var callingRoles = await this._userManager.GetRolesAsync(callingUser);
+        var isOwner = callingRoles.Any(x => x == Roles.Owner);
+        var userRoles = await this._userManager.GetRolesAsync(user);
+
+        // To remove the admin/owner role, you must be an owner of the server
+        if (userRoles.Any(x => x is Roles.Administrator or Roles.Owner) && !isOwner)
+        {
+            return ResultOf.Fail("Unable to remove roles from another admin");
         }
 
         var result = await this._userManager.RemoveFromRoleAsync(user, request.RoleName);
@@ -187,12 +209,17 @@ public class UserService : IUserService
     /// <param name="claimType"></param>
     /// <param name="claim"></param>
     /// <returns>True if <paramref name="claimType"/> exists in <paramref name="claims"/></returns>
-    bool HasClaim(ref List<Claim> claims, string claimType, out Claim? claim)
+    private bool HasClaim(ref List<Claim> claims, string claimType, out Claim? claim)
     {
         claim = claims.FirstOrDefault(x => x.Type == claimType);
         return claim is not null;
     }
 
+    /// <summary>
+    /// Retrieve user from OAuth provider
+    /// </summary>
+    /// <param name="authResult"></param>
+    /// <returns></returns>
     public async Task<ResultOf<ApplicationUser>> GetUserFromOAuth(AuthenticateResult authResult)
     {
         if (!authResult.Succeeded)

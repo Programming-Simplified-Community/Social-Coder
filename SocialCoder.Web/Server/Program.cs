@@ -30,10 +30,6 @@ if (isSetupComplete)
 {
     builder.Services.SetupForProduction(builder.Configuration);
 }
-else
-{
-    builder.Services.SetupForAdmin(builder.Configuration);
-}
 
 var app = builder.Build();
 

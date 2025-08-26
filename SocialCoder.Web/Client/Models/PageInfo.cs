@@ -1,3 +1,12 @@
 ﻿namespace SocialCoder.Web.Client.Models;
 
-public record PageInfo(int Take, int Skip);
+public record PageInfoParams(
+    int PageSize,
+    string? Cursor
+);
+
+public interface ICursorItem<TEntity>
+{
+    public string Cursor { get; set; }
+    public TEntity Node { get; set; }
+}

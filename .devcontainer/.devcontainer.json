@@ -1,0 +1,39 @@
+{
+  "name": "C# and Docker",
+  "workspaceFolder": "/workspace",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+
+  "workspaceMount": "source=${localWorkspaceFolder}/../,target=/workspace,type=bind,consistency=cached",
+  "customizations": {
+    "rider": {
+      "projectPath": "/workspace/SocialCoder.sln"
+    }
+  },
+  "forwardPorts": [
+    7159,
+    5159
+  ],
+  "portsAttributes": {
+    "7159": {
+      "label": "HTTPS"
+    },
+    "5159": {
+      "label": "HTTP"
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/git-lfs:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "latest"
+    }
+  },
+  "postCreateCommand": "dotnet restore"
+}

@@ -1,45 +1,81 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
-    <Found Context="routeData">
-        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
-            <Authorizing>
-                <MudContainer Class="mt-12">
-                    <MudGrid Justify="Justify.Center" Spacing="3">
-                        <MudItem md="2" Style="display: flex; justify-content: center">
-                            <MudProgressCircular Color="Color.Info"
-                                                 Size="Size.Large"
-                                                 Indeterminate="true"/>            
-                        </MudItem>
-                        <MudItem md="12" Style="display: flex; justify-content: center">
-                            <MudText Typo="Typo.button" Align="Align.Center">
-                                Authorizing...
-                            </MudText>
-                        </MudItem>
-                    </MudGrid>
-                </MudContainer>
-            </Authorizing>
-            <NotAuthorized>
-                <RedirectToLogin/>
-            </NotAuthorized>
-        </AuthorizeRouteView>
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-    </Found>
-    <NotFound>
-        <CascadingAuthenticationState>
-            <PageTitle>Not found</PageTitle>
-                    <LayoutView Layout="@typeof(MainLayout)">
-                        <MudContainer>
-                            <MudGrid Justify="Justify.Center" Spacing="3">
-                                <MudItem md="12">
-                                    <MudAlert Icon="@Icons.Material.Filled.Warning"
-                                              Severity="Severity.Warning"
-                                              Elevation="3"
-                                              ContentAlignment="HorizontalAlignment.Center">
-                                        Sorry, there's nothing at this address.
-                                    </MudAlert>
-                                </MudItem>
-                            </MudGrid>
-                        </MudContainer>
-                    </LayoutView>
-        </CascadingAuthenticationState>
-    </NotFound>
-</Router>
+﻿@using SocialCoder.Web.Client.Services
+@inject NavigationManager NavigationManager
+@inject AppState AppState
+
+@if (!AppState.IsLoaded)
+{
+    <MudContainer>
+        <MudGrid>
+            <MudItem>Loading...</MudItem>
+            <MudItem md="12">
+                <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true"/>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+}
+else
+{
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <Authorizing>
+                    <MudContainer Class="mt-12">
+                        <MudGrid Justify="Justify.Center" Spacing="3">
+                            <MudItem md="2" Style="display: flex; justify-content: center">
+                                <MudProgressCircular Color="Color.Info"
+                                                     Size="Size.Large"
+                                                     Indeterminate="true"/>            
+                            </MudItem>
+                            <MudItem md="12" Style="display: flex; justify-content: center">
+                                <MudText Typo="Typo.button" Align="Align.Center">
+                                    Authorizing...
+                                </MudText>
+                            </MudItem>
+                        </MudGrid>
+                    </MudContainer>
+                </Authorizing>
+                <NotAuthorized>
+                    <RedirectToLogin/>
+                </NotAuthorized>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <CascadingAuthenticationState>
+                <PageTitle>Not found</PageTitle>
+                        <LayoutView Layout="@typeof(MainLayout)">
+                            <MudContainer>
+                                <MudGrid Justify="Justify.Center" Spacing="3">
+                                    <MudItem md="12">
+                                        <MudAlert Icon="@Icons.Material.Filled.Warning"
+                                                  Severity="Severity.Warning"
+                                                  Elevation="3"
+                                                  ContentAlignment="HorizontalAlignment.Center">
+                                            Sorry, there's nothing at this address.
+                                        </MudAlert>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudContainer>
+                        </LayoutView>
+            </CascadingAuthenticationState>
+        </NotFound>
+    </Router>
+}
+
+@code{
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AppState.LoadStateAsync();
+        await base.OnInitializedAsync();
+
+        if (AppState.IsInSetupMode && !IsOnSetupPage())
+            NavigationManager.NavigateTo("/setup");
+    }
+
+    private bool IsOnSetupPage()
+    {
+        return NavigationManager.Uri.EndsWith("/setup", StringComparison.OrdinalIgnoreCase);
+    }
+
+}

@@ -1,6 +1,6 @@
-﻿@using MudBlazor.Utilities
-@using Blazored.LocalStorage
+﻿@using Blazored.LocalStorage
 @using Microsoft.AspNetCore.Authorization
+@using MudBlazor.Utilities
 @inherits LayoutComponentBase
 @attribute [Authorize]
 
@@ -9,6 +9,7 @@
 <MudThemeProvider Theme="_theme" IsDarkMode="true" />
 <MudDialogProvider />
 <MudSnackbarProvider />
+<MudPopoverProvider/>
 
 <CascadingValue TValue="bool" Value="_drawerOpen" Name="DrawerOpen">
     <MudLayout>
@@ -34,7 +35,7 @@
 
 @code {
     bool _drawerOpen;
-    string _userId;
+    string? _userId;
 
     readonly MudTheme _theme = new()
     {

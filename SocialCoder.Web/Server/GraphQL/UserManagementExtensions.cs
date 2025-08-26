@@ -15,11 +15,11 @@ public sealed class UserManagementExtensions
     /// <returns></returns>
     public async Task<List<string>> GetUserRoles([Parent] BasicUserAccountInfo user,
         CancellationToken cancellationToken,
-        [Service] ApplicationDbContext context) => 
+        [Service] ApplicationDbContext context) =>
             await (from userRole in context.UserRoles
-                    join role in context.Roles
-                        on userRole.RoleId equals role.Id
-                    where userRole.UserId == user.UserId
-                    select role.Name)
+                   join role in context.Roles
+                       on userRole.RoleId equals role.Id
+                   where userRole.UserId == user.UserId
+                   select role.Name)
                 .ToListAsync(cancellationToken);
 }

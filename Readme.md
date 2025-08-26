@@ -4,81 +4,53 @@
 
 # Social Coder
 
-This project is geared towards building a social-media like experience for programmers!
+This project is geared towards building a social-media-like experience for programmers!
 
 Clearly, this is a work in progress app but here's a sneak peak on current progress!
 ![WIP Code Jam Topics](imgs/code-jam-topics.png)
-1. OAuth login via Google or Discord (will add more)
+1. OAuth login via Google, Discord, GitHub (will add more)
 2. Ability to view code jams
 3. Ability to register/withdraw from code jams
 
+
+## Contributing
+
 If you're interested in contributing here's [Environment](Environment.md) setup instructions/suggestions.
 
-Of course, no app is complete without a [Database](Database.md)!
+We are using dotnet Aspire to help manage dependent services such as creating a Postgres database via Docker. 
 
-## Scripts
+### Running the project
 
-Before starting the database via docker-compose we need to setup some environment variables.
+Assuming your environment is set up, run the project by running the AppHost project. This is our Aspire orchestrator that automatically manages the database
+portion of this project.
 
-There are a few parameters you can specify if you want... running it with no parameters will
-use default values for our connection string! Which is fine...
+If running via Rider, you can run the project by pressing the green play button - with `SocialCoder.AppHost.https` selected.
 
-[View Script](create-env.ps1)
+Alternatively, you can run the project via the command line:
 
-Please note this will override previously set values if you don't respecify them!
-Additionally, this script will automatically update your connection string.
-
-```bash
-./create-env.ps1
-
-./create-env.ps1 -databasePath Path\To\Where\You\Want\To\Store\Db
-```
-
-Start database from [docker-compose](docker-compose.yml)
-```bash
-./start-db.ps1
-```
-
-Create https-certs. Depending on your environment your IDE might have already set this up for you.
-Otherwise, this script will do the trick... hopefully
-
-```bash
-./create-https-certs.ps1
+```Bash
+cd SocialCoder.AppHost
+dotnet watch run
 ```
 
 ## Services
 
 After some research we have determined that we needed something a bit better than standard REST endpoints between our **client** and **server**. 
-Though we're noobs to implement GraphQL, it looks like an excellent long-term solution for loading an entire pages worth of data in one go... compared to
+Despite being noobs, we're tackling GraphQL as it looks like an excellent long-term solution for loading an entire pages worth of data in one go... compared to
 calling `N` amount of endpoints for `N` components on screen.
 
-```mermaid
-graph TD
-    Client[Client] --- GraphQL[GraphQL]
-    GraphQL --- Server
-    Server --- Postgres[Postgres DB]
-```
-
 ## Login
-There are no default credentials. Must utilize OAuth.
+There are no default credentials. Must use OAuth. The setup page has links to each OAuth provider's documentation to help you get started.
 
 ## OAuth Setup
 
-Will require adding a `appsettings.development.json` to your Server project [SocialCoder.Web](SocialCoder.Web)
+During the first launch of the application, you will see a "setup-mode." While in this mode, the application is not 
+usable. You're required to ensure that you have at least one OAuth provider, and a valid database connection. If using our Aspire AppHost, you should
+already have a database connection string provided for you. If not, you will need to create a database and provide the connection string.
 
-```json
-{
-  "Authentication": {
-    "ProviderName": {
-      "ClientId": "",
-      "ClientSecret": ""
-    }
-  }
-}
-```
-
-Right now we have Discord and Google setup for our application. A requirement to set this up will be to register with 
-the following services:
+Once both requirements are satisfied, you can finalize the setup by clicking the "Finish Setup" button. Then the server
+will shut down. If in a containerized environment, if the restart policy is set to 'always' or 'unless-stopped' the server will automatically restart. Otherwise,
+you will need to manually start the server. Additionally, if you're using the Aspire AppHost, you can press the "Start" button on the main dashboard to start the server.
 
 #### Discord
 

@@ -1,17 +1,34 @@
-﻿query GetTopicsWithUserInfo($take:Int, $skip:Int, $userId: String){
-    topics(take: $take, skip: $skip) {
-
+﻿query GetTopicsWithUserInfo(
+    $first: Int
+    $after: String # Cursor for forward paging
+    $last: Int
+    $before: String # Cursor for backward paging
+    $orderBy: [CodeJamTopicSortInput!] # Sorting options
+    $where: CodeJamTopicFilterInput # Filtering options
+    $userId: String!
+) {
+    topics(
+        first: $first
+        after: $after
+        last: $last
+        before: $before
+        where: $where
+        order: $orderBy
+    ) {
         pageInfo {
             hasNextPage,
-            hasPreviousPage
-        }
-
-        items {
-            isRegistered(userId: $userId)
-            ...TopicCardInfo
+            hasPreviousPage,
+            startCursor,
+            endCursor
         },
         
-        totalCount
+        edges {
+            cursor,
+            node {
+                ...TopicCardInfo,
+                isRegistered(userId: $userId)
+            }
+        }
     }
 }
 

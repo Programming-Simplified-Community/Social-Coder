@@ -1,5 +1,0 @@
-DB_PASSWORD=my-awesome-password
-DB_USER=social-coder
-DB_HOST=localhost
-DB_NAME=social-coder
-DB_DOCKER_IMAGE=postgres:latest

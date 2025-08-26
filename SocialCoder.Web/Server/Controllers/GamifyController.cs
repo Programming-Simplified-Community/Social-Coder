@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SocialCoder.Web.Server.Attributes;
 using SocialCoder.Web.Server.Data;
 using SocialCoder.Web.Shared.Models;
 using SocialCoder.Web.Shared.ViewModels;
@@ -7,15 +8,16 @@ using SocialCoder.Web.Shared.ViewModels;
 namespace SocialCoder.Web.Server.Controllers;
 
 [Route("[controller]")]
+[DisabledInSetupMode]
 public class GamifyController : ControllerBase
 {
     private readonly ILogger<GamifyController> _logger;
     private readonly ApplicationDbContext _context;
-    
+
     public GamifyController(ILogger<GamifyController> logger, ApplicationDbContext context)
     {
-        _logger = logger;
-        _context = context;
+        this._logger = logger;
+        this._context = context;
     }
 
     /// <summary>
@@ -29,7 +31,7 @@ public class GamifyController : ControllerBase
     [HttpGet]
     public async Task<IEnumerable<Badge>> Badges(CancellationToken cancellationToken)
     {
-        return await _context.Badges
+        return await this._context.Badges
             .Include(x => x.Requirements)
             .ToListAsync(cancellationToken);
     }
@@ -44,8 +46,8 @@ public class GamifyController : ControllerBase
     [Route("{userId}/badges")]
     public async Task<IEnumerable<UserBadgeViewModel>> GetUserBadges([FromRoute] string userId, CancellationToken cancellationToken)
     {
-        var results = await _context.BadgeProgress
-            .Join(_context.Badges,                                          // join on badges
+        var results = await this._context.BadgeProgress
+            .Join(this._context.Badges,                                          // join on badges
                 progress => progress.BadgeId,                   // where progress.BadgeId equals badge.Id
                 badge => badge.Id,
                 (progress, badge) => new UserBadgeViewModel       // translate the two records into our view model
@@ -58,12 +60,12 @@ public class GamifyController : ControllerBase
                     ImagePath = badge.ImagePath,
                     Type = badge.BadgeType,
                 })
-            .Where(x=>x.Type == BadgeType.Badge)
+            .Where(x => x.Type == BadgeType.Badge)
             .ToListAsync(cancellationToken);
 
         return results;
     }
-    
+
     /// <summary>
     /// Similar to <see cref="GetUserBadges"/> except for <see cref="BadgeType.Quests"/>
     /// </summary>
@@ -75,8 +77,8 @@ public class GamifyController : ControllerBase
     public async Task<IEnumerable<UserBadgeViewModel>> GetUserQuests([FromRoute] string userId,
         CancellationToken cancellationToken)
     {
-        var results = await _context.BadgeProgress
-            .Join(_context.Badges,                                          // join on badges
+        var results = await this._context.BadgeProgress
+            .Join(this._context.Badges,                                          // join on badges
                 progress => progress.BadgeId,                   // where progress.BadgeId equals badge.Id
                 badge => badge.Id,
                 (progress, badge) => new UserBadgeViewModel       // translate the two records into our view model
@@ -89,7 +91,7 @@ public class GamifyController : ControllerBase
                     ImagePath = badge.ImagePath,
                     Type = badge.BadgeType,
                 })
-            .Where(x=>x.Type == BadgeType.Quest)
+            .Where(x => x.Type == BadgeType.Quest)
             .ToListAsync(cancellationToken);
 
         return results;

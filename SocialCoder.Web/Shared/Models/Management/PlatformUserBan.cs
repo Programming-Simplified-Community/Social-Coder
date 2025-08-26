@@ -15,7 +15,7 @@ public class PlatformUserBan : IAuditable
     /// </summary>
     [MinLength(10)]
     public string Reason { get; set; }
-    
+
     /// <summary>
     /// Foreign key to user who is being banned
     /// </summary>

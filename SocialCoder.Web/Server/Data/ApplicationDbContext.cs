@@ -28,7 +28,7 @@ namespace SocialCoder.Web.Server.Data
             e.Entity<Badge>()
                 .HasMany(x => x.Requirements)
                 .WithOne(x => x.Badge)
-                .HasForeignKey(x=>x.BadgeId);
+                .HasForeignKey(x => x.BadgeId);
 
             e.Entity<CodeJamTopic>()
                 .HasMany(x => x.CodeJamRegistrations)
@@ -41,7 +41,7 @@ namespace SocialCoder.Web.Server.Data
         public DbSet<Badge> Badges { get; set; }
         public DbSet<BadgeProgress> BadgeProgress { get; set; }
         public DbSet<BadgeRequirement> BadgeRequirements { get; set; }
-        
+
         #region User Experience
 
         public DbSet<ExperiencePool> ExperiencePools { get; set; }
@@ -49,7 +49,7 @@ namespace SocialCoder.Web.Server.Data
         public DbSet<UserGoal> UserGoals { get; set; }
 
         #endregion
-        
+
         #region Code Jam
 
         public DbSet<CodeJamTopic> CodeJamTopics { get; set; }

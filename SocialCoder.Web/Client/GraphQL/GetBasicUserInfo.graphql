@@ -1,17 +1,21 @@
-﻿query GetBasicUserAccounts($take: Int, $skip: Int) {
+﻿query GetBasicUserAccounts($cursor: String, $pageSize: Int) {
     roles {
         roleId,
         name
     },
-    users(take: $take, skip: $skip) {
-        totalCount,
+    users(after: $cursor, first: $pageSize) {
+        edges {
+            cursor,
+            node {
+                ...BasicUserInfo,
+                userRoles
+            }
+        }
         pageInfo {
             hasNextPage,
-            hasPreviousPage
-        },
-        items {
-            ...BasicUserInfo
-            userRoles
+            hasPreviousPage,
+            startCursor,
+            endCursor
         }
     }
 }

@@ -24,15 +24,15 @@ public class BasicRoleInfo
 // ReSharper disable once InconsistentNaming
 public partial class GraphQLQueries
 {
-    [UseProjection, Authorize(Roles= [Roles.Owner, Roles.Administrator])]
+    [UseProjection, Authorize(Roles = [Roles.Owner, Roles.Administrator])]
     public IOrderedQueryable<BasicRoleInfo> GetRoles([Service] ApplicationDbContext context)
         => context.Roles.Select(x => new BasicRoleInfo
-            {
-                RoleId = x.Id,
-                Name = x.Name
-            })
+        {
+            RoleId = x.Id,
+            Name = x.Name
+        })
             .OrderBy(x => x.Name);
-    
+
     [UsePaging, UseProjection, UseFiltering, UseSorting, Authorize(Roles = [Roles.Owner, Roles.Administrator])]
     public IOrderedQueryable<BasicUserAccountInfo> GetUsers([Service] ApplicationDbContext context)
         => context.Users

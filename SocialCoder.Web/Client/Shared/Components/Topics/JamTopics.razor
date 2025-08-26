@@ -1,57 +1,25 @@
 ﻿@inherits QueryComponent
 
 <MudGrid Spacing="3" Justify="Justify.Center" Class="mt-3">
-    <UseGetTopicsWithUserInfo Take="10" Skip="0" UserId="@UserId" Strategy="ExecutionStrategy.CacheAndNetwork">
+    <UseGetTopicsWithUserInfo Strategy="ExecutionStrategy.CacheAndNetwork" UserId="@UserId">
         <ErrorContent>
-            <MudAlert Icon="@Icons.Material.Filled.Error" Severity="Severity.Error" Style="width: 100%">
-                Oops! Double check the GraphQL Schema! They could be out-of-sync.
+            <MudAlert Icon="@Icons.Material.TwoTone.Error" Severity="Severity.Error" Style="width: 100%">
+                Oops! Double-check the GraphQL Schema! They could be out-of-sync.
             </MudAlert>
-            <MudList T="string">
-                @foreach (var error in context)
-                {
-                    <MudListItem>
-                        <MudText Typo="Typo.body1">
-                            @error.Message
-                        </MudText>
-                        <MudText Typo="Typo.body1">
-                            @error.Code
-                        </MudText>
-                        @if (error.Exception is not null)
-                        {
-                            <MudText Typo="Typo.subtitle1" Color="Color.Error">
-                                @error.Exception.ToString()
-                            </MudText>
-                        }
-                        @if (error.Path is not null)
-                        {
-                            @foreach (var path in error.Path)
-                            {
-                                <MudText Typo="Typo.subtitle2">@path.ToString()</MudText>
-                            }
-                        }
-                        @if (error.Locations is not null)
-                        {
-                            <MudText Typo="Typo.subtitle1">
-                                @string.Join("<br>", error.Locations)
-                            </MudText>    
-                        }
-                    </MudListItem>
-                }
-            </MudList>
         </ErrorContent>
         <ChildContent>
-            @if (context.Topics?.Items is not null)
+            @if (context.Topics?.Edges is not null)
             {
-                foreach (var topic in context.Topics.Items)
+                foreach (var topic in context.Topics.Edges)
                 {
-                    <JamTopic Model="topic"/>
+                    <JamTopic Topic="topic.Node"/>
                 }
             }
             else
             {
                 <MudPaper Elevation="3" MinWidth="300px">
                     <MudText Align="Align.Center">
-                        No records.
+                        No records
                     </MudText>
                 </MudPaper>
             }
@@ -64,7 +32,6 @@
     </UseGetTopicsWithUserInfo>
 </MudGrid>
 
-@code{
-    [CascadingParameter(Name = "UserId")]
-    public string UserId { get; set; }
+@code {
+    [CascadingParameter(Name = "UserId")] public string UserId { get; set; }
 }

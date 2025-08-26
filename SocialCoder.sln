@@ -13,23 +13,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6ED18575-31A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "web", "web", "{F10099E1-F9AA-4D68-BB12-653CA6E43256}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{99BAC35B-5B5D-4532-A49A-BBDE913E380F}"
-	ProjectSection(SolutionItems) = preProject
-		docker-compose.yml = docker-compose.yml
-		create-https-certs.ps1 = create-https-certs.ps1
-		start-db.ps1 = start-db.ps1
-		create-env.ps1 = create-env.ps1
-		reset-db.ps1 = reset-db.ps1
-		.defaults = .defaults
-		start-server.ps1 = start-server.ps1
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{0B1747EF-1BEE-4EED-A989-A1BB11A59B8B}"
 	ProjectSection(SolutionItems) = preProject
 		Environment.md = Environment.md
 		Database.md = Database.md
 		Readme.md = Readme.md
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dev", "dev", "{1F2555A5-F15E-489E-91F8-D06D50D391AE}"
+	ProjectSection(SolutionItems) = preProject
+		.devcontainer = .devcontainer
+		.devcontainer\Dockerfile = .devcontainer\Dockerfile
+		.devcontainer\.devcontainer.json = .devcontainer\.devcontainer.json
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialCoder.AppHost", "SocialCoder.AppHost\SocialCoder.AppHost.csproj", "{40A93E6A-0373-4099-8F69-1F00FF10147F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialCoder.ServiceDefaults", "SocialCoder.ServiceDefaults\SocialCoder.ServiceDefaults.csproj", "{214762FC-3FAA-4F68-817C-4F3040645C57}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "aspire", "aspire", "{A9E14FB6-D4A3-40FE-9C83-F90A91F21AD9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +51,14 @@ Global
 		{40520FE4-D8C6-4251-AA46-103CC96DFC6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40520FE4-D8C6-4251-AA46-103CC96DFC6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40520FE4-D8C6-4251-AA46-103CC96DFC6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40A93E6A-0373-4099-8F69-1F00FF10147F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40A93E6A-0373-4099-8F69-1F00FF10147F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40A93E6A-0373-4099-8F69-1F00FF10147F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40A93E6A-0373-4099-8F69-1F00FF10147F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{214762FC-3FAA-4F68-817C-4F3040645C57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{214762FC-3FAA-4F68-817C-4F3040645C57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{214762FC-3FAA-4F68-817C-4F3040645C57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{214762FC-3FAA-4F68-817C-4F3040645C57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,5 +71,8 @@ Global
 		{F68E1DB6-52B4-479E-BAF7-37A6FAB19EE6} = {F10099E1-F9AA-4D68-BB12-653CA6E43256}
 		{55CC9CD2-E708-4CED-B920-6D5E0567B9FF} = {F10099E1-F9AA-4D68-BB12-653CA6E43256}
 		{40520FE4-D8C6-4251-AA46-103CC96DFC6A} = {F10099E1-F9AA-4D68-BB12-653CA6E43256}
+		{A9E14FB6-D4A3-40FE-9C83-F90A91F21AD9} = {6ED18575-31A4-468B-8C76-1353FB9F57DB}
+		{40A93E6A-0373-4099-8F69-1F00FF10147F} = {A9E14FB6-D4A3-40FE-9C83-F90A91F21AD9}
+		{214762FC-3FAA-4F68-817C-4F3040645C57} = {A9E14FB6-D4A3-40FE-9C83-F90A91F21AD9}
 	EndGlobalSection
 EndGlobal

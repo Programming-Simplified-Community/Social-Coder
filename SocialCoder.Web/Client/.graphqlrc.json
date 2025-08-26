@@ -4,7 +4,8 @@
   "extensions": {
     "strawberryShake": {
       "name": "SocialCoderGraphQLClient",
-      "url": "https://localhost:7159/graphql",
+      "url": "https://localhost:7159/graphql/",
+      "namespace": "SocialCoder.Web.Client",
       "records": {
         "inputs": false,
         "entities": false

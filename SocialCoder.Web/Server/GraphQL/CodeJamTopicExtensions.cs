@@ -11,7 +11,7 @@ namespace SocialCoder.Web.Server.GraphQL;
 public sealed class CodeJamTopicQueryExtensions
 {
     public int TopicId([Parent] CodeJamTopic topic) => topic.Id;
-    
+
     /// <summary>
     /// In GraphQL allow us to query how many people signed up for the topic
     /// </summary>
@@ -20,12 +20,12 @@ public sealed class CodeJamTopicQueryExtensions
     /// <param name="context"></param>
     /// <returns></returns>
     public async Task<int> TotalApplicants(
-        [Parent] CodeJamTopic parent, 
+        [Parent] CodeJamTopic parent,
         CancellationToken cancellationToken,
         [Service] ApplicationDbContext context)
         => await context.CodeJamRegistrations.CountAsync(x => x.CodeJamTopicId == parent.Id && x.AbandonedOn == null,
             cancellationToken);
-    
+
     /// <summary>
     /// In GraphQL allow us to query how many people signed up to be on a team
     /// </summary>
@@ -37,9 +37,9 @@ public sealed class CodeJamTopicQueryExtensions
         [Service] ApplicationDbContext context)
         => await context.CodeJamRegistrations.CountAsync(
             x => x.CodeJamTopicId == parent.Id && x.AbandonedOn == null & x.PreferTeam, cancellationToken);
-    
+
     /// <summary>
-    /// In GraphQL allow us to query whether or not a specified user is registered with the code-jam
+    /// In GraphQL allow us to query whether a specified user is registered with the code-jam
     /// </summary>
     /// <param name="parent"></param>
     /// <param name="cancellationToken"></param>
@@ -53,7 +53,7 @@ public sealed class CodeJamTopicQueryExtensions
         return await db.CodeJamRegistrations.AnyAsync(
             x => x.CodeJamTopicId == parent.Id && x.AbandonedOn == null && x.UserId == userId, cancellationToken);
     }
-    
+
     /// <summary>
     /// In GraphQL allow us to query how many people signed up to as a lone-wolf/solo
     /// </summary>
@@ -63,7 +63,7 @@ public sealed class CodeJamTopicQueryExtensions
     /// <returns></returns>
     [BindMember(nameof(CodeJamTopic.Id))]
     public async Task<int> SoloApplicants(
-        [Parent] CodeJamTopic parent, 
+        [Parent] CodeJamTopic parent,
         CancellationToken cancellationToken,
         [Service] ApplicationDbContext context
     )

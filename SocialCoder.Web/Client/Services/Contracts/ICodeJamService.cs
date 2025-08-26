@@ -14,7 +14,7 @@ public interface ICodeJamService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<ResultOf<CodeJamTopic>> AdminCreateTopic(CodeJamTopic topic, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// As a privileged user, update an existing <see cref="CodeJamTopic"/>
     /// </summary>
@@ -22,7 +22,7 @@ public interface ICodeJamService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task<ResultOf<CodeJamTopic>> AdminUpdateTopic(CodeJamTopic topic, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// As a privileged user, delete a <see cref="CodeJamTopic"/>
     /// </summary>

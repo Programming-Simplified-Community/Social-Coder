@@ -15,7 +15,7 @@ public partial class GraphQlMutations
     public async Task<ResultOf<CodeJamViewModel>> Register(CodeJamRegistrationRequest request, string userId,
         [Service] ICodeJamService cj, CancellationToken cancellationToken)
         => await cj.Register(request, userId, cancellationToken);
-    
+
     [UseMutationConvention, Authorize]
     public async Task<ResultOf<CodeJamViewModel>> Abandon(CodeJamAbandonRequest request, string userId,
         [Service] ICodeJamService cj, CancellationToken cancellationToken)
@@ -29,7 +29,9 @@ public partial class GraphQlMutations
         var existing = await context.CodeJamTopics.FirstOrDefaultAsync(x => x.Id == request.TopicId, cancellationToken);
 
         if (existing is null)
+        {
             return ResultOf<CodeJamTopic>.Fail("Not Found");
+        }
 
         existing.Title = request.Title;
         existing.Description = request.Description;
@@ -41,10 +43,10 @@ public partial class GraphQlMutations
 
         context.Update(existing);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return ResultOf<CodeJamTopic>.Pass(existing);
     }
-    
+
     [UseMutationConvention, Authorize(Roles = [Roles.Administrator, Roles.Owner])]
     public async Task<ResultOf> DeleteTopic(int topicId,
         [Service] ApplicationDbContext context,
@@ -53,11 +55,13 @@ public partial class GraphQlMutations
         var existing = await context.CodeJamTopics.FirstOrDefaultAsync(x => x.Id == topicId, cancellationToken);
 
         if (existing is null)
+        {
             return ResultOf.Fail("Not Found");
+        }
 
         context.CodeJamTopics.Remove(existing);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return ResultOf.Pass();
     }
 
@@ -75,10 +79,10 @@ public partial class GraphQlMutations
             JamStartDate = request.JamStartDate,
             RegistrationStartDate = request.JamRegistrationStart
         };
-        
+
         context.CodeJamTopics.Add(topic);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return ResultOf<CodeJamTopic>.Pass(topic);
     }
 }

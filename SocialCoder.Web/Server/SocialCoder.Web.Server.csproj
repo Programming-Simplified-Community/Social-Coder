@@ -18,30 +18,56 @@
     <PackageReference Include="HotChocolate.Data.EntityFramework" Version="15.1.8" />
     <PackageReference Include="HotChocolate.Types" Version="15.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="9.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Twitter" Version="9.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Twitter" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.8" />
+    <PackageReference Include="Npgsql" Version="9.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageReference Include="Workleap.DotNet.CodingStandards" Version="1.1.23">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\SocialCoder.ServiceDefaults\SocialCoder.ServiceDefaults.csproj" />
     <ProjectReference Include="..\Client\SocialCoder.Web.Client.csproj" />
     <ProjectReference Include="..\Shared\SocialCoder.Web.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="7.0.20" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.7">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+  
+  <Target Name="CreateEnvFileOnBuild" BeforeTargets="PreBuildEvent">
+    <PropertyGroup>
+      <EnvTemplateFile>$(SolutionDir).env.template</EnvTemplateFile>
+      <EnvFile>$(SolutionDir).env</EnvFile>
+    </PropertyGroup>
+    
+    <!--
+      Check if the .env file exists. If it does not and the template file does, copy the template.
+      The 'Condition' attribute is the key to making this work safely
+    -->
+    <Copy SourceFiles="$(EnvTemplateFile)"
+          DestinationFiles="$(EnvFile)"
+          Condition="!Exists('$(EnvFile)') And Exists('$(EnvTemplateFile)')"/>
+    
+    <Message
+      Text="The .env file was not found. A new one was created from the .env.template template."
+      Importance="high"
+      Condition="!Exists('$(EnvFile)') And Exists('$(EnvTemplateFile)')"/>
+  </Target>
   
   <Target Name="CopyConnectionsFile" AfterTargets="AfterBuild">
     <Copy SourceFiles="..\..\.connections" DestinationFolder="$(OutDir)" Condition="Exists('..\..\.connections')" />

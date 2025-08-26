@@ -1,7 +1,9 @@
 ﻿@page "/Login"
 @layout LoginLayout
 @inject HttpClient Client
-
+@inject NavigationManager NavigationManager
+@inject AppState AppState
+@using SocialCoder.Web.Client.Services
 @using SocialCoder.Web.Shared.ViewModels
 
 <PageTitle>Login</PageTitle>
@@ -54,7 +56,12 @@ else
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        _providers = await Client.GetFromJsonAsync<AuthProvider[]>("/api/Auth/Providers") ?? [];
+
+        if (AppState.IsInSetupMode)
+            NavigationManager.NavigateTo("/setup");
+        else
+            _providers = await Client.GetFromJsonAsync<AuthProvider[]>("/api/Auth/Providers") ?? [];    
+        
         _loading = false;
     }
 }

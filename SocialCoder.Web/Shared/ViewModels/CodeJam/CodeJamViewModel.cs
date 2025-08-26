@@ -17,21 +17,21 @@ public class CodeJamViewModel
     /// </summary>
     public bool IsRegistered { get; set; }
 
-    public string RegisterUrl => string.Format(Endpoints.CodeJamPostTopicRegister, Topic.Id);
-    public string AbandonUrl => string.Format(Endpoints.CodeJamPostTopicWithdraw, Topic.Id);
-    
+    public string RegisterUrl => string.Format(Endpoints.CodeJamPostTopicRegister, this.Topic.Id);
+    public string AbandonUrl => string.Format(Endpoints.CodeJamPostTopicWithdraw, this.Topic.Id);
+
     /// <summary>
     /// # of applicants wanting a team
     /// </summary>
     public int TotalTeamApplicants { get; set; }
-    
+
     /// <summary>
     /// # of solo applicants
     /// </summary>
     public int TotalSoloApplicants { get; set; }
-    
+
     /// <summary>
     /// Applicants in total
     /// </summary>
-    public int TotalApplicants => TotalSoloApplicants + TotalTeamApplicants;
+    public int TotalApplicants => this.TotalSoloApplicants + this.TotalTeamApplicants;
 }

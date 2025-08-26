@@ -93,7 +93,7 @@
     [Parameter]
     public Color BadgeColor { get; set; } = Color.Tertiary;
 
-    MudTheme _theme = new();
+    readonly MudTheme _theme = new();
     
     protected override async Task OnInitializedAsync()
     {

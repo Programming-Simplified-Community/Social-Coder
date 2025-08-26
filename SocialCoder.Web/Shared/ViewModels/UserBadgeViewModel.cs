@@ -10,7 +10,7 @@ public class UserBadgeViewModel
     public string Description { get; init; }
     public int Progress { get; init; }
     public int Requirement { get; init; }
-    public bool IsCompleted => Progress >= Requirement;
+    public bool IsCompleted => this.Progress >= this.Requirement;
     public string ImagePath { get; init; }
     public BadgeType Type { get; init; }
 }

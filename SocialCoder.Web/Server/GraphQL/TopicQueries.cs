@@ -11,6 +11,6 @@ namespace SocialCoder.Web.Server.GraphQL;
 public partial class GraphQLQueries
 {
     [UsePaging, UseProjection, UseFiltering, UseSorting, Authorize]
-    public IOrderedQueryable<CodeJamTopic> GetTopics([Service] ApplicationDbContext context)
-        => context.CodeJamTopics.OrderBy(x => x.JamStartDate);
+    public IQueryable<CodeJamTopic> GetTopics([Service] ApplicationDbContext context)
+        => context.CodeJamTopics;
 }

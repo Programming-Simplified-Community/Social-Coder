@@ -28,7 +28,7 @@
                         @Topic.JamStartDate.ToRealLocalTime().ToString("t")
                     </MudText>
                     <MudText Typo="Typo.subtitle1" Style="font-size: 0.6rem;" Color="Color.Info">
-                        Length: @((Topic.JamEndDate - Topic.JamEndDate).TotalDays) Days
+                        Length: @((Topic.JamEndDate - Topic.JamStartDate).TotalDays) Days
                     </MudText>
                 </MudListItem>
             </MudList>

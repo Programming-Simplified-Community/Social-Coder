@@ -2,6 +2,9 @@
 
 namespace SocialCoder.Web.Server.Middleware;
 
+/// <summary>
+/// Enforces rules based on whether the application is in setup mode.
+/// </summary>
 public class SetupModeMiddleware
 {
     private readonly RequestDelegate _next;
@@ -26,6 +29,11 @@ public class SetupModeMiddleware
         await this._next(context);
     }
 
+    /// <summary>
+    /// Limits the number of endpoints a user can reach while in setup mode.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <returns></returns>
     private bool IsAllowedInSetupMode(HttpContext context)
     {
         var path = context.Request.Path;

@@ -142,6 +142,10 @@ public static class ServiceCollectionExtensions
         services.AddAuthorization();
 
         services.AddGraphQLServer()
+            .ModifyCostOptions(options =>
+            {
+                options.MaxFieldCost = 5000;
+            })
             .AddAuthorization()
             .AddQueryType<GraphQLQueries>()
             .AddTypeExtension<CodeJamTopicQueryExtensions>()

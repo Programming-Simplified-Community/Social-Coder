@@ -1,1 +1,47 @@
-﻿
+﻿query GetTopicsWithUserInfo(
+    $first: Int
+    $after: String # Cursor for forward paging
+    $last: Int
+    $before: String # Cursor for backward paging
+    $orderBy: [CodeJamTopicSortInput!] # Sorting options
+    $where: CodeJamTopicFilterInput # Filtering options
+    $userId: String!
+) {
+    topics(
+        first: $first
+        after: $after
+        last: $last
+        before: $before
+        where: $where
+        order: $orderBy
+    ) {
+        pageInfo {
+            hasNextPage,
+            hasPreviousPage,
+            startCursor,
+            endCursor
+        },
+        
+        edges {
+            cursor,
+            node {
+                ...TopicCardInfo,
+                isRegistered(userId: $userId)
+            }
+        }
+    }
+}
+
+fragment TopicCardInfo on CodeJamTopic {
+    topicId,
+    backgroundImageUrl,
+    registrationStartDate,
+    jamStartDate,
+    jamEndDate,
+    title,
+    description,
+    soloApplicants,
+    teamApplicants,
+    totalApplicants,
+    isActive
+}

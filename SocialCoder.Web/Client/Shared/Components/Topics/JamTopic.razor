@@ -1,0 +1,96 @@
+﻿<MudItem md="4">
+    <MudPaper Style="border-radius: 25px">
+        <MudContainer
+            Class="codejam-topic-background-image"
+            Style="@_image"/>
+        
+        <MudContainer Class="pb-3">
+            <MudText Typo="Typo.h4" Class="mt-2">@Topic.Title</MudText>
+            
+            @*Display dates for topic*@
+            <MudList T="string">
+                <MudListItem Icon="@Icons.Material.TwoTone.PersonAdd"
+                             IconColor="Color.Success">
+                    <MudText Typo="Typo.body1">
+                        @Topic.RegistrationStartDate.ToRealLocalTime().ToString("dddd, MMMM dd - yyyy")
+                    </MudText>
+                    <MudText Typo="Typo.subtitle1" Color="Color.Secondary" Style="font-size: 0.6rem">
+                        @Topic.RegistrationStartDate.ToRealLocalTime().ToString("t")
+                    </MudText>
+                </MudListItem>
+                <MudListItem T="string"
+                             Icon="@Icons.Material.TwoTone.Event"
+                             IconColor="Color.Tertiary">
+                    <MudText Typo="Typo.body1">
+                        @Topic.JamStartDate.ToRealLocalTime().ToString("dddd, MMMM dd - yyyy")
+                    </MudText>
+                    <MudText Typo="Typo.subtitle1" Style="font-size: 0.6rem" Color="Color.Secondary">
+                        @Topic.JamStartDate.ToRealLocalTime().ToString("t")
+                    </MudText>
+                    <MudText Typo="Typo.subtitle1" Style="font-size: 0.6rem;" Color="Color.Info">
+                        Length: @((Topic.JamEndDate - Topic.JamEndDate).TotalDays) Days
+                    </MudText>
+                </MudListItem>
+            </MudList>
+            
+            <MudText Typo="Typo.body1" Style="color: #9aa4bf">
+                @(new MarkupString(Topic.Description.Replace("\n", "<br/>")))
+            </MudText>
+            
+            <MudGrid Class="mt6 mb-4">
+                <MudItem md="6">
+                    <MudText Typo="Typo.h6"
+                             Align="Align.Center"
+                             Style="font-size: 1rem;">
+                        Solo Applicants
+                    </MudText>
+                    <MudText Typo="Typo.subtitle1"
+                             Align="Align.Center"
+                             Style="font-size: 0.75rem; color: #9aa4bf">
+                        @Topic.SoloApplicants/@Topic.TotalApplicants
+                    </MudText>
+                </MudItem>
+                
+                <MudItem md="6">
+                    <MudText Typo="Typo.h6"
+                             Align="Align.Center"
+                             Style="font-size: 1rem;">
+                        Team Applicants
+                    </MudText>
+                    <MudText Typo="Typo.subtitle1"
+                             Align="Align.Center"
+                             Style="font-size: 0.75rem; color: #9aa4bf">
+                        @Topic.TeamApplicants/@Topic.TotalApplicants
+                    </MudText>
+                </MudItem>
+            </MudGrid>
+            
+            @{
+                var icon = !Topic.IsRegistered ? Icons.Material.TwoTone.PersonAdd : Icons.Material.Filled.ExitToApp;
+                var color = !Topic.IsRegistered ? Color.Tertiary : Color.Warning;
+                var text = !Topic.IsRegistered ? "Register" : "Withdraw";
+            }
+            
+            @if (Topic.IsRegistered)
+            {
+                <MudButton Color="@color" StartIcon="@icon">
+                    @text
+                </MudButton>
+            }
+            else
+            {
+                <MudMenu Label="Register" Variant="Variant.Text" Color="@color">
+                    <div class="d-flex align-content-center">
+                        <MudTooltip Text="Solo">
+                            <MudIconButton Class="mx-2" Color="Color.Tertiary" Icon="@Icons.Material.Filled.Person"/>
+                        </MudTooltip>
+                        
+                        <MudTooltip Text="Team">
+                            <MudIconButton Class="mx-2" Color="Color.Info" Icon="@Icons.Material.Filled.People"/>
+                        </MudTooltip>
+                    </div>
+                </MudMenu>
+            }
+        </MudContainer>
+    </MudPaper>
+</MudItem>

@@ -1,0 +1,37 @@
+﻿@inherits QueryComponent
+
+<MudGrid Spacing="3" Justify="Justify.Center" Class="mt-3">
+    <UseGetTopicsWithUserInfo Strategy="ExecutionStrategy.CacheAndNetwork" UserId="@UserId">
+        <ErrorContent>
+            <MudAlert Icon="@Icons.Material.TwoTone.Error" Severity="Severity.Error" Style="width: 100%">
+                Oops! Double-check the GraphQL Schema! They could be out-of-sync.
+            </MudAlert>
+        </ErrorContent>
+        <ChildContent>
+            @if (context.Topics?.Edges is not null)
+            {
+                foreach (var topic in context.Topics.Edges)
+                {
+                    <JamTopic Topic="topic.Node"/>
+                }
+            }
+            else
+            {
+                <MudPaper Elevation="3" MinWidth="300px">
+                    <MudText Align="Align.Center">
+                        No records
+                    </MudText>
+                </MudPaper>
+            }
+        </ChildContent>
+        <LoadingContent>
+            <MudProgressCircular Indeterminate="true"
+                                 Color="Color.Info"
+                                 Size="Size.Large"/>
+        </LoadingContent>
+    </UseGetTopicsWithUserInfo>
+</MudGrid>
+
+@code {
+    [CascadingParameter(Name = "UserId")] public string UserId { get; set; }
+}

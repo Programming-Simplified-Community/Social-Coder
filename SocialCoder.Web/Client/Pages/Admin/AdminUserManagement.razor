@@ -1,0 +1,72 @@
+﻿@page "/Admin/UserManagement"
+@inherits QueryComponent
+@layout AdminDashboardLayout
+
+<MudContainer Class="mt-3">
+    <MudTable Items="_users">
+    <HeaderContent>
+        <MudTh>Username</MudTh>
+        <MudTh>Email</MudTh>
+        <MudTh>Roles</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate Context="user">
+        <MudTd>@user.Data.Username</MudTd>
+        <MudTd>@user.Data.Email</MudTd>
+        <MudTd>
+            @{
+                var myRoles = user.Data.Roles.ToHashSet();
+            }
+            
+            <MudMenu StartIcon="@Icons.Material.TwoTone.AccountTree" 
+                     Open="@user.IsModifying" 
+                     OpenChanged="@(newValue => user.IsModifying=newValue)">
+                @foreach (var role in _roles)
+                {
+                    var hasRole = myRoles.Contains(role);
+                    var icon = hasRole ? Icons.Material.TwoTone.Remove : Icons.Material.TwoTone.Add;
+                    var color = hasRole ? Color.Error : Color.Info;
+                        
+                    <MudMenuItem Icon="@icon" Color="@color" OnClick="@( async ()=>await UpdateRoleAsync(user, hasRole, role))">@role</MudMenuItem>
+                }
+            </MudMenu>
+            
+            <MudStack Row Spacing="2">
+                <MudButton OnClick="@(_ => user.IsModifying = !user.IsModifying)" 
+                           StartIcon="@Icons.Material.TwoTone.Shield"
+                           IconColor="Color.Primary"
+                           Variant="Variant.Text">
+                    Manage Roles
+                </MudButton>
+            
+                @foreach (var role in user.Data.Roles)
+                {
+                    var (icon, color) = role switch
+                    {
+                        Roles.Administrator => (Icons.Material.TwoTone.AdminPanelSettings, Color.Info),
+                        Roles.Owner => (Icons.Material.TwoTone.Bolt, Color.Success),
+                        _ => (Icons.Material.TwoTone.AssignmentInd, Color.Surface)
+                    };
+                
+                    <MudTooltip RootStyle="padding-top: 8px;" Text="@role">
+                        <MudIcon Icon="@icon" Color="@color"/>
+                    </MudTooltip>
+                }
+            </MudStack>
+        </MudTd>
+        <MudTd>
+            <MudButton StartIcon="@Icons.Material.Filled.TimeToLeave"
+                       IconColor="Color.Warning"
+                       OnClick="@(async () => await BanUser(user.Data))">
+                Ban
+            </MudButton>
+            <MudButton StartIcon="@Icons.Material.TwoTone.Delete"
+                       IconColor="Color.Error"
+                       OnClick="@(() => Snack.Add("Not implement yet", Severity.Info))">
+                Wipe/Delete
+            </MudButton>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+</MudContainer>

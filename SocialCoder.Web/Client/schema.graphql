@@ -1,485 +1,611 @@
 ﻿schema {
-  query: GraphQLQueries
-  mutation: GraphQlMutations
+    query: GraphQLQueries
+    mutation: GraphQlMutations
+    subscription: UserSubscriptions
 }
 
-input AddRoleToUserRequestInput {
-  userId: String!
-  roleName: String!
+type BasicRoleInfo {
+    roleId: String!
+    name: String!
 }
 
-input CreateCodeJamTopicRequestInput {
-  title: String!
-  description: String!
-  backgroundImageUrl: String!
-  jamStartDate: DateTime!
-  jamEndDate: DateTime!
-  jamRegistrationStart: DateTime!
+type BasicUserAccountInfo {
+    userId: String!
+    username: String!
+    email: String!
+    "In GraphQL allow us to query a user's roles"
+    userRoles: [String!]! @cost(weight: "10")
 }
 
-input CodeJamTopicFilterInput {
-  and: [CodeJamTopicFilterInput!]
-  or: [CodeJamTopicFilterInput!]
-  id: IntOperationFilterInput
-  title: StringOperationFilterInput
-  description: StringOperationFilterInput
-  "URL to image that will be used for a code jam"
-  backgroundImageUrl: StringOperationFilterInput
-  "Is this topic available? Equivalent of a soft-delete"
-  isActive: BooleanOperationFilterInput
-  "At this time applicants are no longer accepted. The topic is \"active\""
-  jamStartDate: DateTimeOperationFilterInput
-  "After this time, submissions are no longer accepted. The \"jam\" is considered closed."
-  jamEndDate: DateTimeOperationFilterInput
-  "Time in which this topic will start accepting applicants"
-  registrationStartDate: DateTimeOperationFilterInput
-  codeJamRegistrations: ListFilterInputTypeOfCodeJamRegistrationFilterInput
-}
-
-type ResultOfOfCodeJamTopic {
-  data: CodeJamTopic
-  message: String
-  success: Boolean!
-}
-
-input DateTimeOperationFilterInput {
-  eq: DateTime
-  neq: DateTime
-  in: [DateTime]
-  nin: [DateTime]
-  gt: DateTime
-  ngt: DateTime
-  gte: DateTime
-  ngte: DateTime
-  lt: DateTime
-  nlt: DateTime
-  lte: DateTime
-  nlte: DateTime
-}
-
-type ResultOfOfUserExperience {
-  data: UserExperience
-  message: String
-  success: Boolean!
-}
-
-enum GoalType {
-  ACADEMIC
-  WORK
-  PROJECT
-  SHORT_TERM
-  LONG_TERM
-}
-
-type GraphQLQueries {
-  experiencePool: [ExperiencePool!]!
-  userExperience(userId: String!): [UserExperienceViewModel!]!
-  goals(userId: String!): [UserGoal!]!
-  myInfo(userId: String!): MyProfileInfo
-  topics("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: CodeJamTopicFilterInput order: [CodeJamTopicSortInput!]): TopicsConnection
-  roles: [BasicRoleInfo!]!
-  users("Returns the first _n_ elements from the list." first: Int "Returns the elements in the list that come after the specified cursor." after: String "Returns the last _n_ elements from the list." last: Int "Returns the elements in the list that come before the specified cursor." before: String where: BasicUserAccountInfoFilterInput order: [BasicUserAccountInfoSortInput!]): UsersConnection
-}
-
-"Follows the Sigma levels"
-enum ExperienceLevel {
-  WHITE
-  YELLOW
-  GREEN
-  BLUE
-  RED
-  BLACK
-}
-
-"The `DateTime` scalar represents an ISO-8601 compliant date time type."
-scalar DateTime
-
-"An edge in a connection."
-type UsersEdge {
-  "A cursor for use in pagination."
-  cursor: String!
-  "The item at the end of the edge."
-  node: BasicUserAccountInfo!
-}
-
-input IntOperationFilterInput {
-  eq: Int
-  neq: Int
-  in: [Int]
-  nin: [Int]
-  gt: Int
-  ngt: Int
-  gte: Int
-  ngte: Int
-  lt: Int
-  nlt: Int
-  lte: Int
-  nlte: Int
-}
-
-"A connection to a list of items."
-type UsersConnection {
-  "Information to aid in pagination."
-  pageInfo: PageInfo!
-  "A list of edges."
-  edges: [UsersEdge!]
-  "A flattened list of the nodes."
-  nodes: [BasicUserAccountInfo!]
-}
-
-"An edge in a connection."
-type TopicsEdge {
-  "A cursor for use in pagination."
-  cursor: String!
-  "The item at the end of the edge."
-  node: CodeJamTopic!
-}
-
-"Add a user-goal"
-input AddUserGoalRequestInput {
-  title: String!
-  description: String!
-  goalType: GoalType!
-  targetDate: DateTime!
-  userId: String!
-}
-
-type UserExperienceViewModel {
-  userId: String!
-  experiencePoolId: Int!
-  name: String!
-  imageUrl: String!
-  experience: ExperienceLevel!
-}
-
-input DeleteUserGoalRequestInput {
-  goalId: Int!
-  userId: String!
-}
-
-input CodeJamAbandonRequestInput {
-  topicId: Int!
-}
-
-input EditProfileInfoRequestInput {
-  userId: String!
-  displayName: String
-  language: String
-  country: String
+type CodeJamRegistration {
+    id: ID
+    "Foreign key to User"
+    userId: String!
+    "Foreign Key to CodeJamTopic"
+    codeJamTopicId: Int!
+    "Time in which the user registered for this code jam"
+    registeredOn: DateTime!
+    "Time in which the user left the jam (if applicable)"
+    abandonedOn: DateTime
+    "User wants to be on a team"
+    preferTeam: Boolean!
+    codeJamTopic: CodeJamTopic!
 }
 
 type CodeJamTopic {
-  title: String!
-  description: String!
-  "URL to image that will be used for a code jam"
-  backgroundImageUrl: String
-  "Is this topic available? Equivalent of a soft-delete"
-  isActive: Boolean!
-  "At this time applicants are no longer accepted. The topic is \"active\""
-  jamStartDate: DateTime!
-  "After this time, submissions are no longer accepted. The \"jam\" is considered closed."
-  jamEndDate: DateTime!
-  "Time in which this topic will start accepting applicants"
-  registrationStartDate: DateTime!
-  codeJamRegistrations: [CodeJamRegistration!]!
-  topicId: Int!
-  "In GraphQL allow us to query how many people signed up for the topic"
-  totalApplicants: Int!
-  "In GraphQL allow us to query how many people signed up to be on a team"
-  teamApplicants: Int!
-  "In GraphQL allow us to query whether a specified user is registered with the code-jam"
-  isRegistered(userId: String): Boolean!
-  "In GraphQL allow us to query how many people signed up to as a lone-wolf\/solo"
-  soloApplicants: Int!
-}
-
-input AddUserExperienceRequestInput {
-  experiencePoolId: Int!
-  level: ExperienceLevel!
-  userId: String!
-}
-
-"A connection to a list of items."
-type TopicsConnection {
-  "Information to aid in pagination."
-  pageInfo: PageInfo!
-  "A list of edges."
-  edges: [TopicsEdge!]
-  "A flattened list of the nodes."
-  nodes: [CodeJamTopic!]
-}
-
-input BasicUserAccountInfoSortInput {
-  userId: SortEnumType
-  username: SortEnumType
-  email: SortEnumType
-}
-
-"Information about pagination in a connection."
-type PageInfo {
-  "Indicates whether more edges exist following the set defined by the clients arguments."
-  hasNextPage: Boolean!
-  "Indicates whether more edges exist prior the set defined by the clients arguments."
-  hasPreviousPage: Boolean!
-  "When paginating backwards, the cursor to continue."
-  startCursor: String
-  "When paginating forwards, the cursor to continue."
-  endCursor: String
+    title: String!
+    description: String!
+    "URL to image that will be used for a code jam"
+    backgroundImageUrl: String
+    "Is this topic available? Equivalent of a soft-delete"
+    isActive: Boolean!
+    "At this time applicants are no longer accepted. The topic is \"active\""
+    jamStartDate: DateTime!
+    "After this time, submissions are no longer accepted. The \"jam\" is considered closed."
+    jamEndDate: DateTime!
+    "Time in which this topic will start accepting applicants"
+    registrationStartDate: DateTime!
+    codeJamRegistrations: [CodeJamRegistration!]!
+    topicId: Int!
+    "In GraphQL allow us to query how many people signed up for the topic"
+    totalApplicants: Int! @cost(weight: "10")
+    "In GraphQL allow us to query how many people signed up to be on a team"
+    teamApplicants: Int! @cost(weight: "10")
+    "In GraphQL allow us to query whether a specified user is registered with the code-jam"
+    isRegistered(userId: String): Boolean! @cost(weight: "10")
+    "In GraphQL allow us to query how many people signed up to as a lone-wolf/solo"
+    soloApplicants: Int! @cost(weight: "10")
 }
 
 "View Model for displaying Topic Information"
 type CodeJamViewModel {
-  "Topic associated with this view"
-  topic: CodeJamTopic!
-  "Is the current user registered for this topic"
-  isRegistered: Boolean!
-  registerUrl: String!
-  abandonUrl: String!
-  "# of applicants wanting a team"
-  totalTeamApplicants: Int!
-  "# of solo applicants"
-  totalSoloApplicants: Int!
-  "Applicants in total"
-  totalApplicants: Int!
-}
-
-type GraphQlMutations {
-  register(request: CodeJamRegistrationRequestInput! userId: String!): ResultOfOfCodeJamViewModel!
-  abandon(request: CodeJamAbandonRequestInput! userId: String!): ResultOfOfCodeJamViewModel!
-  updateTopic(request: UpdateCodeJamTopicRequestInput!): ResultOfOfCodeJamTopic!
-  deleteTopic(topicId: Int!): ResultOf!
-  createTopic(request: CreateCodeJamTopicRequestInput!): ResultOfOfCodeJamTopic!
-  addRoleToUser(request: AddRoleToUserRequestInput! callingUser: String!): ResultOf!
-  removeRoleFromUser(request: RemoveRoleFromUserRequestInput! callingUser: String!): ResultOf!
-  banUser(request: BanUserRequestInput! callingUser: String!): ResultOf!
-  addUserExperience(request: AddUserExperienceRequestInput!): ResultOfOfUserExperience!
-  editUserExperience(request: AddUserExperienceRequestInput!): ResultOf!
-  removeUserExperience(request: RemoveUserExperienceRequestInput!): ResultOf!
-  addUserGoal(request: AddUserGoalRequestInput!): ResultOfOfUserGoal!
-  editUserGoal(request: EditUserGoalRequestInput!): ResultOf!
-  deleteUserGoal(request: DeleteUserGoalRequestInput!): ResultOf!
-  editProfileInfo(request: EditProfileInfoRequestInput!): ResultOf!
-}
-
-input RemoveRoleFromUserRequestInput {
-  userId: String!
-  roleName: String!
-  reason: String
-}
-
-type BasicUserAccountInfo {
-  userId: String!
-  username: String!
-  email: String!
-  "In GraphQL allow us to query a user's roles"
-  userRoles: [String!]!
-}
-
-"Defines when a policy shall be executed."
-enum ApplyPolicy {
-  "Before the resolver was executed."
-  BEFORE_RESOLVER
-  "After the resolver was executed."
-  AFTER_RESOLVER
-  "The policy is applied in the validation step before the execution."
-  VALIDATION
-}
-
-enum SortEnumType {
-  ASC
-  DESC
-}
-
-type MyProfileInfo {
-  username: String!
-  displayName: String
-  country: String
-  language: String
-  email: String!
-}
-
-input RemoveUserExperienceRequestInput {
-  experiencePoolId: Int!
-  userId: String!
-}
-
-type BasicRoleInfo {
-  roleId: String!
-  name: String!
-}
-
-type ResultOfOfCodeJamViewModel {
-  data: CodeJamViewModel
-  message: String
-  success: Boolean!
-}
-
-input StringOperationFilterInput {
-  and: [StringOperationFilterInput!]
-  or: [StringOperationFilterInput!]
-  eq: String
-  neq: String
-  contains: String
-  ncontains: String
-  in: [String]
-  nin: [String]
-  startsWith: String
-  nstartsWith: String
-  endsWith: String
-  nendsWith: String
-}
-
-type ResultOfOfUserGoal {
-  data: UserGoal
-  message: String
-  success: Boolean!
-}
-
-input CodeJamRegistrationFilterInput {
-  and: [CodeJamRegistrationFilterInput!]
-  or: [CodeJamRegistrationFilterInput!]
-  id: IntOperationFilterInput
-  "Foreign key to User"
-  userId: StringOperationFilterInput
-  "Foreign Key to CodeJamTopic"
-  codeJamTopicId: IntOperationFilterInput
-  "Time in which the user registered for this code jam"
-  registeredOn: DateTimeOperationFilterInput
-  "Time in which the user left the jam (if applicable)"
-  abandonedOn: DateTimeOperationFilterInput
-  "User wants to be on a team"
-  preferTeam: BooleanOperationFilterInput
-  codeJamTopic: CodeJamTopicFilterInput
+    "Topic associated with this view"
+    topic: CodeJamTopic!
+    "Is the current user registered for this topic"
+    isRegistered: Boolean!
+    registerUrl: String!
+    abandonUrl: String!
+    "# of applicants wanting a team"
+    totalTeamApplicants: Int!
+    "# of solo applicants"
+    totalSoloApplicants: Int!
+    "Applicants in total"
+    totalApplicants: Int!
 }
 
 "Represents various things a user may have experience in"
 type ExperiencePool {
-  id: Int!
-  "Name of item a user can have experience in"
-  name: String!
-  "Image to display when rendered"
-  imageUrl: String!
+    id: Int!
+    "Name of item a user can have experience in"
+    name: String!
+    "Image to display when rendered"
+    imageUrl: String!
 }
 
-input CodeJamTopicSortInput {
-  id: SortEnumType
-  title: SortEnumType
-  description: SortEnumType
-  "URL to image that will be used for a code jam"
-  backgroundImageUrl: SortEnumType
-  "Is this topic available? Equivalent of a soft-delete"
-  isActive: SortEnumType
-  "At this time applicants are no longer accepted. The topic is \"active\""
-  jamStartDate: SortEnumType
-  "After this time, submissions are no longer accepted. The \"jam\" is considered closed."
-  jamEndDate: SortEnumType
-  "Time in which this topic will start accepting applicants"
-  registrationStartDate: SortEnumType
+type GraphQLQueries {
+    experiencePool: [ExperiencePool!]! @authorize @cost(weight: "10")
+    userExperience(userId: String!): [UserExperienceViewModel!]!
+    @authorize
+    @cost(weight: "10")
+    goals(userId: String!): [UserGoal!]! @authorize @cost(weight: "10")
+    myInfo(userId: String!): MyProfileInfo @authorize @cost(weight: "10")
+    topics(
+        "Returns the first _n_ elements from the list."
+        first: Int
+        "Returns the elements in the list that come after the specified cursor."
+        after: String
+        "Returns the last _n_ elements from the list."
+        last: Int
+        "Returns the elements in the list that come before the specified cursor."
+        before: String
+        where: CodeJamTopicFilterInput @cost(weight: "10")
+        order: [CodeJamTopicSortInput!] @cost(weight: "10")
+    ): TopicsConnection
+    @authorize
+    @listSize(
+        assumedSize: 50
+        slicingArguments: ["first", "last"]
+        slicingArgumentDefaultValue: 10
+        sizedFields: ["edges", "nodes"]
+        requireOneSlicingArgument: false
+    )
+    @cost(weight: "10")
+    roles: [BasicRoleInfo!]!
+    @authorize(roles: ["Administrator", "Owner"])
+    @cost(weight: "10")
+    users(
+        "Returns the first _n_ elements from the list."
+        first: Int
+        "Returns the elements in the list that come after the specified cursor."
+        after: String
+        "Returns the last _n_ elements from the list."
+        last: Int
+        "Returns the elements in the list that come before the specified cursor."
+        before: String
+        where: BasicUserAccountInfoFilterInput @cost(weight: "10")
+        order: [BasicUserAccountInfoSortInput!] @cost(weight: "10")
+    ): UsersConnection
+    @authorize(roles: ["Administrator", "Owner"])
+    @listSize(
+        assumedSize: 50
+        slicingArguments: ["first", "last"]
+        slicingArgumentDefaultValue: 10
+        sizedFields: ["edges", "nodes"]
+        requireOneSlicingArgument: false
+    )
+    @cost(weight: "10")
 }
 
-type CodeJamRegistration {
-  id: ID
-  "Foreign key to User"
-  userId: String!
-  "Foreign Key to CodeJamTopic"
-  codeJamTopicId: Int!
-  "Time in which the user registered for this code jam"
-  registeredOn: DateTime!
-  "Time in which the user left the jam (if applicable)"
-  abandonedOn: DateTime
-  "User wants to be on a team"
-  preferTeam: Boolean!
-  codeJamTopic: CodeJamTopic!
+type GraphQlMutations {
+    register(
+        request: CodeJamRegistrationRequestInput!
+        userId: String!
+    ): ResultOfOfCodeJamViewModel! @authorize @cost(weight: "10")
+    abandon(
+        request: CodeJamAbandonRequestInput!
+        userId: String!
+    ): ResultOfOfCodeJamViewModel! @authorize @cost(weight: "10")
+    updateTopic(
+        request: UpdateCodeJamTopicRequestInput!
+    ): ResultOfOfCodeJamTopic!
+    @authorize(roles: ["Administrator", "Owner"])
+    @cost(weight: "10")
+    deleteTopic(topicId: Int!): ResultOf!
+    @authorize(roles: ["Administrator", "Owner"])
+    @cost(weight: "10")
+    createTopic(
+        request: CreateCodeJamTopicRequestInput!
+    ): ResultOfOfCodeJamTopic!
+    @authorize(roles: ["Administrator", "Owner"])
+    @cost(weight: "10")
+    addRoleToUser(
+        request: AddRoleToUserRequestInput!
+        callingUser: String!
+    ): ResultOf! @authorize(roles: ["Administrator", "Owner"]) @cost(weight: "10")
+    removeRoleFromUser(
+        request: RemoveRoleFromUserRequestInput!
+        callingUser: String!
+    ): ResultOf! @authorize(roles: ["Administrator", "Owner"]) @cost(weight: "10")
+    banUser(request: BanUserRequestInput!, callingUser: String!): ResultOf!
+    @authorize(roles: ["Administrator", "Owner"])
+    @cost(weight: "10")
+    addUserExperience(
+        request: AddUserExperienceRequestInput!
+    ): ResultOfOfUserExperience! @authorize @cost(weight: "10")
+    editUserExperience(request: AddUserExperienceRequestInput!): ResultOf!
+    @authorize
+    @cost(weight: "10")
+    removeUserExperience(request: RemoveUserExperienceRequestInput!): ResultOf!
+    @authorize
+    @cost(weight: "10")
+    addUserGoal(request: AddUserGoalRequestInput!): ResultOfOfUserGoal!
+    @authorize
+    @cost(weight: "10")
+    editUserGoal(request: EditUserGoalRequestInput!): ResultOf!
+    @authorize
+    @cost(weight: "10")
+    deleteUserGoal(request: DeleteUserGoalRequestInput!): ResultOf!
+    @authorize
+    @cost(weight: "10")
+    editProfileInfo(request: EditProfileInfoRequestInput!): ResultOf!
+    @authorize
+    @cost(weight: "10")
 }
 
-input BooleanOperationFilterInput {
-  eq: Boolean
-  neq: Boolean
+type MyProfileInfo {
+    username: String!
+    displayName: String
+    country: String
+    language: String
+    email: String!
+}
+
+"Information about pagination in a connection."
+type PageInfo {
+    "Indicates whether more edges exist following the set defined by the clients arguments."
+    hasNextPage: Boolean!
+    "Indicates whether more edges exist prior the set defined by the clients arguments."
+    hasPreviousPage: Boolean!
+    "When paginating backwards, the cursor to continue."
+    startCursor: String
+    "When paginating forwards, the cursor to continue."
+    endCursor: String
+}
+
+type ResultOf {
+    message: String
+    success: Boolean!
+}
+
+type ResultOfOfCodeJamTopic {
+    data: CodeJamTopic
+    message: String
+    success: Boolean!
+}
+
+type ResultOfOfCodeJamViewModel {
+    data: CodeJamViewModel
+    message: String
+    success: Boolean!
+}
+
+type ResultOfOfUserExperience {
+    data: UserExperience
+    message: String
+    success: Boolean!
+}
+
+type ResultOfOfUserGoal {
+    data: UserGoal
+    message: String
+    success: Boolean!
+}
+
+"A connection to a list of items."
+type TopicsConnection {
+    "Information to aid in pagination."
+    pageInfo: PageInfo!
+    "A list of edges."
+    edges: [TopicsEdge!]
+    "A flattened list of the nodes."
+    nodes: [CodeJamTopic!]
+}
+
+"An edge in a connection."
+type TopicsEdge {
+    "A cursor for use in pagination."
+    cursor: String!
+    "The item at the end of the edge."
+    node: CodeJamTopic!
+}
+
+type UserAccountItem {
+    userId: String!
+    username: String!
+    email: String!
+    userRoles: [String!]!
+}
+
+type UserExperience {
+    id: Int!
+    "Foreign key to user"
+    userId: String!
+    "Foreign key to ExperienceLevel"
+    experiencePoolId: Int!
+    "Amount of experience"
+    level: ExperienceLevel!
+}
+
+type UserExperienceViewModel {
+    userId: String!
+    experiencePoolId: Int!
+    name: String!
+    imageUrl: String!
+    experience: ExperienceLevel!
 }
 
 type UserGoal {
-  id: Int!
-  "Foreign key to User"
-  userId: String!
-  "Title that shall appear in UI"
-  title: String!
-  "Possible description of what this goal entails"
-  description: String!
-  "What type of goal is this?"
-  goalType: GoalType!
-  "Time in which this goal was created"
-  createdOn: DateTime!
-  "Target date towards achieving this goal"
-  targetDate: DateTime!
-  "Time in which this goal was completed"
-  completedOn: DateTime
+    id: Int!
+    "Foreign key to User"
+    userId: String!
+    "Title that shall appear in UI"
+    title: String!
+    "Possible description of what this goal entails"
+    description: String!
+    "What type of goal is this?"
+    goalType: GoalType!
+    "Time in which this goal was created"
+    createdOn: DateTime!
+    "Target date towards achieving this goal"
+    targetDate: DateTime!
+    "Time in which this goal was completed"
+    completedOn: DateTime
 }
 
-input UpdateCodeJamTopicRequestInput {
-  topicId: Int!
-  isActive: Boolean!
-  title: String!
-  description: String!
-  backgroundImageUrl: String!
-  jamStartDate: DateTime!
-  jamEndDate: DateTime!
-  jamRegistrationStart: DateTime!
+type UserSubscriptions {
+    userUpdated: UserAccountItem!
+    userDeleted: UserAccountItem!
+    userBanned: UserAccountItem!
 }
 
-input ListFilterInputTypeOfCodeJamRegistrationFilterInput {
-  all: CodeJamRegistrationFilterInput
-  none: CodeJamRegistrationFilterInput
-  some: CodeJamRegistrationFilterInput
-  any: Boolean
+"A connection to a list of items."
+type UsersConnection {
+    "Information to aid in pagination."
+    pageInfo: PageInfo!
+    "A list of edges."
+    edges: [UsersEdge!]
+    "A flattened list of the nodes."
+    nodes: [BasicUserAccountInfo!]
+}
+
+"An edge in a connection."
+type UsersEdge {
+    "A cursor for use in pagination."
+    cursor: String!
+    "The item at the end of the edge."
+    node: BasicUserAccountInfo!
+}
+
+input AddRoleToUserRequestInput {
+    userId: String!
+    roleName: String!
+}
+
+input AddUserExperienceRequestInput {
+    experiencePoolId: Int!
+    level: ExperienceLevel!
+    userId: String!
+}
+
+"Add a user-goal"
+input AddUserGoalRequestInput {
+    title: String!
+    description: String!
+    goalType: GoalType!
+    targetDate: DateTime!
+    userId: String!
+}
+
+input BanUserRequestInput {
+    userId: String!
+    reason: String!
+}
+
+input BasicUserAccountInfoFilterInput {
+    and: [BasicUserAccountInfoFilterInput!]
+    or: [BasicUserAccountInfoFilterInput!]
+    userId: StringOperationFilterInput
+    username: StringOperationFilterInput
+    email: StringOperationFilterInput
+}
+
+input BasicUserAccountInfoSortInput {
+    userId: SortEnumType @cost(weight: "10")
+    username: SortEnumType @cost(weight: "10")
+    email: SortEnumType @cost(weight: "10")
+}
+
+input BooleanOperationFilterInput {
+    eq: Boolean @cost(weight: "10")
+    neq: Boolean @cost(weight: "10")
+}
+
+input CodeJamAbandonRequestInput {
+    topicId: Int!
+}
+
+input CodeJamRegistrationFilterInput {
+    and: [CodeJamRegistrationFilterInput!]
+    or: [CodeJamRegistrationFilterInput!]
+    id: IntOperationFilterInput
+    "Foreign key to User"
+    userId: StringOperationFilterInput
+    "Foreign Key to CodeJamTopic"
+    codeJamTopicId: IntOperationFilterInput
+    "Time in which the user registered for this code jam"
+    registeredOn: DateTimeOperationFilterInput
+    "Time in which the user left the jam (if applicable)"
+    abandonedOn: DateTimeOperationFilterInput
+    "User wants to be on a team"
+    preferTeam: BooleanOperationFilterInput
+    codeJamTopic: CodeJamTopicFilterInput
+}
+
+input CodeJamRegistrationRequestInput {
+    topicId: Int!
+    preferTeam: Boolean!
+}
+
+input CodeJamTopicFilterInput {
+    and: [CodeJamTopicFilterInput!]
+    or: [CodeJamTopicFilterInput!]
+    id: IntOperationFilterInput
+    title: StringOperationFilterInput
+    description: StringOperationFilterInput
+    "URL to image that will be used for a code jam"
+    backgroundImageUrl: StringOperationFilterInput
+    "Is this topic available? Equivalent of a soft-delete"
+    isActive: BooleanOperationFilterInput
+    "At this time applicants are no longer accepted. The topic is \"active\""
+    jamStartDate: DateTimeOperationFilterInput
+    "After this time, submissions are no longer accepted. The \"jam\" is considered closed."
+    jamEndDate: DateTimeOperationFilterInput
+    "Time in which this topic will start accepting applicants"
+    registrationStartDate: DateTimeOperationFilterInput
+    codeJamRegistrations: ListFilterInputTypeOfCodeJamRegistrationFilterInput
+}
+
+input CodeJamTopicSortInput {
+    id: SortEnumType @cost(weight: "10")
+    title: SortEnumType @cost(weight: "10")
+    description: SortEnumType @cost(weight: "10")
+    "URL to image that will be used for a code jam"
+    backgroundImageUrl: SortEnumType @cost(weight: "10")
+    "Is this topic available? Equivalent of a soft-delete"
+    isActive: SortEnumType @cost(weight: "10")
+    "At this time applicants are no longer accepted. The topic is \"active\""
+    jamStartDate: SortEnumType @cost(weight: "10")
+    "After this time, submissions are no longer accepted. The \"jam\" is considered closed."
+    jamEndDate: SortEnumType @cost(weight: "10")
+    "Time in which this topic will start accepting applicants"
+    registrationStartDate: SortEnumType @cost(weight: "10")
+}
+
+input CreateCodeJamTopicRequestInput {
+    title: String!
+    description: String!
+    backgroundImageUrl: String!
+    jamStartDate: DateTime!
+    jamEndDate: DateTime!
+    jamRegistrationStart: DateTime!
+}
+
+input DateTimeOperationFilterInput {
+    eq: DateTime @cost(weight: "10")
+    neq: DateTime @cost(weight: "10")
+    in: [DateTime] @cost(weight: "10")
+    nin: [DateTime] @cost(weight: "10")
+    gt: DateTime @cost(weight: "10")
+    ngt: DateTime @cost(weight: "10")
+    gte: DateTime @cost(weight: "10")
+    ngte: DateTime @cost(weight: "10")
+    lt: DateTime @cost(weight: "10")
+    nlt: DateTime @cost(weight: "10")
+    lte: DateTime @cost(weight: "10")
+    nlte: DateTime @cost(weight: "10")
+}
+
+input DeleteUserGoalRequestInput {
+    goalId: Int!
+    userId: String!
+}
+
+input EditProfileInfoRequestInput {
+    userId: String!
+    displayName: String
+    language: String
+    country: String
 }
 
 "All entries are optional. Non-nullable values shall be used when modifying the existing record in the database"
 input EditUserGoalRequestInput {
-  "Required field for designating which record to modify"
-  goalId: Int!
-  title: String
-  description: String
-  goalType: GoalType
-  targetDate: DateTime
-  completedOn: DateTime
-  userId: String!
+    "Required field for designating which record to modify"
+    goalId: Int!
+    title: String
+    description: String
+    goalType: GoalType
+    targetDate: DateTime
+    completedOn: DateTime
+    userId: String!
 }
 
-input BanUserRequestInput {
-  userId: String!
-  reason: String!
+input IntOperationFilterInput {
+    eq: Int @cost(weight: "10")
+    neq: Int @cost(weight: "10")
+    in: [Int] @cost(weight: "10")
+    nin: [Int] @cost(weight: "10")
+    gt: Int @cost(weight: "10")
+    ngt: Int @cost(weight: "10")
+    gte: Int @cost(weight: "10")
+    ngte: Int @cost(weight: "10")
+    lt: Int @cost(weight: "10")
+    nlt: Int @cost(weight: "10")
+    lte: Int @cost(weight: "10")
+    nlte: Int @cost(weight: "10")
 }
 
-input BasicUserAccountInfoFilterInput {
-  and: [BasicUserAccountInfoFilterInput!]
-  or: [BasicUserAccountInfoFilterInput!]
-  userId: StringOperationFilterInput
-  username: StringOperationFilterInput
-  email: StringOperationFilterInput
+input ListFilterInputTypeOfCodeJamRegistrationFilterInput {
+    all: CodeJamRegistrationFilterInput @cost(weight: "10")
+    none: CodeJamRegistrationFilterInput @cost(weight: "10")
+    some: CodeJamRegistrationFilterInput @cost(weight: "10")
+    any: Boolean @cost(weight: "10")
 }
 
-type ResultOf {
-  message: String
-  success: Boolean!
+input RemoveRoleFromUserRequestInput {
+    userId: String!
+    roleName: String!
+    reason: String
 }
 
-type UserExperience {
-  id: Int!
-  "Foreign key to user"
-  userId: String!
-  "Foreign key to ExperienceLevel"
-  experiencePoolId: Int!
-  "Amount of experience"
-  level: ExperienceLevel!
+input RemoveUserExperienceRequestInput {
+    experiencePoolId: Int!
+    userId: String!
 }
 
-input CodeJamRegistrationRequestInput {
-  topicId: Int!
-  preferTeam: Boolean!
+input StringOperationFilterInput {
+    and: [StringOperationFilterInput!]
+    or: [StringOperationFilterInput!]
+    eq: String @cost(weight: "10")
+    neq: String @cost(weight: "10")
+    contains: String @cost(weight: "20")
+    ncontains: String @cost(weight: "20")
+    in: [String] @cost(weight: "10")
+    nin: [String] @cost(weight: "10")
+    startsWith: String @cost(weight: "20")
+    nstartsWith: String @cost(weight: "20")
+    endsWith: String @cost(weight: "20")
+    nendsWith: String @cost(weight: "20")
 }
+
+input UpdateCodeJamTopicRequestInput {
+    topicId: Int!
+    isActive: Boolean!
+    title: String!
+    description: String!
+    backgroundImageUrl: String!
+    jamStartDate: DateTime!
+    jamEndDate: DateTime!
+    jamRegistrationStart: DateTime!
+}
+
+"Defines when a policy shall be executed."
+enum ApplyPolicy {
+    "Before the resolver was executed."
+    BEFORE_RESOLVER
+    "After the resolver was executed."
+    AFTER_RESOLVER
+    "The policy is applied in the validation step before the execution."
+    VALIDATION
+}
+
+"Follows the Sigma levels"
+enum ExperienceLevel {
+    WHITE
+    YELLOW
+    GREEN
+    BLUE
+    RED
+    BLACK
+}
+
+enum GoalType {
+    ACADEMIC
+    WORK
+    PROJECT
+    SHORT_TERM
+    LONG_TERM
+}
+
+enum SortEnumType {
+    ASC
+    DESC
+}
+
+"The authorize directive."
+directive @authorize(
+    "The name of the authorization policy that determines access to the annotated resource."
+    policy: String
+    "Roles that are allowed to access the annotated resource."
+    roles: [String!]
+    "Defines when when the authorize directive shall be applied.By default the authorize directives are applied during the validation phase."
+    apply: ApplyPolicy! = BEFORE_RESOLVER
+) repeatable on OBJECT | FIELD_DEFINITION
 
 "The purpose of the `cost` directive is to define a `weight` for GraphQL types, fields, and arguments. Static analysis can use these weights when calculating the overall cost of a query or response."
-directive @cost("The `weight` argument defines what value to add to the overall cost for every appearance, or possible appearance, of a type, field, argument, etc." weight: String!) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | ENUM | INPUT_FIELD_DEFINITION
+directive @cost(
+    "The `weight` argument defines what value to add to the overall cost for every appearance, or possible appearance, of a type, field, argument, etc."
+    weight: String!
+) on SCALAR | OBJECT | FIELD_DEFINITION | ARGUMENT_DEFINITION | ENUM | INPUT_FIELD_DEFINITION
 
 "The purpose of the `@listSize` directive is to either inform the static analysis about the size of returned lists (if that information is statically available), or to point the analysis to where to find that information."
-directive @listSize("The `assumedSize` argument can be used to statically define the maximum length of a list returned by a field." assumedSize: Int "The `slicingArguments` argument can be used to define which of the field's arguments with numeric type are slicing arguments, so that their value determines the size of the list returned by that field. It may specify a list of multiple slicing arguments." slicingArguments: [String!] "The `slicingArgumentDefaultValue` argument can be used to define a default value for a slicing argument, which is used if the argument is not present in a query." slicingArgumentDefaultValue: Int "The `sizedFields` argument can be used to define that the value of the `assumedSize` argument or of a slicing argument does not affect the size of a list returned by a field itself, but that of a list returned by one of its sub-fields." sizedFields: [String!] "The `requireOneSlicingArgument` argument can be used to inform the static analysis that it should expect that exactly one of the defined slicing arguments is present in a query. If that is not the case (i.e., if none or multiple slicing arguments are present), the static analysis may throw an error." requireOneSlicingArgument: Boolean! = true) on FIELD_DEFINITION
+directive @listSize(
+    "The `assumedSize` argument can be used to statically define the maximum length of a list returned by a field."
+    assumedSize: Int
+    "The `slicingArguments` argument can be used to define which of the field's arguments with numeric type are slicing arguments, so that their value determines the size of the list returned by that field. It may specify a list of multiple slicing arguments."
+    slicingArguments: [String!]
+    "The `slicingArgumentDefaultValue` argument can be used to define a default value for a slicing argument, which is used if the argument is not present in a query."
+    slicingArgumentDefaultValue: Int
+    "The `sizedFields` argument can be used to define that the value of the `assumedSize` argument or of a slicing argument does not affect the size of a list returned by a field itself, but that of a list returned by one of its sub-fields."
+    sizedFields: [String!]
+    "The `requireOneSlicingArgument` argument can be used to inform the static analysis that it should expect that exactly one of the defined slicing arguments is present in a query. If that is not the case (i.e., if none or multiple slicing arguments are present), the static analysis may throw an error."
+    requireOneSlicingArgument: Boolean! = true
+) on FIELD_DEFINITION
+
+"The `@specifiedBy` directive is used within the type system definition language to provide a URL for specifying the behavior of custom scalar definitions."
+directive @specifiedBy(
+    "The specifiedBy URL points to a human-readable specification. This field will only read a result for scalar types."
+    url: String!
+) on SCALAR
+
+"The `DateTime` scalar represents an ISO-8601 compliant date time type."
+scalar DateTime @specifiedBy(url: "https://www.graphql-scalars.com/date-time")

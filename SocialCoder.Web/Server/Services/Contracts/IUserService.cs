@@ -21,7 +21,7 @@ public interface IUserService
     /// <param name="callingUserId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<ResultOf> BanUser(BanUserRequest request, string callingUserId, CancellationToken cancellationToken = default);
+    Task<ResultOf<ApplicationUser?>> BanUser(BanUserRequest request, string callingUserId, CancellationToken cancellationToken = default);
 
 
     /// <summary>
@@ -31,7 +31,7 @@ public interface IUserService
     /// <param name="callingUserId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<ResultOf> AddRoleToUser(AddRoleToUserRequest request, string callingUserId, CancellationToken cancellationToken = default);
+    Task<ResultOf<ApplicationUser?>> AddRoleToUser(AddRoleToUserRequest request, string callingUserId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Remove role from user
@@ -40,5 +40,5 @@ public interface IUserService
     /// <param name="callingUserId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<ResultOf> RemoveRoleFromUser(RemoveRoleFromUserRequest request, string callingUserId, CancellationToken cancellationToken = default);
+    Task<ResultOf<ApplicationUser?>> RemoveRoleFromUser(RemoveRoleFromUserRequest request, string callingUserId, CancellationToken cancellationToken = default);
 }

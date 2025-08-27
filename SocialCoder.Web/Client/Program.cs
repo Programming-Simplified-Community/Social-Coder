@@ -27,7 +27,8 @@ builder.Services.AddScoped<ICodeJamService, CodeJamService>();
 builder.Services.AddMudServices();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddSocialCoderGraphQLClient()
-    .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress + "graphql"));
+    .ConfigureHttpClient(c => c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress + "graphql"))
+    .ConfigureWebSocketClient(c=>c.Uri = new Uri(builder.HostEnvironment.BaseAddress + "graphql"));
 
 var host = builder.Build();
 

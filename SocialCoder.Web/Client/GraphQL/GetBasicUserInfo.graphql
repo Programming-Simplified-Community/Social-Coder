@@ -1,9 +1,23 @@
-﻿query GetBasicUserAccounts($cursor: String, $pageSize: Int) {
+﻿query GetBasicUserAccounts(
+    $first: Int
+    $after: String
+    $last: Int
+    $before: String
+    $orderBy: [BasicUserAccountInfoSortInput!]
+    $where: BasicUserAccountInfoFilterInput
+) {
     roles {
         roleId,
         name
     },
-    users(after: $cursor, first: $pageSize) {
+    users(
+        first: $first
+        last: $last
+        after: $after
+        before: $before
+        where: $where
+        order: $orderBy
+    ) {
         edges {
             cursor,
             node {

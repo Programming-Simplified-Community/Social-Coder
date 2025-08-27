@@ -1,0 +1,8 @@
+﻿subscription UserUpdated {
+    userUpdated {
+        userId,
+        username,
+        email,
+        userRoles
+    }
+}

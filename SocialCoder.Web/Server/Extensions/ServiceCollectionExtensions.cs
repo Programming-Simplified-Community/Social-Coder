@@ -175,6 +175,8 @@ public static class ServiceCollectionExtensions
             .AddTypeExtension<CodeJamTopicQueryExtensions>()
             .AddTypeExtension<UserManagementExtensions>()
             .AddMutationType<GraphQlMutations>()
+            .AddSubscriptionType<UserSubscriptions>()
+            .AddInMemorySubscriptions()
             .AddProjections()
             .AddFiltering()
             .AddSorting();

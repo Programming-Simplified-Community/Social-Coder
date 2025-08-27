@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SocialCoder.Web.Server.Data;
+using SocialCoder.Web.Server.Migrations;
 using SocialCoder.Web.Server.Models;
 using SocialCoder.Web.Server.Services.Contracts;
 using SocialCoder.Web.Shared;
@@ -34,11 +35,11 @@ public class UserService : IUserService
     /// <param name="callingUserId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<ResultOf> BanUser(BanUserRequest request, string callingUserId, CancellationToken cancellationToken = default)
+    public async Task<ResultOf<ApplicationUser?>> BanUser(BanUserRequest request, string callingUserId, CancellationToken cancellationToken = default)
     {
         if (request.Reason.Length < 10)
         {
-            return ResultOf.Fail("Need some type of reason that's at least 10 characters in length");
+            return ResultOf<ApplicationUser?>.Fail("Need some type of reason that's at least 10 characters in length");
         }
 
         var banner = await this._userManager.FindByIdAsync(callingUserId);
@@ -47,7 +48,7 @@ public class UserService : IUserService
 
         if (banner is null || user is null)
         {
-            return ResultOf.Fail("Invalid Request");
+            return ResultOf<ApplicationUser?>.Fail("Invalid Request");
         }
 
         var userRoles = await this._userManager.GetRolesAsync(user);
@@ -55,7 +56,7 @@ public class UserService : IUserService
         // Cannot ban an admin or owner of server
         if (userRoles.Any(x => x is Roles.Administrator or Roles.Owner))
         {
-            return ResultOf.Fail("Cannot ban an admin or owner");
+            return ResultOf<ApplicationUser?>.Fail("Cannot ban an admin or owner");
         }
 
         // Find this user
@@ -86,7 +87,7 @@ public class UserService : IUserService
                 user.UserName,
                 banner.UserName,
                 request.Reason);
-            return ResultOf.Pass();
+            return ResultOf<ApplicationUser?>.Pass(user);
         }
         catch (Exception ex)
         {
@@ -95,7 +96,7 @@ public class UserService : IUserService
                 banner.UserName,
                 request.Reason,
                 ex);
-            return ResultOf.Fail("Server error");
+            return ResultOf<ApplicationUser?>.Fail("Server error");
         }
     }
 
@@ -106,7 +107,7 @@ public class UserService : IUserService
     /// <param name="callingUserId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<ResultOf> AddRoleToUser(AddRoleToUserRequest request, string callingUserId,
+    public async Task<ResultOf<ApplicationUser?>> AddRoleToUser(AddRoleToUserRequest request, string callingUserId,
         CancellationToken cancellationToken = default)
     {
         var callingUser = await this._userManager.FindByIdAsync(callingUserId);
@@ -114,7 +115,7 @@ public class UserService : IUserService
 
         if (user is null || callingUser is null)
         {
-            return ResultOf.Fail("Invalid Request");
+            return ResultOf<ApplicationUser?>.Fail("Invalid Request");
         }
 
         var callingRoles = await this._userManager.GetRolesAsync(callingUser);
@@ -124,7 +125,7 @@ public class UserService : IUserService
 
         if (userRoles.Any(x => x == Roles.Administrator) && !isOwner)
         {
-            return ResultOf.Fail("Unable to add role");
+            return ResultOf<ApplicationUser?>.Fail("Unable to add role");
         }
 
         var result = await this._userManager.AddToRoleAsync(user, request.RoleName);
@@ -135,7 +136,7 @@ public class UserService : IUserService
                 user.UserName,
                 callingUser.UserName,
                 request.RoleName);
-            return ResultOf.Pass();
+            return ResultOf<ApplicationUser?>.Pass(user);
         }
 
         this._logger.LogError("Was unable to grant {Role} to {User} by {Admin}. {Error}",
@@ -143,7 +144,7 @@ public class UserService : IUserService
             user.UserName,
             callingUser.UserName,
             string.Join("\n", result.Errors.Select(x => x.Description)));
-        return ResultOf.Fail("Error trying to add role");
+        return ResultOf<ApplicationUser?>.Fail("Error trying to add role");
     }
 
     /// <summary>
@@ -153,7 +154,7 @@ public class UserService : IUserService
     /// <param name="callingUserId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<ResultOf> RemoveRoleFromUser(RemoveRoleFromUserRequest request, string callingUserId,
+    public async Task<ResultOf<ApplicationUser?>> RemoveRoleFromUser(RemoveRoleFromUserRequest request, string callingUserId,
         CancellationToken cancellationToken = default)
     {
         var callingUser = await this._userManager.FindByIdAsync(callingUserId);
@@ -161,7 +162,7 @@ public class UserService : IUserService
 
         if (callingUser is null || user is null)
         {
-            return ResultOf.Fail("Invalid Request");
+            return ResultOf<ApplicationUser?>.Fail("Invalid Request");
         }
 
         var callingRoles = await this._userManager.GetRolesAsync(callingUser);
@@ -171,7 +172,7 @@ public class UserService : IUserService
         // To remove the admin/owner role, you must be an owner of the server
         if (userRoles.Any(x => x is Roles.Administrator or Roles.Owner) && !isOwner)
         {
-            return ResultOf.Fail("Unable to remove roles from another admin");
+            return ResultOf<ApplicationUser?>.Fail("Unable to remove roles from another admin");
         }
 
         var result = await this._userManager.RemoveFromRoleAsync(user, request.RoleName);
@@ -183,7 +184,7 @@ public class UserService : IUserService
                 user.UserName,
                 callingUser.UserName,
                 request.Reason);
-            return ResultOf.Pass();
+            return ResultOf<ApplicationUser?>.Pass(user);
         }
 
         this._logger.LogInformation("Unable to remove {RoleName} from {User} by {Admin}: {Reason}\n{Error}",
@@ -192,7 +193,7 @@ public class UserService : IUserService
             callingUser.UserName,
             request.Reason,
             string.Join("\n\n", result.Errors.Select(x => x.Description)));
-        return ResultOf.Fail("Error trying to remove role");
+        return ResultOf<ApplicationUser?>.Fail("Error trying to remove role");
     }
     #endregion
 
@@ -229,8 +230,7 @@ public class UserService : IUserService
 
         var userPrincipal = authResult.Principal!;
         var claims = userPrincipal.Claims.ToList();
-        var userIdClaim = claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier ||
-                                                     x.Type == JwtClaimTypes.Subject);
+        var userIdClaim = claims.FirstOrDefault(x => x.Type is ClaimTypes.NameIdentifier or JwtClaimTypes.Subject);
         var authProvider = authResult.Ticket!.Properties.Items[".AuthScheme"];
 
         if (userIdClaim is null)
@@ -261,6 +261,15 @@ public class UserService : IUserService
         // Early exit if user was found
         if (user is not null)
         {
+            var platformBan = await this._context.PlatformBans.FirstOrDefaultAsync(x => x.UserId == user.Id);
+
+            if (platformBan is not null)
+            {
+                this._logger.LogInformation("User \"{Username}\" with User ID \"{UserId}\" who is banned for \"{Reason}\" attempted to login",
+                    user.UserName, user.Id, platformBan.Reason);
+                return ResultOf<ApplicationUser>.Fail(platformBan.Reason);
+            }
+
             var existingProviders = await this._userManager.GetLoginsAsync(user);
 
             if (existingProviders.Any(x => x.LoginProvider == authProvider))
@@ -328,8 +337,8 @@ public class UserService : IUserService
            Our application requires at least 1 administrator. Considering the owner of this platform
            is going to be the FIRST to login - we'll make them administrator. 
            
-           This does however mean that down the road we SHOULD NOT remove an admin role from a user if no other 
-           user has the admin role. Otherwise a random user who signs up could potentially receive this
+           This does, however, mean that down the road we SHOULD NOT remove an admin role from a user if no other 
+           user has the admin role. Otherwise, a random user who signs up could potentially receive this
            elevated role...
         */
 

@@ -21,11 +21,13 @@
                                 <MudIconButton Icon="@Icons.Material.Filled.Save" Color="Color.Info" OnClick="SaveProfileInfo"/>
                             </MudItem>
                         </MudGrid>
-                        <MudTextField T="string" Label="Display Name" @bind-Value="ProfileInfo.DisplayName"/>
-                        <MudTextField T="string" Label="Username" @bind-Value="ProfileInfo.Username" ReadOnly/>
-                        <MudTextField T="string" Label="Email" @bind-Value="ProfileInfo.Email" ReadOnly/>
-                        <MudTextField T="string" Label="Country" @bind-Value="ProfileInfo.Country"/>
-                        <MudTextField T="string" Label="Language" @bind-Value="ProfileInfo.Language"/>
+                        <MudStack Spacing="3">
+                            <MudTextField T="string" Label="Display Name" @bind-Value="ProfileInfo.DisplayName"/>
+                            <MudTextField T="string" Label="Username" @bind-Value="ProfileInfo.Username" ReadOnly/>
+                            <MudTextField T="string" Label="Email" @bind-Value="ProfileInfo.Email" ReadOnly/>
+                            <MudTextField T="string" Label="Country" @bind-Value="ProfileInfo.Country"/>
+                            <MudTextField T="string" Label="Language" @bind-Value="ProfileInfo.Language"/>    
+                        </MudStack>
                     </MudPaper>
                 </MudItem>
                 <MudItem md="12">
@@ -74,25 +76,34 @@
                         <MudCardContent>
                             <MudText><strong>Current Experience</strong></MudText>
                             
-                            <MudGrid Class="mt-3 mb-3">
-                                @foreach (var current in UserExperiences)
+                            <MudGrid Spacing="3" Class="mt-3">
+                                @foreach (var current in UserExperiences.OrderByDescending(x=>x.Experience))
                                 {
-                                    var iconStyle = $"margin-right: 6px; color: {Theme.GetSigmaColor(current.Experience)}; background-color:{Theme.PaletteDark.PrimaryLighten}; border-radius: 50%; width: 32px;";
+                                    var backgroundColor = $"background-color: {Theme.PaletteDark.Primary}; width: 100%";
+                                    var iconColor = $"color: {Theme.GetSigmaColor(current.Experience)}";
+                                    
                                     <MudItem md="4" Style="display: flex;">
-                                        <MudIcon Icon="@Icons.Material.Filled.School" Style="@iconStyle"/>
-                                        <p style="display: inline;">
-                                            @current.Name <br/>
-                                            @current.Experience.GetSigmaYears()    
-                                        </p>
+                                        <MudCard Style="@backgroundColor">
+                                            <MudCardHeader>
+                                                @current.Name
+                                                <MudSpacer/>
+                                                <MudIcon Icon="@Icons.Material.TwoTone.School" Style="@iconColor"/>
+                                            </MudCardHeader>
+                                            <MudCardContent>
+                                                <MudStack>
+                                                    <MudText>@current.Experience.GetSigmaYears()</MudText>
+                                                </MudStack>
+                                            </MudCardContent>
+                                        </MudCard>
                                     </MudItem>
                                 }
                             </MudGrid>
                             
                             @{
-                                var style = $"background-color: {Theme.PaletteDark.DarkDarken}";
+                                var style = $"background-color: {Theme.PaletteDark.DarkDarken}; padding: 8px;";
                             }
-                            <MudPaper Outlined Style="@style" Class="px-2">
-                                <MudGrid>
+                            <MudPaper Outlined Style="@style" Class="mt-3">
+                                <MudGrid Spacing="3">
                                     <MudItem md="5">
                                         <MudSelect T="ExperiencePool" Label="Experience" @bind-Value="_selectedExperiencePoolItem">
                                             @foreach (var item in ExperiencePool)
@@ -105,6 +116,7 @@
                                     </MudItem>
                                     <MudItem md="5">
                                         <MudSelect T="ExperienceLevel"
+                                                   Style="padding-top: 16px"
                                                    AdornmentIcon="@Icons.Material.Filled.School"
                                                    @bind-Value="_selectedExperienceLevel">
                                             @foreach (var item in Enum.GetValues<ExperienceLevel>())

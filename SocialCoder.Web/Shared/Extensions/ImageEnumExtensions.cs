@@ -10,9 +10,9 @@ public static class ImageEnumExtensions
 
     public static string? GetImagePath(this PageType imageType)
     {
-        if (PathTypeCache.ContainsKey(imageType))
+        if (PathTypeCache.TryGetValue(imageType, out var imagePath))
         {
-            return PathTypeCache[imageType];
+            return imagePath;
         }
 
         var type = imageType.GetType();

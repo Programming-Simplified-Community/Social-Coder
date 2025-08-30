@@ -13,6 +13,16 @@ namespace SocialCoder.Web.Server.GraphQL;
 
 public partial class GraphQlMutations
 {
+    /// <summary>
+    /// Adds a specified role to a user. For auditing purposes, the <paramref name="callingUser"/> is tracked.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="callingUser">User who performed the action</param>
+    /// <param name="sender">Sends event to clients that are subscribed</param>
+    /// <param name="service">Service which manages users</param>
+    /// <param name="userManager">Object which manages the Identity portion of user management</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>Pass/Fail</returns>
     [UseMutationConvention, Authorize(Roles = [Roles.Owner, Roles.Administrator])]
     public async Task<ResultOf> AddRoleToUser(
         AddRoleToUserRequest request, string callingUser,
@@ -40,6 +50,16 @@ public partial class GraphQlMutations
         return ResultOf.Pass();
     }
 
+    /// <summary>
+    /// Removes a specific role from a user. For auditing purposes, the <paramref name="callingUser"/> is tracked.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="callingUser">User performing action</param>
+    /// <param name="service">Service which manages users</param>
+    /// <param name="sender">Sends events to clients that are subscribed</param>
+    /// <param name="userManager">Service which manages the Identity portion of user management</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     [UseMutationConvention, Authorize(Roles = [Roles.Owner, Roles.Administrator])]
     public async Task<ResultOf> RemoveRoleFromUser(RemoveRoleFromUserRequest request, string callingUser,
         [Service] IUserService service, [Service] ITopicEventSender sender, UserManager<ApplicationUser> userManager, CancellationToken cancellationToken)
@@ -65,7 +85,6 @@ public partial class GraphQlMutations
 
     [UseMutationConvention, Authorize(Roles = [Roles.Owner, Roles.Administrator])]
     public async Task<ResultOf> BanUser(BanUserRequest request, string callingUser, [Service] IUserService service, [Service] ITopicEventSender sender,
-        [Service] UserManager<ApplicationUser> userManager,
         CancellationToken cancellationToken)
     {
         var result = await service.BanUser(request, callingUser, cancellationToken);
@@ -75,15 +94,8 @@ public partial class GraphQlMutations
             return ResultOf.Fail(result.Message ?? "Error banning user");
         }
 
-        var roles = await userManager.GetRolesAsync(result.Data);
-        var user = new UserAccountItem
-        {
-            UserId = result.Data.Id,
-            Username = result.Data.UserName!,
-            Email = result.Data.Email!,
-            Roles = roles.ToList()
-        };
-        await sender.SendAsync(nameof(UserSubscriptions.UserBanned), user, cancellationToken);
+        var banInfo = new UserBannedInfo(result.Data.Id, result.Success, request.Reason);
+        await sender.SendAsync(nameof(UserSubscriptions.UserBanned), banInfo, cancellationToken);
         return ResultOf.Pass();
     }
 

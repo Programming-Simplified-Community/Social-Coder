@@ -3,6 +3,6 @@
         userId,
         username,
         email,
-        userRoles
+        roles
     }
 }

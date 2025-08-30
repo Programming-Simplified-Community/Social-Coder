@@ -55,11 +55,15 @@
             </MudStack>
         </MudTd>
         <MudTd>
-            <MudButton StartIcon="@Icons.Material.Filled.TimeToLeave"
-                       IconColor="Color.Warning"
-                       OnClick="@(async () => await BanUser(user.Data))">
-                Ban
-            </MudButton>
+            @if (UserId != user.Data.UserId)
+            {
+                <MudButton StartIcon="@Icons.Material.Filled.TimeToLeave"
+                           IconColor="Color.Warning"
+                           OnClick="@(async () => await BanUser(user.Data))">
+                    Ban
+                </MudButton>    
+            }
+            
             <MudButton StartIcon="@Icons.Material.TwoTone.Delete"
                        IconColor="Color.Error"
                        OnClick="@(() => Snack.Add("Not implement yet", Severity.Info))">

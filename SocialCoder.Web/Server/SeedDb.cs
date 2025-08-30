@@ -19,7 +19,9 @@ public static class SeedDb
     {
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
-
+        
+        
+        
         var experiencePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "experiences.json");
         if (File.Exists(experiencePath))
         {

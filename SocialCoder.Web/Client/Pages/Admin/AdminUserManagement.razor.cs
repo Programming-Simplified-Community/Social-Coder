@@ -111,6 +111,38 @@ public partial class AdminUserManagement : QueryComponent, IDisposable
             Cursor = x.Cursor
         }).ToList();
 
+
+        this._onUserBannedSubscription = this.GraphQlClient.UserBanned.Watch().Subscribe(res =>
+        {
+            if (res.Data is not null)
+            {
+                var localUser = this._users.FirstOrDefault(x => x.Data.UserId == res.Data.UserBanned.UserId);
+
+                if (localUser is not null)
+                {
+                    localUser.Data.IsBanned = res.Data.UserBanned.IsBanned;
+                    localUser.Data.BanReason = res.Data.UserBanned.BanReason;
+                }
+            }
+        });
+
+        this._onUserDeletedSubscription = this.GraphQlClient.UserDeleted.Watch().Subscribe(res =>
+        {
+            if (res.Data is not null)
+            {
+                var localUser = this._users.FirstOrDefault(x => x.Data.UserId == res.Data.UserDeleted.UserId);
+
+                if (localUser is null)
+                {
+                    return;
+                }
+
+                this._users.RemoveAt(this._users.IndexOf(localUser));
+                this.StateHasChanged();
+            }
+        });
+
+        // As users get updated, we'll update the local list of users
         this._onUserUpdatedSubscription = this.GraphQlClient.UserUpdated.Watch().Subscribe(res =>
         {
             if (res.Data is not null)
@@ -120,11 +152,11 @@ public partial class AdminUserManagement : QueryComponent, IDisposable
 
                 if (localUser is not null)
                 {
-                    localUser.Data.Roles = updatedUser.UserRoles.ToList();
+                    localUser.Data.Roles = updatedUser.Roles.ToList();
                 }
-            }
 
-            this.StateHasChanged();
+                this.StateHasChanged();
+            }
         });
     }
 

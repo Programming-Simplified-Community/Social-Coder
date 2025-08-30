@@ -79,22 +79,23 @@
                             <MudGrid Spacing="3" Class="mt-3">
                                 @foreach (var current in UserExperiences.OrderByDescending(x=>x.Experience))
                                 {
-                                    var backgroundColor = $"background-color: {Theme.PaletteDark.Primary}; width: 100%";
-                                    var iconColor = $"color: {Theme.GetSigmaColor(current.Experience)}";
-                                    
+                                    var image = ExperiencePool.FirstOrDefault(x => x.Name == current.Name);
                                     <MudItem md="4" Style="display: flex;">
-                                        <MudCard Style="@backgroundColor">
-                                            <MudCardHeader>
-                                                @current.Name
-                                                <MudSpacer/>
-                                                <MudIcon Icon="@Icons.Material.TwoTone.School" Style="@iconColor"/>
-                                            </MudCardHeader>
-                                            <MudCardContent>
+                                        <HexagonProgress
+                                            ImageUrl="@(image?.ImageUrl ?? string.Empty)"
+                                            BadgeColor="@Color.Secondary"
+                                            BadgeLineColor="Color.Success"
+                                            UserLevel="@((int)current.Experience)"
+                                            ProgressMin="0"
+                                            ProgressMax="10"
+                                            Progress="@((int)current.Experience)"
+                                        >
+                                            <CenterContent>
                                                 <MudStack>
-                                                    <MudText>@current.Experience.GetSigmaYears()</MudText>
-                                                </MudStack>
-                                            </MudCardContent>
-                                        </MudCard>
+                                                    <MudIcon Icon="@Icons.Material.Filled.School"/>
+                                                </MudStack>    
+                                            </CenterContent>
+                                        </HexagonProgress>
                                     </MudItem>
                                 }
                             </MudGrid>

@@ -8,8 +8,8 @@ public class UserSubscriptions
     public UserAccountItem UserUpdated([EventMessage] UserAccountItem user) => user;
 
     [Subscribe, Topic(nameof(UserDeleted))]
-    public UserAccountItem UserDeleted([EventMessage] UserAccountItem user) => user;
+    public USerDeletedInfo UserDeleted([EventMessage] USerDeletedInfo user) => user;
 
     [Subscribe, Topic(nameof(UserBanned))]
-    public UserAccountItem UserBanned([EventMessage] UserAccountItem user) => user;
+    public UserBannedInfo UserBanned([EventMessage] UserBannedInfo user) => user;
 }

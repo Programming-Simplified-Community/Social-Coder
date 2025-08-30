@@ -1,0 +1,7 @@
+﻿subscription UserBanned {
+    userBanned {
+        userId,
+        banReason,
+        isBanned
+    }
+}

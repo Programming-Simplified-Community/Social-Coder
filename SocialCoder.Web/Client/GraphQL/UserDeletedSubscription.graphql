@@ -1,0 +1,6 @@
+﻿subscription UserDeleted {
+    userDeleted {
+        userId,
+        username
+    }
+}

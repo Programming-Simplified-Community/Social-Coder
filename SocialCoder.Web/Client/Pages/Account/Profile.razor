@@ -1,4 +1,5 @@
 ﻿@page "/Account/Profile"
+@using MudBlazor.Utilities
 @using ExperienceLevel = SocialCoder.Web.Shared.Enums.ExperienceLevel
 @layout AccountLayout
 
@@ -82,19 +83,14 @@
                                     var image = ExperiencePool.FirstOrDefault(x => x.Name == current.Name);
                                     <MudItem md="4" Style="display: flex;">
                                         <HexagonProgress
-                                            ImageUrl="@(image?.ImageUrl ?? string.Empty)"
-                                            BadgeColor="@Color.Secondary"
-                                            BadgeLineColor="Color.Success"
-                                            UserLevel="@((int)current.Experience)"
-                                            ProgressMin="0"
-                                            ProgressMax="10"
-                                            Progress="@((int)current.Experience)"
-                                        >
-                                            <CenterContent>
-                                                <MudStack>
-                                                    <MudIcon Icon="@Icons.Material.Filled.School"/>
-                                                </MudStack>    
-                                            </CenterContent>
+                                            Progress="@((int)current.Experience * 10)"
+                                            ProgressColor="@Colors.Pink.Accent2"
+                                            BackgroundColor="@Colors.Gray.Darken4"
+                                            Size="100"
+                                            StrokeWidth="10">
+                                            <MudTooltip Text="@current.Name">
+                                                <DevIcon IconType="@((ExperienceItem)current.ExperiencePoolId)"/>
+                                            </MudTooltip>
                                         </HexagonProgress>
                                     </MudItem>
                                 }
@@ -110,7 +106,18 @@
                                             @foreach (var item in ExperiencePool)
                                             {
                                                 <MudSelectItem Value="item">
-                                                    <img alt="@item.Name" src="@item.ImageUrl" height="14" class="mr-1"/>@item.Name
+                                                    <MudStack Row>
+                                                        @if (item.Id.IsExperienceItem(out var experienceItem))
+                                                        {
+                                                            <DevIcon IconType="experienceItem"/>
+                                                        }
+                                                        else
+                                                        {
+                                                            <img alt="@item.Name" src="@item.ImageUrl" height="14" class="mr-1"/>
+                                                            @item.Name
+                                                        }
+                                                        <MudText Style="padding-top: 7px">@item.Name</MudText>    
+                                                    </MudStack>
                                                 </MudSelectItem>
                                             }
                                         </MudSelect>
@@ -128,7 +135,7 @@
                                     </MudItem>
                                     <MudItem md="1">
                                         <MudIconButton Icon="@Icons.Material.Filled.Add"
-                                                       OnClick="AddExperiencePool"
+                                                       OnClick="@AddExperiencePool"
                                                        Color="Color.Info" 
                                                        Style="position: relative; top: 6px; left: 8px;"/>
                                     </MudItem>

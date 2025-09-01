@@ -42,5 +42,5 @@ public static class ExperienceLevelExtensions
         };
 
     public static string Display(this Level level)
-        => $"{level.ToString()} Belt ({level.GetSigmaYears()})";
+        => $"{level} Belt ({level.GetSigmaYears()})";
 }

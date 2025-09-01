@@ -1,158 +1,143 @@
-﻿@inject IJSRuntime JsRuntime
+﻿@using System.Globalization
 
-<div style="display: flex; justify-content: center;">
-    <div style="display: inline">
-        <div style="position: relative; max-width: @(Width)px">
-            <div class="user-avatar-border">
-                <div class="hexagon-progress" style="width: @(Width)px; height: @(Height)px; position:  relative;"></div>
-            </div>
-
-            <div class="user-avatar-content"
-                 style="position: absolute; 
-                 top: @(Width * 0.16)px; 
-                 left: @(Height * 0.17)px;">
-                <div class="hexagon-image"
-                     style="width: @(Width * 0.683)px; 
-                    height:  @(Height * 0.683); 
-                    position:  relative;">
-                    @CenterContent
-                </div>
-            </div>
-
-            <div class="user-avatar-badge" style="display: flex;
-        flex-wrap:  wrap;
-        align-items: center;
-        justify-content: center; 
-        position: absolute;
-        bottom: 25px;
-        right: -3px;">
-
-                <div class="user-avatar-badge-border" style="
-            display:  inline-block;
-            position: absolute;
-            z-index: 1">
-                    <div class="hexagon-avatar-badge"
-                         style="width: 32px; height: 36px; position: absolute;"></div>
-                </div>
-
-                <div class="user-avatar-badge-content"
-                     style="
-                 display: inline-block;
-                 z-index: 5; 
-                 position: absolute;">
-                    <div class="hexagon-dark" style="width: 26px; 
-                                             height:  28px; 
-                                             position:  relative;"></div>
-                </div>
-                <p class="user-avatar-badge-text" style="
-                position: absolute; 
-                pointer-events: none; 
-                z-index: 6; 
-                display:  inline-block;
-                font-weight: 700;">
-                    @UserLevel
-                </p>
-            </div>
-        </div>
+<div class="hex-progress-bar-container" style="width: @(Size + "px"); height: @(Size + "px");">
+    <svg viewBox="0 0 @Size @Size" class="hex-progress-bar-svg">
+        @*Background Hexagon (optional for visual clarity when not filled)*@
+        <polygon points="@HexagonPoints"
+                 fill="none"
+                 stroke="@BackgroundColor"
+                 stroke-width="@StrokeWidth"
+                 stroke-linejoin="round"
+                 stroke-linecap="round"/>
+        
+        @*Progress Hexagon*@
+        <polygon points="@HexagonPoints"
+                 fill="none"
+                 stroke="@ProgressColor"
+                 stroke-width="@StrokeWidth"
+                 stroke-linecap="round"
+                 stroke-linejoin="round"
+                 stroke-dasharray="@StrokeDashArray"
+                 stroke-dashoffset="@StrokeDashOffset"
+                 transform="rotate(-90 @HexCenterX @HexCenterY)"/> @*Rotate to start at the top*@
+    </svg>
+    
+    <div class="hex-content-center">
+        @ChildContent
     </div>
 </div>
-@code {
 
-    [Parameter] 
-    public string ImageUrl { get; set; } = string.Empty;
 
-    [Parameter]
-    public int UserLevel { get; set; }
-
-    [Parameter]
-    public int Progress { get; set; }
-
-    [Parameter]
-    public int ProgressMin { get; set; } = 0;
-
-    [Parameter]
-    public int ProgressMax { get; set; } = 100;
-
-    [Parameter]
-    public int Width { get; set; } = 100;
-
-    [Parameter]
-    public int Height { get; set; } = 100;
-
-    [Parameter]
-    public int LineWidth { get; set; } = 8;
-
-    [Parameter]
-    public Color ProgressColor { get; set; } = Color.Primary;
-
-    [Parameter]
-    public RenderFragment? CenterContent { get; set; }
-
-    [Parameter]
-    public Color BadgeLineColor { get; set; } = Color.Secondary;
-
-    [Parameter]
-    public Color BadgeColor { get; set; } = Color.Tertiary;
-
-    readonly MudTheme _theme = new();
+<style>
+    .hex-progress-bar-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
     
-    protected override async Task OnInitializedAsync()
+    .hex-content-center {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        width: 100%;
+        height: 100%;
+    }
+    
+    .hex-progress-bar-svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        transition: stroke-dashoffset 0.5s ease-in-out; /*Smooth transition for progress changes*/
+    }
+</style>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    
+    /// <summary>
+    /// Value between 0 and 100
+    /// </summary>
+    [Parameter] public double Progress { get; set; }
+    
+    /// <summary>
+    /// Size of SVG viewbox
+    /// </summary>
+    [Parameter] public double Size { get; set; } = 100;
+
+    /// <summary>
+    /// Color to use for ProgressBar
+    /// </summary>
+    [Parameter] public string ProgressColor { get; set; } = "#E91E63";
+
+    /// <summary>
+    /// Background Color 
+    /// </summary>
+    [Parameter] public string BackgroundColor { get; set; } = "#343434";
+
+    /// <summary>
+    /// Thickness of Progress Bar
+    /// </summary>
+    [Parameter] public double StrokeWidth { get; set; } = 8;
+    
+
+    /// <summary>
+    /// Radius of the Hexagon. Adjusted for stroke width and padding
+    /// </summary>
+    private double HexRadius => (Size / 2) - (StrokeWidth / 2 + 2);
+    
+    private const double HexCenterX = 50;
+    private const double HexCenterY = 50;
+
+    private string HexagonPoints { get; set; } = "";
+    private double HexagonPerimeter { get; set; }
+
+    private string StrokeDashArray => HexagonPerimeter.ToString(CultureInfo.InvariantCulture);
+    private string StrokeDashOffset => (HexagonPerimeter - (HexagonPerimeter * Progress / 100)).ToString(CultureInfo.InvariantCulture);
+
+    protected override void OnInitialized()
     {
-        await base.OnInitializedAsync();
+        base.OnInitialized();
+        CalculateHexagonPoints();
+        CalculateHexagonPerimeter();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnParametersSet()
     {
-        /*
-            It is worth mentioning that 
-            
-            1. To have the line color appear -- you cannot use the gradient value
-            2. To see the progress bar you cannot use the fill or clip value -- those are for images
-            3. These methods are called AFTER render because we want to make sure our 
-               DOM elements are present before executing these scripts
-         */
-        
-        await JsRuntime.InvokeVoidAsync("createHexagon", new
-        {
-            width = Width,
-            height = Height,
-            container = ".hexagon-progress",
-            roundedCorners = true,
-            lineWidth = LineWidth,
-            lineColor = ColorUtil.GetCssValue(_theme, ProgressColor),
-            scale = new { start = 0, end = 1, stop = MathUtil.GetNormalizedPercentage(Progress, ProgressMin, ProgressMax) }
-        });
-
-        await JsRuntime.InvokeVoidAsync("createHexagon", new
-        {
-            width = 68,
-            Height = 68,
-            container = ".hexagon-image",
-            roundedCorners = true,
-            clip = true
-        });
-        
-        await JsRuntime.InvokeVoidAsync("createHexagon", new
-        {
-            container = ".hexagon-dark",
-            width = 26,
-            height = 28,
-            roundedCorners = true,
-            roundedCornerRadius = 1,
-            lineColor = ColorUtil.GetCssValue(_theme, BadgeLineColor),
-            fill = true
-        });
-
-        await JsRuntime.InvokeVoidAsync("createHexagon", new
-        {
-            container = ".hexagon-avatar-badge",
-            width = 32,
-            height = 36,
-            fill = true,
-            roundedCorners = true,
-            roundedCornerRadius = 1,
-            lineColor = ColorUtil.GetCssValue(_theme, BadgeColor)
-        });
+        base.OnParametersSet();
+        CalculateHexagonPoints();
+        CalculateHexagonPerimeter();
     }
 
+    private void CalculateHexagonPoints()
+    {
+        var effectiveRadius = Math.Max(1, HexRadius);
+        
+        var points = new List<string>();
+
+        for (var i = 0; i < 6; i++)
+        {
+            var angleDeg = 60 * i;
+            var angleRad = Math.PI / 180 * angleDeg;
+            var x = HexCenterX + effectiveRadius * Math.Cos(angleRad);
+            var y = HexCenterY + effectiveRadius * Math.Sin(angleRad);
+            points.Add($"{x.ToString(CultureInfo.InvariantCulture)},{y.ToString(CultureInfo.InvariantCulture)}");
+        }
+
+        HexagonPoints = string.Join(" ", points);
+        HexagonPerimeter = 6 * effectiveRadius;
+    }
+
+    private void CalculateHexagonPerimeter()
+    {
+        // For a regular hexagon, perimeter is 6 * side length
+        // Side length for a hexagon inscribed in a circle with radius R is also R
+        HexagonPerimeter = 6 * HexRadius;
+    }
 }

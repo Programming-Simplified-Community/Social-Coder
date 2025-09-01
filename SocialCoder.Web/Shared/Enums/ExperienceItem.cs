@@ -4,6 +4,7 @@ namespace SocialCoder.Web.Shared.Enums;
 
 public enum ExperienceItem
 {
+    None = 0,
     AArch64,
     AdonisJs,
     Aerospike,

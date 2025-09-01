@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Newtonsoft.Json;
 using SocialCoder.Web.Server.Data;
 using SocialCoder.Web.Shared;
+using SocialCoder.Web.Shared.Enums;
+using SocialCoder.Web.Shared.Extensions;
 using SocialCoder.Web.Shared.Models;
-using Path = System.IO.Path;
 
 namespace SocialCoder.Web.Server;
 
 public static class SeedDb
 {
-    private record ExperienceItem(string Name, string ImageUrl);
 
     /// <summary>
     /// Inject test data into our database!
@@ -19,30 +18,37 @@ public static class SeedDb
     {
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
-        
-        
-        
-        var experiencePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "experiences.json");
-        if (File.Exists(experiencePath))
+
+        if (!context.ExperiencePools.Any())
         {
-            var experiences = JsonConvert.DeserializeObject<ExperienceItem[]>(await File.ReadAllTextAsync(experiencePath));
-            var currentExperiences = context.ExperiencePools.Select(x => x.Name).Distinct().ToHashSet();
+            var items = Enum.GetValues<ExperienceItem>();
+            var succeeded = true;
 
-            foreach (var item in experiences ?? [])
+            foreach (var item in items)
             {
-                if (currentExperiences.Contains(item.Name))
+                var asInt = (int)item;
+                Console.WriteLine($"Trying to add {item} with id {asInt} for {item.GetDisplayName()}");
+                try
                 {
-                    continue;
+                    context.ExperiencePools.Add(new()
+                    {
+                        Name = item.GetDisplayName(),
+                        Id = (int)item,
+                        ImageUrl = item.GetIcon()
+                    });
+                    await context.SaveChangesAsync();
                 }
-
-                context.ExperiencePools.Add(new()
+                catch (Exception ex)
                 {
-                    Name = item.Name,
-                    ImageUrl = item.ImageUrl
-                });
+                    succeeded = false;
+                    await Console.Error.WriteLineAsync($"An error occurred while adding {item}: {ex.Message}");
+                }
             }
 
-            await context.SaveChangesAsync();
+            if (succeeded)
+            {
+                throw new Exception("Error occurred when seeing database");
+            }
         }
 
         // CREATE ROLES that our application requires to operate (at least base ones)

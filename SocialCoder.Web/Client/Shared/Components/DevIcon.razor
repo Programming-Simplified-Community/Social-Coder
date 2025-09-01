@@ -1,0 +1,10 @@
+﻿@if (IconType != ExperienceItem.None)
+{
+    <i class="@IconType.GetIcon().ToLower()" style="font-size: 36px; color: @Theme.PaletteDark.InfoDarken"></i>
+}
+
+@code {
+    [Parameter] public ExperienceItem IconType { get; set; }
+    private static MudTheme Theme { get; } = new();
+    
+}
